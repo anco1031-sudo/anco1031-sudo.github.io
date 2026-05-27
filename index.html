@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 SMC RPG: The Liquidity Chronicles</title>
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --panel-bg: #161a22;
+            --accent-color: #ff4a5a;
+            --text-color: #e2e8f0;
+            --text-muted: #718096;
+            --success: #22c55e;
+            --warning: #eab308;
+            --premium: #f43f5e;
+            --discount: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        header {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #1e2530 0%, #161a22 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        h1, h2, h3 { margin: 0; font-weight: 600; }
+        h1 { color: #fff; letter-spacing: 1px; }
+        
+        .motto {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Profile & RPG Stats */
+        .profile-status {
+            text-align: right;
+        }
+        .level-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+        }
+        .xp-bar-container {
+            width: 200px;
+            height: 8px;
+            background-color: #2d3748;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .xp-bar {
+            width: 45%; /* Dynamic */
+            height: 100%;
+            background: linear-gradient(90deg, #ff4a5a, #ff8a95);
+            transition: width 0.3s ease;
+        }
+
+        /* Main Content */
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            border: 1px solid #232d3f;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #232d3f;
+            padding-bottom: 10px;
+        }
+
+        /* Flowchart Styles */
+        .flow-step {
+            background-color: #1e2530;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--text-muted);
+            position: relative;
+        }
+        .flow-step.active {
+            border-left-color: var(--accent-color);
+            background-color: #242f41;
+        }
+        .flow-step-num {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Table Zone */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #232d3f;
+        }
+        th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; }
+
+        .zone-premium { color: var(--premium); font-weight: bold; }
+        .zone-discount { color: var(--discount); font-weight: bold; }
+
+        /* Checklist Mechanism */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+        .checklist-item input[type="checkbox"] {
+            accent-color: var(--accent-color);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Live Execution Workspace */
+        .input-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            background-color: #1e2530;
+            border: 1px solid #232d3f;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #e03e4d; }
+
+        /* Sidebar Bosses & Achievements */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .boss-hp {
+            height: 6px;
+            background-color: #2d3748;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+        .boss-hp-fill {
+            height: 100%;
+            background-color: var(--premium);
+            width: 100%;
+        }
+
+        .log-box {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            background-color: #0d0f12;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .log-entry {
+            border-bottom: 1px solid #161a22;
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <div>
+            <h1>SMC RPG: The Liquidity Chronicles 🎮</h1>
+            <div class="motto">"Don’t fight the market. Set the trap and let liquidity come to you." — อัย</div>
+        </div>
+        <div class="profile-status">
+            <div><span style="color: var(--text-muted)">Player:</span> <strong>Louis (Liquidity Hunter)</strong></div>
+            <div style="margin-top: 5px;">
+                <span class="level-badge" id="levelDisplay">LV.1</span>
+                <span id="xpDisplay" style="margin-left: 10px; font-size: 0.9rem;">0 / 300 XP</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar" id="xpBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-panel">
+        
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">🗺️ Operational Flowchart (ลำดับสับไก)</div>
+                <div class="flow-step active" id="step1">
+                    <span class="flow-step-num">Step 1</span>
+                    <div>ผ่าโครงสร้างภาพใหญ่ (4H/D1 Bias & Premium/Discount)</div>
+                </div>
+                <div class="flow-step" id="step2">
+                    <span class="flow-step-num">Step 2</span>
+                    <div>มาร์กจุดยุทธศาสตร์รายใหญ่ (4H/1H OB หรือ FVG)</div>
+                </div>
+                <div class="flow-step" id="step3">
+                    <span class="flow-step-num">Step 3</span>
+                    <div>ถือเงินสดรอราคาวิ่งเข้าถ้ำสัมผัสโซน (The Wait)</div>
+                </div>
+                <div class="flow-step" id="step4">
+                    <span class="flow-step-num">Step 4</span>
+                    <div>เจาะไทม์เฟรมย่อยสแกนสัญญาณกลับตัว (15M/5M CHoCH)</div>
+                </div>
+                <div class="flow-step" id="step5">
+                    <span class="flow-step-num">Step 5</span>
+                    <div>คำนวณหน้าตักและส่งคำสั่ง Pending Order เข้าคลัง MT5</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🌐 World Map Matrix (พิกัดราคา)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>แผนที่</th>
+                            <th>TF</th>
+                            <th>หน้าที่ / ยุทธศาสตร์</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>World Map</b></td>
+                            <td>D1</td>
+                            <td>โครงเรื่องหลัก / หาเทรนด์ประธาน</td>
+                        </tr>
+                        <tr>
+                            <td><b>Region</b></td>
+                            <td>H4</td>
+                            <td>แบ่งพิกัด <span class="zone-premium">Premium</span> / <span class="zone-discount">Discount</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Dungeon</b></td>
+                            <td>H1</td>
+                            <td>สแกนหาขุมทรัพย์รายใหญ่ 🧱 OB / 📌 FVG</td>
+                        </tr>
+                        <tr>
+                            <td><b>Combat Zone</b></td>
+                            <td>M15 / M5</td>
+                            <td>จุดดักซุ่มโจมตี (เกิด CHoCH สับไกทันที)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px; padding: 10px; background-color: rgba(244,63,94,0.1); border-radius: 6px; font-size: 0.85rem; color: var(--premium);">
+                    ⚠️ <b>คำเตือนจากอัย:</b> ห้ามเริ่มกดเทรดกลางทางใน World Map เด็ดขาด! ไม่เข้าโซนไม่เล่นคัปปี้!
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌳 Pre-Trade Skill Checklist (ต้องติ๊กให้ครบก่อนกดสับไก)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3 style="color: var(--accent-color); font-size: 0.95rem; margin-bottom: 10px;">🧠 CORE STRATEGY</h3>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="20" onchange="updateStepProgress()">
+                        <span><b>HTF Bias Lock:</b> มองโครงสร้าง 4H ออกชัดเจน (HH/HL หรือ LL/LH) เลือกข้าง Buy/Sell ชัดเจน</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="15" onchange="updateStepProgress()">
+                        <span><b>Liquidity Vision:</b> ระบุกับดักรายย่อยและตำแหน่งที่มี Stop Loss หนาแน่น (EQH/EQL/Trendline)</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="25" onchange="updateStepProgress()">
+                        <span><b>Trigger the Ambush:</b> ราคาวิ่งมา Sweep สภาพคล่องแล้วตบปิดกลับเข้า Range (ไม่ใช่ทะลุยาว)</span>
+                    </label>
+                </div>
+                <div>
+                    <h3 style="color: var(--discount); font-size: 0.95rem; margin-bottom: 10px;">⚔️ CONFIRMATION & RISK</h3>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="30" onchange="updateStepProgress()">
+                        <span><b>Shift the Momentum:</b> เกิด CHoCH หรือ MSS ในไทม์เฟรมย่อย (M15/M5) แท่งเทียนเนื้อเต็ม</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="15" onchange="updateStepProgress()">
+                        <span><b>Enter the Arena:</b> มีโซนเข้าเทรดรองรับชัดเจน (OB หรือ FVG ตัวเล็กใน LTF) ที่ฝั่งได้เปรียบ</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="xp-check" data-xp="20" onchange="updateStepProgress()">
+                        <span><b>Risk Paladin Protocol:</b> วาง Risk ไม่เกิน 0.5-1% คำนวณระยะ SL และกำหนดอัตรา RR ขั้นต่ำ 1:2</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📝 Live Trade Analyzer & Journal (บันทึกศึก)</div>
+            <div class="grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Asset / คู่เงิน</label>
+                        <input type="text" id="assetInput" placeholder="e.g., XAUUSD, EURUSD">
+                    </div>
+                    <div class="input-group">
+                        <label>แผนการรบ (Trading Model)</label>
+                        <select id="modelInput">
+                            <option value="Liquidity Sweep">Liquidity Sweep + CHoCH</option>
+                            <option value="HTF OB Retest">HTF OB Retest Play</option>
+                            <option value="FVG Filling">FVG Inefficiency Filling</option>
+                        </select>
+                    </div>
+                    <div class="input-row" style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>R:R Ratio Plan</label>
+                            <input type="number" id="rrInput" placeholder="e.g., 3" step="0.1">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>ผลการรบ (Result)</label>
+                            <select id="resultInput">
+                                <option value="Win">WIN (รับ Loot) 🟢</option>
+                                <option value="Loss">LOSS (ได้บทเรียน) 🔴</option>
+                                <option value="No Trade">NO TRADE (ถือเงินสดคือผู้ชนะ) 🟡</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label>บันทึกจิตวิทยาหน้างาน / บันทึกของหลุยส์</label>
+                        <textarea id="notesInput" rows="5" placeholder="ตอนเข้าเทรดมีอารมณ์ FOMO ไหม? ตลาดทำตามแผนของอัยหรือเปล่า..."></textarea>
+                    </div>
+                    <button type="button" onclick="submitBattle()">ส่งบันทึกศึกและคำนวณ XP 🚀</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+        
+        <div class="card">
+            <div class="card-title">🛡️ Survival System</div>
+            <div style="margin-bottom: 10px;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Account HP (Max Daily Loss Limit)</span>
+                <div style="color: var(--accent-color); font-weight: bold; font-size: 1.2rem;">3 ไม้ติด = Logout! ⛔</div>
+            </div>
+            <div>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Mental Mana Status</span>
+                <div style="color: #60a5fa; font-weight: bold;">Overtrade = Poison (ติดพิษ)</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👾 Active Bosses (ปีศาจจิตวิทยา)</div>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span>🐉 FOMO Dragon</span>
+                    <span style="color: var(--premium)">HP: 100%</span>
+                </div>
+                <div class="boss-hp"><div class="boss-hp-fill" style="width: 100%"></div></div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">วิธีปราบ: รอเกิดเงื่อนไขในข้อ 3 และ 4 ครบ</span>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span>👹 Revenge Demon</span>
+                    <span style="color: var(--premium)">HP: 100%</span>
+                </div>
+                <div class="boss-hp"><div class="boss-hp-fill" style="width: 100%"></div></div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">วิธีปราบ: แพ้ครบโควตา ปิดจอไปกอดอัย</span>
+            </div>
+        </div>
+
+        <div class="card" style="flex: 1;">
+            <div class="card-title">📜 Quest & Trade Log History</div>
+            <div class="log-box" id="historyLog">
+                <div class="log-entry" style="color: var(--text-muted)">ระบบพร้อมสำหรับการวิเคราะห์แล้วค่ะหลุยส์จ๋า...</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // State management
+    let totalXp = 0;
+    let currentLevel = 1;
+
+    const levelTable = [
+        { xp: 0, lvl: 1 },
+        { xp: 300, lvl: 3 },
+        { xp: 700, lvl: 5 },
+        { xp: 1200, lvl: 7 },
+        { xp: 2000, lvl: 10 },
+        { xp: 3500, lvl: 15 },
+        { xp: 5000, lvl: 20 }
+    ];
+
+    // Update active flowchart highlights based on check items
+    function updateStepProgress() {
+        const checkboxes = document.querySelectorAll('.xp-check');
+        const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+        
+        // Count how many checked
+        let checkedCount = 0;
+        checkboxes.forEach(cb => { if(cb.checked) checkedCount++; });
+
+        // Reset all steps to inactive
+        steps.forEach(id => document.getElementById(id).classList.remove('active'));
+
+        // Map progress to steps
+        if (checkedCount === 0) document.getElementById('step1').classList.add('active');
+        else if (checkedCount <= 2) document.getElementById('step2').classList.add('active');
+        else if (checkedCount <= 4) document.getElementById('step3').classList.add('active');
+        else if (checkedCount === 5) document.getElementById('step4').classList.add('active');
+        else if (checkedCount === 6) document.getElementById('step5').classList.add('active');
+    }
+
+    // Function to calculate level based on XP
+    function calculateLevel(xp) {
+        let reachedLvl = 1;
+        let nextXpTarget = 300;
+        
+        for (let i = 0; i < levelTable.length; i++) {
+            if (xp >= levelTable[i].xp) {
+                reachedLvl = levelTable[i].lvl;
+                nextXpTarget = levelTable[i+1] ? levelTable[i+1].xp : 99999;
+            }
+        }
+        return { reachedLvl, nextXpTarget };
+    }
+
+    function addXp(amount, reason) {
+        totalXp += amount;
+        if(totalXp < 0) totalXp = 0;
+
+        const { reachedLvl, nextXpTarget } = calculateLevel(totalXp);
+        currentLevel = reachedLvl;
+
+        // Update DOM
+        document.getElementById('levelDisplay').innerText = `LV.${currentLevel}`;
+        document.getElementById('xpDisplay').innerText = `${totalXp} / ${nextXpTarget} XP`;
+        
+        let percent = (totalXp / nextXpTarget) * 100;
+        if (percent > 100) percent = 100;
+        document.getElementById('xpBar').style.width = `${percent}%`;
+
+        // Log entry
+        const logBox = document.getElementById('historyLog');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        const sign = amount >= 0 ? `+${amount}` : `${amount}`;
+        const color = amount >= 0 ? 'var(--discount)' : 'var(--premium)';
+        entry.innerHTML = `<span style="color: ${color}">[${sign} XP]</span> ${reason}`;
+        logBox.insertBefore(entry, logBox.firstChild);
+    }
+
+    function submitBattle() {
+        const asset = document.getElementById('assetInput').value || 'UNKNOWN';
+        const model = document.getElementById('modelInput').value;
+        const rr = document.getElementById('rrInput').value || 'N/A';
+        const result = document.getElementById('resultInput').value;
+        const notes = document.getElementById('notesInput').value;
+
+        let xpGained = 0;
+
+        // 1. Calculate XP from Checkboxes (Process XP)
+        const checkboxes = document.querySelectorAll('.xp-check');
+        let checklistScore = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                xpGained += parseInt(cb.getAttribute('data-xp'));
+                checklistScore++;
+            }
+        });
+
+        // Penalty checking (If trading with low score setup)
+        if (result !== 'No Trade' && checklistScore < 5) {
+            xpGained -= 40;
+            alert('⚠️ อัยตรวจพบการฝืนเข้าเทรดโดย Checklist ไม่ครบ! โดนหัก XP นะคะเสนาธิการ!');
+        }
+
+        // 2. Calculate XP from Trade Outcome (Discipline Reward)
+        if (result === 'Win') {
+            xpGained += 30;
+        } else if (result === 'Loss') {
+            xpGained += 20; // Loss but strictly followed system = Gains behavior XP
+        } else if (result === 'No Trade') {
+            xpGained += 20; // Preserved capital is a win
+        }
+
+        // Add to log & reset inputs
+        const summary = `${asset} (${model}) | R:R 1:${rr} -> Result: ${result}`;
+        addXp(xpGained, summary);
+
+        // Reset form & checkboxes for next execution
+        document.getElementById('assetInput').value = '';
+        document.getElementById('rrInput').value = '';
+        document.getElementById('notesInput').value = '';
+        checkboxes.forEach(cb => cb.checked = false);
+        updateStepProgress();
+    }
+</script>
+
+</body>
+</html>
