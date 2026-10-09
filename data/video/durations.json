@@ -1,0 +1,8 @@
+{
+  "durations": [
+    { "value": "2s", "seconds": 2, "phrase": "2 seconds" },
+    { "value": "3s", "seconds": 3, "phrase": "3 seconds" },
+    { "value": "5s", "seconds": 5, "phrase": "5 seconds" },
+    { "value": "10s", "seconds": 10, "phrase": "10 seconds" }
+  ]
+}

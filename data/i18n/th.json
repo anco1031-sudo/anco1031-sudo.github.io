@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "PromptForge",
+    "subtitle": "เครื่องมือสร้างพรอมพ์ภาพคุณภาพสูง"
+  },
+  "nav": {
+    "generator": "ตัวสร้าง",
+    "history": "ประวัติ",
+    "favorites": "โปรด"
+  },
+  "sections": {
+    "projectType": "ประเภทโครงการ",
+    "subject": "เรื่อง/วัตถุ",
+    "artStyle": "สไตล์ศิลปะ",
+    "cameraAngle": "มุมกล้อง",
+    "lighting": "แสงสว่าง",
+    "colorPalette": "สีพาเลท",
+    "background": "พื้นหลัง",
+    "mood": "อารมณ์",
+    "typography": "แบบอักษร",
+    "effects": "เอฟเฟกต์",
+    "watermark": "ลายน้ำ",
+    "aspectRatio": "อัตราส่วนภาพ",
+    "advanced": "ขั้นสูง",
+    "additional": "คำอธิบายเพิ่มเติม"
+  },
+  "buttons": {
+    "generate": "สร้าง",
+    "clear": "ล้าง",
+    "reset": "รีเซ็ต",
+    "copy": "คัดลอก",
+    "saveFavorite": "บันทึกโปรด",
+    "saveHistory": "บันทึกประวัติ",
+    "addSubject": "เพิ่มเรื่อง",
+    "addColor": "+ เพิ่มสี",
+    "clearHistory": "ล้างทั้งหมด",
+    "clearFavorites": "ล้างทั้งหมด"
+  },
+  "labels": {
+    "category": "หมวดหมู่",
+    "preset": "пресет",
+    "custom": "กำหนดเอง",
+    "subjects": "เรื่อง/วัตถุ",
+    "referenceImages": "ภาพอ้างอิง",
+    "backgroundReference": "ภาพอ้างอิงพื้นหลัง",
+    "customEffects": "เอฟเฟกต์กำหนดเอง",
+    "watermarkPosition": "ตำแหน่งลายน้ำ",
+    "watermarkText": "ข้อความลายน้ำ",
+    "watermarkCustomPos": "ตำแหน่งกำหนดเอง",
+    "customResolution": "ความละเอียดกำหนดเอง",
+    "additionalDesc": "คำแนะนำเพิ่มเติม / หมายเหตุ",
+    "outputPrompt": "พรอมพ์",
+    "outputNegative": "เนเกทีฟพรอมพ์"
+  },
+  "placeholders": {
+    "projectTypeCustom": "เช่น โปสเตอร์เทศกาล",
+    "artStyleCustom": "เช่น น้ำมัน + หมึก",
+    "cameraAngleCustom": "เช่น ดัช 35°",
+    "lightingCustom": "เช่น แสงผ่านหน้าต่างนุ่ม",
+    "backgroundCustom": "เช่น เกาะลอยฟ้าตอนรุ่งอรุณ",
+    "moodCustom": "เช่น ความสงบนอสตัลจิก",
+    "typographyCustom": "เช่น หัวข้อเซริฟ เนื้อหาซานเซริฟ",
+    "effectsCustom": "อนุภาคลอย, ออราพลังงาน, ไฟแมนต์เวท",
+    "watermarkCustomPos": "เช่น มุมขวาล่าง ห่าง 20px",
+    "watermarkText": "เช่น @PromptForge",
+    "customResolution": "เช่น 1920x1080, 3840x2160, 1080x1920",
+    "additionalDesc": "เช่น ทำให้ตาดูโดดเด่น อย่ามีข้อความในภาพ อารมณ์นอกจากเศร้าแต่ยังหวังดี"
+  },
+  "toast": {
+    "welcome": "ยินดีต้อนรับสู่ PromptForge ตั้งค่าและกด Generate",
+    "generated": "สร้างพรอมพ์แล้ว และบันทึกประวัติ",
+    "cleared": "ล้างเอาต์พุตแล้ว",
+    "resetAll": "ล้างทุกช่องแล้ว",
+    "copied": "คัดลอกพรอมพ์แล้ว",
+    "copyFailed": "คัดลอกไม่สำเร็จ",
+    "savedFav": "บันทึกโปรดแล้ว",
+    "removedFav": "ลบออกจากโปรดแล้ว",
+    "savedHist": "บันทึกประวัติแล้ว",
+    "historyCleared": "ล้างประวัติแล้ว",
+    "favsCleared": "ล้างโปรดแล้ว",
+    "errorGenerate": "กรุณาเลือกอย่างน้อยหนึ่งตัวเลือก"
+  },
+  "meta": {
+    "preset": "Premet",
+    "resolution": "ความละเอียด",
+    "ratio": "อัตราส่วน",
+    "quality": "คุณภาพ",
+    "expansion": "ขยายรายละเอียด",
+    "enrichments": "การเสริมอัตโนมัติ",
+    "subjects": "จำนวนเรื่อง",
+    "watermark": "ลายน้ำ"
+  }
+}

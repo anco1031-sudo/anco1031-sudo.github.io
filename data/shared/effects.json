@@ -1,0 +1,19 @@
+{
+  "effects": [
+    { "value": "Particles", "phrase": "floating particle effects" },
+    { "value": "Smoke", "phrase": "swirling smoke effects" },
+    { "value": "Fire", "phrase": "dynamic fire effects" },
+    { "value": "Rain", "phrase": "rain droplet effects" },
+    { "value": "Lightning", "phrase": "crackling lightning effects" },
+    { "value": "Fog", "phrase": "atmospheric fog effects" },
+    { "value": "Dust", "phrase": "floating dust mote effects" },
+    { "value": "Magic Energy", "phrase": "magic energy aura effects" },
+    { "value": "Glitch", "phrase": "digital glitch distortion effects" },
+    { "value": "Motion Blur", "phrase": "motion blur effects" },
+    { "value": "Lens Flare", "phrase": "anamorphic lens flare" },
+    { "value": "Bokeh", "phrase": "soft bokeh highlights" },
+    { "value": "Sparks", "phrase": "shower of sparks" },
+    { "value": "Snow", "phrase": "falling snow particles" },
+    { "value": "Embers", "phrase": "glowing embers" }
+  ]
+}

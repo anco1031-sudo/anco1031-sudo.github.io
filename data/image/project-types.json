@@ -1,0 +1,64 @@
+{
+  "projectTypes": {
+    "Gaming": [
+      { "value": "Minecraft", "phrase": "Minecraft-style game key art" },
+      { "value": "Roblox", "phrase": "Roblox-style game key art" },
+      { "value": "Valorant", "phrase": "Valorant-inspired tactical shooter key art" },
+      { "value": "Fortnite", "phrase": "Fortnite-style vibrant game key art" },
+      { "value": "GTA", "phrase": "GTA-inspired gritty open-world game cover" },
+      { "value": "Free Fire", "phrase": "Free Fire battle royale key art" },
+      { "value": "PUBG", "phrase": "PUBG military battle royale key art" },
+      { "value": "League of Legends", "phrase": "League of Legends champion splash key art" },
+      { "value": "Genshin Impact", "phrase": "Genshin Impact anime RPG key art" },
+      { "value": "Call of Duty", "phrase": "Call of Duty cinematic military key art" },
+      { "value": "Esports Tournament", "phrase": "esports tournament key art" },
+      { "value": "Game Thumbnail", "phrase": "gaming YouTube thumbnail" }
+    ],
+    "Marketing": [
+      { "value": "Product Poster", "phrase": "product promotional poster" },
+      { "value": "Movie Poster", "phrase": "cinematic movie poster" },
+      { "value": "Brand Advertisement", "phrase": "brand advertisement" },
+      { "value": "Social Media Ad", "phrase": "social media advertisement" },
+      { "value": "Sale Banner", "phrase": "sale promotional banner" },
+      { "value": "App Promo", "phrase": "mobile app promotional artwork" },
+      { "value": "Event Flyer", "phrase": "event promotional flyer" },
+      { "value": "Email Header", "phrase": "marketing email header" },
+      { "value": "Billboard", "phrase": "outdoor billboard advertisement" }
+    ],
+    "Events": [
+      { "value": "Concert Poster", "phrase": "live concert poster" },
+      { "value": "Festival Poster", "phrase": "music festival poster" },
+      { "value": "Conference Cover", "phrase": "industry conference cover artwork" },
+      { "value": "Webinar Banner", "phrase": "webinar promotional banner" },
+      { "value": "Birthday Invite", "phrase": "birthday invitation artwork" },
+      { "value": "Wedding Cover", "phrase": "wedding invitation cover" }
+    ],
+    "Creative": [
+      { "value": "Concept Art", "phrase": "concept art illustration" },
+      { "value": "Character Art", "phrase": "character art portrait" },
+      { "value": "Wallpaper", "phrase": "desktop wallpaper artwork" },
+      { "value": "Phone Wallpaper", "phrase": "mobile phone wallpaper" },
+      { "value": "Album Cover", "phrase": "music album cover artwork" },
+      { "value": "Book Cover", "phrase": "book cover illustration" },
+      { "value": "Sticker Pack", "phrase": "illustrated sticker pack artwork" }
+    ],
+    "Business": [
+      { "value": "Pitch Deck Cover", "phrase": "investor pitch deck cover slide" },
+      { "value": "Corporate Banner", "phrase": "corporate business banner" },
+      { "value": "Report Cover", "phrase": "annual report cover artwork" },
+      { "value": "LinkedIn Banner", "phrase": "LinkedIn profile banner" }
+    ],
+    "Education": [
+      { "value": "Course Thumbnail", "phrase": "online course thumbnail" },
+      { "value": "Tutorial Cover", "phrase": "tutorial cover artwork" },
+      { "value": "Infographic", "phrase": "educational infographic" },
+      { "value": "Science Poster", "phrase": "science fair poster" }
+    ],
+    "Technology": [
+      { "value": "App Store Screenshot", "phrase": "App Store screenshot" },
+      { "value": "SaaS Hero", "phrase": "SaaS product hero artwork" },
+      { "value": "Tech Product Render", "phrase": "tech product render" },
+      { "value": "Dashboard Mockup", "phrase": "dashboard UI mockup" }
+    ]
+  }
+}

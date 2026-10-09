@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "PromptForge",
+    "subtitle": "Premium Visual Prompt Generator"
+  },
+  "nav": {
+    "generator": "Generator",
+    "history": "History",
+    "favorites": "Favorites"
+  },
+  "sections": {
+    "projectType": "Project Type",
+    "subject": "Subject",
+    "artStyle": "Art Style",
+    "cameraAngle": "Camera Angle",
+    "lighting": "Lighting",
+    "colorPalette": "Color Palette",
+    "background": "Background",
+    "mood": "Mood",
+    "typography": "Typography",
+    "effects": "Effects",
+    "watermark": "Watermark",
+    "aspectRatio": "Aspect Ratio",
+    "advanced": "Advanced",
+    "additional": "Additional Description"
+  },
+  "buttons": {
+    "generate": "Generate",
+    "clear": "Clear",
+    "reset": "Reset",
+    "copy": "Copy",
+    "saveFavorite": "Save to Favorites",
+    "saveHistory": "Save to History",
+    "addSubject": "Add Subject",
+    "addColor": "+ Add color",
+    "clearHistory": "Clear all",
+    "clearFavorites": "Clear all"
+  },
+  "labels": {
+    "category": "Category",
+    "preset": "Preset",
+    "custom": "Custom",
+    "subjects": "Subjects",
+    "referenceImages": "Reference Images",
+    "backgroundReference": "Background Reference",
+    "customEffects": "Custom Effects",
+    "watermarkPosition": "Watermark Position",
+    "watermarkText": "Watermark Text",
+    "watermarkCustomPos": "Custom Position",
+    "customResolution": "Custom Resolution",
+    "additionalDesc": "Extra Instructions / Notes",
+    "outputPrompt": "Prompt",
+    "outputNegative": "Negative Prompt"
+  },
+  "placeholders": {
+    "projectTypeCustom": "e.g. Festival Poster",
+    "artStyleCustom": "e.g. Watercolor + Ink",
+    "cameraAngleCustom": "e.g. 35° Dutch angle",
+    "lightingCustom": "e.g. Soft window light",
+    "backgroundCustom": "e.g. Floating islands at dawn",
+    "moodCustom": "e.g. Nostalgic serenity",
+    "typographyCustom": "e.g. Serif headline, sans body",
+    "effectsCustom": "floating particles, energy aura, magic sparks",
+    "watermarkCustomPos": "e.g. bottom-right corner, 20px from edge",
+    "watermarkText": "e.g. @PromptForge",
+    "customResolution": "e.g. 1920x1080, 3840x2160, 1080x1920",
+    "additionalDesc": "e.g. Make sure the dragon's eyes glow softly. Avoid any text in the image. The mood should feel melancholic but hopeful."
+  },
+  "toast": {
+    "welcome": "Welcome to PromptForge. Configure & press Generate.",
+    "generated": "Prompt generated & saved to history.",
+    "cleared": "Output cleared.",
+    "resetAll": "All fields cleared.",
+    "copied": "Prompt copied.",
+    "copyFailed": "Copy failed.",
+    "savedFav": "Saved to favorites.",
+    "removedFav": "Removed from favorites.",
+    "savedHist": "Saved to history.",
+    "historyCleared": "History cleared.",
+    "favsCleared": "Favorites cleared.",
+    "errorGenerate": "Add at least one option first."
+  },
+  "meta": {
+    "preset": "Preset",
+    "resolution": "Resolution",
+    "ratio": "Ratio",
+    "quality": "Quality",
+    "expansion": "Expansion",
+    "enrichments": "Auto-enrichments",
+    "subjects": "Subjects",
+    "watermark": "Watermark"
+  }
+}

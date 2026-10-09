@@ -1,0 +1,60 @@
+{
+  "enrichmentRules": [
+    {
+      "triggers": ["minecraft", "roblox", "pixel"],
+      "add": ["blocky voxel geometry", "low-resolution pixel texture", "stylized game-art render"]
+    },
+    {
+      "triggers": ["valorant", "tactical", "call of duty", "pubg", "free fire", "fortnite"],
+      "add": ["cinematic atmosphere", "dramatic shadows", "high detail environment", "professional composition", "epic action mood"]
+    },
+    {
+      "triggers": ["dark fantasy", "gothic", "horror", "dark"],
+      "add": ["cinematic atmosphere", "dramatic shadows", "high detail environment", "professional composition", "epic fantasy mood"]
+    },
+    {
+      "triggers": ["epic", "festival", "concert"],
+      "add": ["cinematic atmosphere", "dramatic lighting", "sweeping scale", "professional composition", "epic grandeur"]
+    },
+    {
+      "triggers": ["volumetric", "god-ray", "volumetric lighting"],
+      "add": ["cinematic atmosphere", "dramatic shadows", "god rays piercing the scene", "high detail environment"]
+    },
+    {
+      "triggers": ["neon", "cyberpunk", "vaporwave"],
+      "add": ["neon glow reflections", "rain-soaked surfaces", "high detail environment", "futuristic mood", "professional composition"]
+    },
+    {
+      "triggers": ["luxury", "premium", "corporate"],
+      "add": ["clean professional composition", "soft gradient backdrop", "studio-quality rendering", "high-end commercial polish"]
+    },
+    {
+      "triggers": ["anime", "studio ghibli", "pixar"],
+      "add": ["expressive character design", "painterly environment", "cinematic staging", "professional composition"]
+    },
+    {
+      "triggers": ["photorealistic", "hyperrealistic", "product render", "product poster"],
+      "add": ["physically based rendering", "accurate material textures", "soft studio reflections", "professional commercial lighting"]
+    },
+    {
+      "triggers": ["concept art", "character art", "fantasy", "sci-fi"],
+      "add": ["detailed concept design", "dynamic composition", "high detail environment", "professional illustration"]
+    },
+    {
+      "triggers": ["golden hour", "moonlight", "candlelight"],
+      "add": ["warm atmospheric tone", "soft directional light", "cinematic color grading", "high detail environment"]
+    },
+    {
+      "triggers": ["wallpaper", "phone wallpaper", "desktop"],
+      "add": ["centered focal subject", "balanced negative space", "high detail environment", "wide color depth"]
+    },
+    {
+      "triggers": ["thumbnail", "youtube"],
+      "add": ["high-contrast subject pop", "expressive facial reaction", "bold focal composition", "clickable vibrant color grading"]
+    },
+    {
+      "triggers": ["movie poster", "album cover", "book cover"],
+      "add": ["cinematic key-art composition", "dramatic central focal", "professional typography hierarchy", "high detail environment"]
+    }
+  ]
+}

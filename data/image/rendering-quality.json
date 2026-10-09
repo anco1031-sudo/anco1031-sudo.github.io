@@ -1,0 +1,8 @@
+{
+  "renderingQuality": [
+    { "value": "Standard", "boost": ["sharp focus", "balanced detail"] },
+    { "value": "High", "boost": ["high detail", "sharp focus", "clean rendering"] },
+    { "value": "Ultra", "boost": ["ultra-detailed", "8K resolution", "razor-sharp focus", "professional rendering"] },
+    { "value": "Masterpiece", "boost": ["masterpiece quality", "ultra-detailed", "8K resolution", "award-winning render", "professional composition", "photographic detail"] }
+  ]
+}

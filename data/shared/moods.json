@@ -1,0 +1,19 @@
+{
+  "moods": [
+    { "value": "Epic", "phrase": "epic grand mood" },
+    { "value": "Professional", "phrase": "professional clean mood" },
+    { "value": "Luxury", "phrase": "luxurious premium mood" },
+    { "value": "Energetic", "phrase": "high-energy dynamic mood" },
+    { "value": "Dark", "phrase": "dark moody atmosphere" },
+    { "value": "Horror", "phrase": "eerie horror atmosphere" },
+    { "value": "Friendly", "phrase": "friendly approachable mood" },
+    { "value": "Dramatic", "phrase": "dramatic tension" },
+    { "value": "Emotional", "phrase": "emotional heartfelt mood" },
+    { "value": "Futuristic", "phrase": "futuristic sleek mood" },
+    { "value": "Nostalgic", "phrase": "nostalgic vintage mood" },
+    { "value": "Mystical", "phrase": "mystical ethereal mood" },
+    { "value": "Playful", "phrase": "playful cheerful mood" },
+    { "value": "Calm", "phrase": "calm serene mood" },
+    { "value": "Tense", "phrase": "tense suspenseful mood" }
+  ]
+}

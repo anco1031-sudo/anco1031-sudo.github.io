@@ -1,0 +1,21 @@
+{
+  "cameraAngles": [
+    { "value": "Front View", "phrase": "front view" },
+    { "value": "Side View", "phrase": "side profile view" },
+    { "value": "Back View", "phrase": "back view" },
+    { "value": "High Angle", "phrase": "high angle shot" },
+    { "value": "Low Angle", "phrase": "low angle hero shot" },
+    { "value": "Bird's Eye View", "phrase": "bird's eye aerial view" },
+    { "value": "Worm's Eye View", "phrase": "worm's eye upward view" },
+    { "value": "Close-Up", "phrase": "close-up shot" },
+    { "value": "Extreme Close-Up", "phrase": "extreme close-up macro shot" },
+    { "value": "Medium Shot", "phrase": "medium shot" },
+    { "value": "Wide Shot", "phrase": "wide establishing shot" },
+    { "value": "Over-the-Shoulder", "phrase": "over-the-shoulder shot" },
+    { "value": "Hero Shot", "phrase": "hero shot composition" },
+    { "value": "Action Shot", "phrase": "dynamic action shot" },
+    { "value": "Dutch Angle", "phrase": "dutch angle tilted shot" },
+    { "value": "POV Shot", "phrase": "first-person POV shot" },
+    { "value": "Tracking Shot", "phrase": "cinematic tracking shot" }
+  ]
+}

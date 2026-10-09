@@ -1,0 +1,7 @@
+{
+  "fpsOptions": [
+    { "value": "24", "fps": 24, "phrase": "24 fps" },
+    { "value": "30", "fps": 30, "phrase": "30 fps" },
+    { "value": "60", "fps": 60, "phrase": "60 fps" }
+  ]
+}

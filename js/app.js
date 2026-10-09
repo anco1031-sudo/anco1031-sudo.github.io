@@ -1236,7 +1236,7 @@
   }
 
   /* ===========================================================
-     Boot
+     Boot — waits for async data load (pf:data-ready)
      =========================================================== */
   function boot() {
     initComboboxes();
@@ -1270,10 +1270,27 @@
     setTimeout(function () { toast("Welcome to PromptForge. Configure & press Generate."); }, 500);
   }
 
+  function startApp() {
+    if (window.PF_DATA) {
+      // Data already loaded (sync fallback or very fast)
+      boot();
+    } else {
+      // Wait for async loader
+      window.addEventListener("pf:data-ready", function onDataReady(e) {
+        window.removeEventListener("pf:data-ready", onDataReady);
+        boot();
+      });
+      window.addEventListener("pf:data-error", function onDataError(e) {
+        window.removeEventListener("pf:data-error", onDataError);
+        toast("Failed to load data: " + e.detail.message, "error");
+      });
+    }
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
+    document.addEventListener("DOMContentLoaded", startApp);
   } else {
-    boot();
+    startApp();
   }
 
   // Expose for debugging

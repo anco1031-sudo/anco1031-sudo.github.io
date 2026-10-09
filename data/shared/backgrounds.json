@@ -1,0 +1,24 @@
+{
+  "backgrounds": [
+    { "value": "City", "phrase": "urban city background" },
+    { "value": "Cyberpunk City", "phrase": "cyberpunk neon city background" },
+    { "value": "Forest", "phrase": "lush forest background" },
+    { "value": "Space", "phrase": "deep space starfield background" },
+    { "value": "Castle", "phrase": "medieval castle background" },
+    { "value": "Minecraft World", "phrase": "Minecraft blocky world background" },
+    { "value": "Cave", "phrase": "mysterious cave background" },
+    { "value": "Abstract", "phrase": "abstract gradient background" },
+    { "value": "Mountain", "phrase": "misty mountain range background" },
+    { "value": "Ocean", "phrase": "vast ocean horizon background" },
+    { "value": "Desert", "phrase": "vast desert dunes background" },
+    { "value": "Snow Field", "phrase": "snowy frozen field background" },
+    { "value": "Ruins", "phrase": "ancient ruins background" },
+    { "value": "Laboratory", "phrase": "high-tech laboratory background" },
+    { "value": "Studio Backdrop", "phrase": "clean studio backdrop" },
+    { "value": "Sky", "phrase": "open sky with clouds background" },
+    { "value": "Volcano", "phrase": "volcanic eruption background" },
+    { "value": "Underwater", "phrase": "underwater reef background" },
+    { "value": "Rooftop", "phrase": "city rooftop at dusk background" },
+    { "value": "Interior", "phrase": "detailed interior background" }
+  ]
+}
