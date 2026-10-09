@@ -1,7 +1,7 @@
 {
-  "name": "PromptForge — Premium Visual Prompt Generator",
-  "short_name": "PromptForge",
-  "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, and Gemini.",
+  "name": "PromptForge-Louis — Premium Visual Prompt Generator",
+  "short_name": "PromptForge-Louis",
+  "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, Gemini, Runway Gen-3, Pika, Sora, Kling, Luma Dream Machine.",
   "start_url": "./index.html?utm_source=pwa",
   "scope": "./",
   "display": "standalone",
@@ -9,10 +9,10 @@
   "orientation": "any",
   "background_color": "#0F172A",
   "theme_color": "#0F172A",
-  "lang": "en",
+  "lang": "th",
   "dir": "ltr",
   "categories": ["productivity", "design", "utilities", "developer"],
-  "id": "/PromptForge/",
+  "id": "/PromptForge-Louis/",
   "prefer_related_applications": false,
   "icons": [
     {

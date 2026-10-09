@@ -1,5 +1,5 @@
 /* =========================================================
-   PromptForge — app.js
+   PromptForge-Louis — app.js
    Main application wiring. Initializes all UI components,
    reads/writes state, drives the generator + history UI.
    ========================================================= */
@@ -8,6 +8,159 @@
 
   const D = global.PF_DATA;
   const { ComboBox, Accordion, Generator, History } = global.PF;
+
+  /* ===========================================================
+     i18n System (PF-L4) — TH/EN UI localization
+     =========================================================== */
+  const i18n = {
+    currentLang: "th",
+    translations: {},
+    loaded: false,
+
+    async init() {
+      // Load saved language or default to Thai
+      const saved = localStorage.getItem("pf-lang");
+      if (saved === "en" || saved === "th") {
+        this.currentLang = saved;
+      }
+      await this.loadTranslations(this.currentLang);
+      this.applyTranslations();
+      this.updateLangToggleUI();
+      this.loaded = true;
+    },
+
+    async loadTranslations(lang) {
+      try {
+        const resp = await fetch(`data/i18n/${lang}.json`, { cache: "no-cache" });
+        if (!resp.ok) throw new Error(`Failed to load ${lang}.json`);
+        this.translations = await resp.json();
+        this.currentLang = lang;
+        localStorage.setItem("pf-lang", lang);
+      } catch (err) {
+        console.error("[i18n] Load failed:", err);
+        // Fallback to English if Thai fails
+        if (lang !== "en") {
+          await this.loadTranslations("en");
+        }
+      }
+    },
+
+    t(key) {
+      const keys = key.split(".");
+      let val = this.translations;
+      for (const k of keys) {
+        if (val && typeof val === "object" && k in val) {
+          val = val[k];
+        } else {
+          return key; // Return key as fallback
+        }
+      }
+      return typeof val === "string" ? val : key;
+    },
+
+    applyTranslations() {
+      // Elements with data-i18n attribute
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const translation = this.t(key);
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+          if (el.placeholder !== undefined && !el.value) {
+            el.placeholder = translation;
+          } else if (el.type === "button" || el.type === "submit") {
+            el.value = translation;
+          } else {
+            el.textContent = translation;
+          }
+        } else {
+          el.textContent = translation;
+        }
+      });
+
+      // Elements with data-i18n-placeholder
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        el.placeholder = this.t(key);
+      });
+
+      // Elements with data-i18n-title
+      document.querySelectorAll("[data-i18n-title]").forEach(el => {
+        const key = el.dataset.i18nTitle;
+        el.title = this.t(key);
+      });
+
+      // Update document title
+      document.title = this.t("app.title") + " — " + this.t("app.subtitle");
+
+      // Update output panel subtitle based on mode
+      const subtitleEl = document.getElementById("outputSubtitle");
+      if (subtitleEl) {
+        const modeKey = this.currentLang === "th" ? "outputSubtitle.video" : "outputSubtitle.image";
+        // Actually we need to check state.outputMode
+        const isVideo = global.PF?.app?.state?.outputMode === "video";
+        subtitleEl.textContent = this.t(isVideo ? "outputSubtitle.video" : "outputSubtitle.image");
+      }
+
+      // Update panel titles/subtitles
+      const leftTitle = document.querySelector(".panel--left .panel__title");
+      const leftSub = document.querySelector(".panel--left .panel__subtitle");
+      const rightTitle = document.querySelector(".panel--right .panel__title");
+      const rightSub = document.querySelector(".panel--right .panel__subtitle");
+      if (leftTitle) leftTitle.textContent = this.t("panelTitle.left");
+      if (leftSub) leftSub.textContent = this.t("panelSubtitle.left");
+      if (rightTitle) rightTitle.textContent = this.t("panelTitle.right");
+      if (rightSub) rightSub.textContent = this.t("panelSubtitle.right");
+
+      // Update history/favorites titles
+      const histTitle = document.querySelector("#history .panel__title");
+      const histSub = document.querySelector("#history .panel__subtitle");
+      const favTitle = document.querySelector("#favorites .panel__title");
+      const favSub = document.querySelector("#favorites .panel__subtitle");
+      if (histTitle) histTitle.textContent = this.t("history.title");
+      if (histSub) histSub.textContent = this.t("history.subtitle");
+      if (favTitle) favTitle.textContent = this.t("favorites.title");
+      if (favSub) favSub.textContent = this.t("favorites.subtitle");
+
+      // Update search placeholder
+      const histSearch = document.getElementById("historySearch");
+      if (histSearch) histSearch.placeholder = this.t("history.searchPlaceholder");
+
+      // Update filter labels
+      const filterMode = document.getElementById("historyFilterMode");
+      const filterPreset = document.getElementById("historyFilterPreset");
+      if (filterMode) {
+        const firstOpt = filterMode.querySelector("option");
+        if (firstOpt) firstOpt.textContent = this.t("history.filterMode");
+      }
+      if (filterPreset) {
+        const firstOpt = filterPreset.querySelector("option");
+        if (firstOpt) firstOpt.textContent = this.t("history.filterPreset");
+      }
+    },
+
+    toggleLanguage() {
+      const newLang = this.currentLang === "th" ? "en" : "th";
+      this.loadTranslations(newLang).then(() => {
+        this.applyTranslations();
+        this.updateLangToggleUI();
+      });
+    },
+
+    updateLangToggleUI() {
+      const btn = document.getElementById("langToggle");
+      const text = document.getElementById("langToggleText");
+      if (btn && text) {
+        text.textContent = this.currentLang === "th" ? "TH" : "EN";
+        btn.setAttribute("aria-label", this.currentLang === "th" ? "Switch to English" : "สลับเป็นภาษาไทย");
+        btn.title = this.currentLang === "th" ? "Switch to English" : "สลับเป็นภาษาไทย";
+      }
+      // Update html lang attribute
+      document.documentElement.lang = this.currentLang === "th" ? "th" : "en";
+    }
+  };
+
+  // Expose i18n globally for other modules
+  global.PF = global.PF || {};
+  global.PF.i18n = i18n;
 
   /* ===========================================================
      Central app state — ALL fields start empty/null (Issue #1).
@@ -385,9 +538,10 @@
     const subtitle = $("#outputSubtitle");
     const promptLabel = $("#promptLabel");
     const negativeLabel = $("#negativeLabel");
-    if (subtitle) subtitle.textContent = mode === "video" ? "Generated video prompt & negative prompt" : "Generated prompt & negative prompt";
-    if (promptLabel) promptLabel.textContent = mode === "video" ? "Video Prompt" : "Prompt";
-    if (negativeLabel) negativeLabel.textContent = mode === "video" ? "Negative Prompt (Video)" : "Negative Prompt";
+    const i18n = global.PF.i18n;
+    if (subtitle) subtitle.textContent = mode === "video" ? i18n.t("outputSubtitle.video") : i18n.t("outputSubtitle.image");
+    if (promptLabel) promptLabel.textContent = mode === "video" ? i18n.t("labels.videoPrompt") : i18n.t("labels.outputPrompt");
+    if (negativeLabel) negativeLabel.textContent = mode === "video" ? i18n.t("labels.videoNegative") : i18n.t("labels.outputNegative");
   }
 
   /* ===========================================================
@@ -1130,9 +1284,10 @@
   const importFileInput = $("#importFileInput");
 
   function renderOutput(result) {
+    const i18n = global.PF.i18n;
     if (!result) {
-      promptOutput.innerHTML = '<span class="output__placeholder">Configure options on the left, then press <strong>Generate</strong>.</span>';
-      negativeOutput.innerHTML = '<span class="output__placeholder">Negative prompt will appear here.</span>';
+      promptOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
+      negativeOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
       outputMeta.innerHTML = "";
       saveFavBtn.disabled = true;
       saveHistBtn.disabled = true;
@@ -1172,11 +1327,11 @@
         videoState.aiPreset = "Luma Dream Machine";
         const lumaResult = Generator.generate(videoState);
         videoFormatOutput.innerHTML =
-          "<strong>Runway:</strong> " + (runwayResult ? runwayResult.prompt : "") + "<br><br>" +
-          "<strong>Pika:</strong> " + (pikaResult ? pikaResult.prompt : "") + "<br><br>" +
-          "<strong>Sora:</strong> " + (soraResult ? soraResult.prompt : "") + "<br><br>" +
-          "<strong>Kling:</strong> " + (klingResult ? klingResult.prompt : "") + "<br><br>" +
-          "<strong>Luma:</strong> " + (lumaResult ? lumaResult.prompt : "");
+          "<strong>" + i18n.t("buttons.copyRunway") + ":</strong> " + (runwayResult ? runwayResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyPika") + ":</strong> " + (pikaResult ? pikaResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copySora") + ":</strong> " + (soraResult ? soraResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyKling") + ":</strong> " + (klingResult ? klingResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyLuma") + ":</strong> " + (lumaResult ? lumaResult.prompt : "");
       }
     }
 
@@ -2158,7 +2313,18 @@
   /* ===========================================================
      Boot — waits for async data load (pf:data-ready)
      =========================================================== */
-  function boot() {
+  async function boot() {
+    // Initialize i18n first (PF-L4)
+    await i18n.init();
+
+    // Wire language toggle button
+    const langToggle = document.getElementById("langToggle");
+    if (langToggle) {
+      langToggle.addEventListener("click", function () {
+        i18n.toggleLanguage();
+      });
+    }
+
     initComboboxes();
     bindInputs();
     initColorPalette();
@@ -2207,8 +2373,8 @@
       }
     });
 
-    // Welcome toast
-    setTimeout(function () { toast("Welcome to PromptForge. Configure & press Generate."); }, 500);
+    // Welcome toast (localized)
+    setTimeout(function () { toast(i18n.t("toast.welcome")); }, 500);
   }
 
   function startApp() {
