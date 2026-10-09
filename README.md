@@ -72,17 +72,28 @@ PromptForge/
 
 ## How to Use
 
-1. **Open `index.html`** in any modern browser. No server, no build step required.
-2. On the **left panel**, configure your prompt:
+**⚠️ Must run via local HTTP server** — `file://` protocol is blocked by browser CORS for `fetch()` calls to load JSON data modules.
+
+```bash
+# Quick start (Python 3)
+python3 -m http.server 8080
+# Then open http://localhost:8080/index.html
+```
+
+Alternative: `npx serve .` or any static file server.
+
+Once running:
+
+1. On the **left panel**, configure your prompt:
    - Pick a **Project Type** category & preset (or type a custom one).
    - Open each accordion section to set **Subject, Art Style, Camera Angle, Lighting, Color Palette, Background, Mood, Typography, Effects, Aspect Ratio**, and **Advanced** options.
    - Each searchable field is a combobox — click it, then type to fuzzy-search.
-3. Click **Generate** (or press `Ctrl/Cmd + Enter`).
-4. On the **right panel**:
+2. Click **Generate** (or press `Ctrl/Cmd + Enter`).
+3. On the **right panel**:
    - Read the **Prompt** and **Negative Prompt**.
    - **Copy** either with one click.
    - **Save to Favorites** or **Save to History**.
-5. **History** and **Favorites** sections below the output let you **restore**, **copy**, **star**, or **delete** any saved entry. All data is stored in your browser's LocalStorage — nothing leaves your machine.
+4. **History** and **Favorites** sections below the output let you **restore**, **copy**, **star**, or **delete** any saved entry. All data is stored in your browser's LocalStorage — nothing leaves your machine.
 
 ---
 

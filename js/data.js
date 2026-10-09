@@ -6,6 +6,42 @@
 (function (global) {
   "use strict";
 
+  /* ---------- C1 FIX: Create PF_DATA synchronously at IIFE top ---------- */
+  // This ensures the const D = global.PF_DATA reference in app.js/generator.js
+  // stays valid and gets populated when fetch completes via Object.assign
+  global.PF_DATA = {
+    PROJECT_TYPE: {},
+    ART_STYLE: [],
+    TYPOGRAPHY: [],
+    COMPOSITION: [],
+    WATERMARK_POSITIONS: [],
+    SUBJECT_IMPORTANCE: [],
+    PROMPT_EXPANSION: [],
+    CAMERA_ANGLE: [],
+    LIGHTING: [],
+    BACKGROUND: [],
+    MOOD: [],
+    EFFECTS: [],
+    ASPECT_RATIOS: [],
+    RENDERING_QUALITY: [],
+    AI_PRESETS: [],
+    ENRICHMENT_RULES: [],
+    NEGATIVE_BASE: [],
+    NEGATIVE_BY_MOOD: {},
+    NEGATIVE_VIDEO_BASE: [],
+    COLOR_PALETTES: [],
+    CAMERA_MOVEMENTS: [],
+    TRANSITIONS: [],
+    DURATIONS: [],
+    FPS_OPTIONS: [],
+    MOTION_STRENGTH: [],
+    LOOP_OPTIONS: [],
+    AI_PRESETS_VIDEO: [],
+    colorName: function (hex) { return hex; },
+    translateToIndonesian: function (text) { return { translated: text || "", changed: false, untranslated: [] }; },
+    isIndonesian: function (text) { return false; }
+  };
+
   /* ---------- Utility: fetch JSON with error handling ---------- */
   async function fetchJSON(path) {
     const resp = await fetch(path, { cache: "no-cache" });
@@ -221,8 +257,8 @@
       fetchJSON("data/video/ai-presets-video.json")
     ]);
 
-    /* ---------- Compose PF_DATA in the exact shape the app expects ---------- */
-    global.PF_DATA = {
+    /* ---------- C1 FIX: Mutate existing PF_DATA via Object.assign (keep const D reference valid) ---------- */
+    Object.assign(global.PF_DATA, {
       /* Project Type */
       PROJECT_TYPE: projectTypesData.projectTypes,
 
@@ -282,7 +318,7 @@
       colorName: colorName,
       translateToIndonesian: translateToIndonesian,
       isIndonesian: isIndonesian
-    };
+    });
 
     /* Signal readiness */
     global.dispatchEvent(new CustomEvent("pf:data-ready", { detail: global.PF_DATA }));

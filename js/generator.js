@@ -33,6 +33,33 @@
     return list.find(function (x) { return x.value === value; }) || null;
   }
 
+  /* C3 FIX: Deep-copy state for history serialization (break circular ref with lastResult) */
+  function cloneStateForHistory(state) {
+    if (!state) return null;
+    // Use structuredClone if available (modern browsers), fallback to JSON round-trip
+    try {
+      const cloned = structuredClone(state);
+      // Remove lastResult to break cycle
+      delete cloned.lastResult;
+      return cloned;
+    } catch (e) {
+      // Fallback: manual clone excluding lastResult
+      const sanitized = {};
+      for (const key in state) {
+        if (key === 'lastResult') continue;
+        const val = state[key];
+        if (Array.isArray(val)) {
+          sanitized[key] = val.map(v => (v && typeof v === 'object') ? { ...v } : v);
+        } else if (val && typeof val === 'object') {
+          sanitized[key] = { ...val };
+        } else {
+          sanitized[key] = val;
+        }
+      }
+      return sanitized;
+    }
+  }
+
   /* Lookup phrase across all data lists */
   function phraseFor(kind, value) {
     if (!value) return null;
@@ -91,21 +118,19 @@
     return uniq(enrichment);
   }
 
-  /* Build a subject phrase from the multiple-subjects list, applying
-     importance and Indonesian translation. */
+  /* Build a subject phrase from the multiple-subjects list (English only per §3.3). */
   function buildSubjectPhrase(state) {
     var subjects = state.subjects || [];
     var valid = subjects.filter(function (s) { return s && s.text && s.text.trim(); });
     if (valid.length === 0) return null;
     if (valid.length === 1) {
-      return D.translateToIndonesian(valid[0].text).translated;
+      return valid[0].text.trim();
     }
     // Multiple subjects: join with importance labels
     var parts = valid.map(function (s, i) {
-      var translated = D.translateToIndonesian(s.text).translated;
       var importance = s.importance || (i === 0 ? "Primary" : "Secondary");
       var impPhrase = (D.SUBJECT_IMPORTANCE.find(function (x) { return x.value === importance; }) || {}).phrase || "subject";
-      return impPhrase + ": " + translated;
+      return impPhrase + ": " + s.text.trim();
     });
     return parts.join("; ");
   }
@@ -126,7 +151,7 @@
       composition: state.composition ? phraseFor("composition", state.composition) : null,
       colors:    state.colors && state.colors.length ? state.colors.slice() : [],
       watermark: buildWatermarkPhrase(state),
-      additional: state.additionalDescription && state.additionalDescription.trim() ? D.translateToIndonesian(state.additionalDescription).translated : null
+      additional: state.additionalDescription && state.additionalDescription.trim() ? state.additionalDescription.trim() : null
     };
 
     const enrich = applyRules(state);
@@ -148,8 +173,7 @@
     var pos = state.watermarkPosition || "Bottom Right";
     var posPhrase = (D.WATERMARK_POSITIONS.find(function (p) { return p.value === pos; }) || {}).phrase || "bottom-right watermark";
     var customPos = state.watermarkCustomPosition && state.watermarkCustomPosition.trim();
-    var translatedText = D.translateToIndonesian(text).translated;
-    var phrase = 'watermark text "' + translatedText + '" at ' + posPhrase;
+    var phrase = 'watermark text "' + text + '" at ' + posPhrase;
     if (customPos && pos === "Custom Position") {
       phrase += ' (' + customPos + ')';
     }
@@ -316,7 +340,8 @@
     let fpsValue = "";
     if (state.fps) {
       const fps = (D.FPS_OPTIONS || []).find(function (f) { return f.value === state.fps; });
-      fpsPhrase = fps ? fps.phrase : state.fps + " fps";
+      // Minor fix: §5 — 24fps not "24 fps" for Runway/Pika
+      fpsPhrase = fps ? fps.phrase.replace(/\s+fps$/, "fps") : state.fps + "fps";
       fpsValue = state.fps;
     }
 
@@ -573,7 +598,7 @@
       prompt: prompt,
       negative: negative,
       meta: meta,
-      state: state,
+      state: cloneStateForHistory(state),
       timestamp: Date.now()
     };
   }

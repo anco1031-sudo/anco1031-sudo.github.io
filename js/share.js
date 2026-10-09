@@ -8,17 +8,21 @@
   const D = global.PF_DATA;
   const Generator = global.PF.Generator;
   const History = global.PF.History;
-  const app = global.PF.app;
 
   /* ===========================================================
-     Copy per-model formats
+     C2 FIX: Lazy access to app (app.js loads after share.js)
      =========================================================== */
+  function getApp() {
+    return global.PF && global.PF.app ? global.PF.app : null;
+  }
 
   function getCurrentState() {
+    const app = getApp();
     return app ? app.state : null;
   }
 
   function getLastResult() {
+    const app = getApp();
     return app && app.state ? app.state.lastResult : null;
   }
 
@@ -217,7 +221,8 @@
     }
 
     // Re-sync UI
-    if (app && app.state) {
+    const appInstance = getApp();
+    if (appInstance && appInstance.state) {
       // We need to call the internal syncUIFromState - but it's not exposed
       // Instead, we'll trigger a page reload or manually sync
       syncUIFromImportedState(state);
