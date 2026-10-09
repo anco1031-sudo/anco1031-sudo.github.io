@@ -226,6 +226,25 @@
 
       <div class="panel__body" id="generatorPanel">
 
+        <!-- ===================== SECTION 00: OUTPUT MODE ===================== -->
+        <div class="accordion" data-section="outputMode" id="sectionOutputMode">
+          <div class="accordion__body is-open" style="max-height: none; height: auto; overflow: visible; padding: 0 16px 16px;">
+            <div class="field">
+              <label class="field__label">Output Mode</label>
+              <div class="seg" id="outputModeSeg" role="tablist" aria-label="Output mode">
+                <button class="seg__btn is-active" type="button" data-mode="image" role="tab" aria-selected="true">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/></svg>
+                  <span>Image</span>
+                </button>
+                <button class="seg__btn" type="button" data-mode="video" role="tab" aria-selected="false">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  <span>Video</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Project Type -->
         <div class="accordion" data-section="projectType">
           <button class="accordion__head" type="button" aria-expanded="false">
@@ -304,8 +323,8 @@
           </div>
         </div>
 
-        <!-- Camera Angle -->
-        <div class="accordion" data-section="cameraAngle">
+        <!-- Camera Angle (Image mode) -->
+        <div class="accordion" data-section="cameraAngle" id="sectionCameraAngle">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">04</span>
             <span class="accordion__label">Camera Angle</span>
@@ -321,6 +340,27 @@
             <div class="field">
               <label class="field__label" for="cameraAngle-custom">Custom Angle</label>
               <input class="input" id="cameraAngle-custom" type="text" placeholder="e.g. 35° Dutch angle" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera Movement (Video mode) -->
+        <div class="accordion" data-section="cameraMovement" id="sectionCameraMovement" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V0</span>
+            <span class="accordion__label">Camera Movement</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label">Camera Movement</label>
+              <div class="combobox" data-combobox="cameraMovement" data-mode="single"></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="cameraMovement-custom">Custom Movement</label>
+              <input class="input" id="cameraMovement-custom" type="text" placeholder="e.g. slow arc around subject" />
             </div>
           </div>
         </div>
@@ -434,8 +474,8 @@
           </div>
         </div>
 
-        <!-- Typography -->
-        <div class="accordion" data-section="typography">
+        <!-- Typography (collapsed by default in Video mode) -->
+        <div class="accordion" data-section="typography" id="sectionTypography">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">09</span>
             <span class="accordion__label">Typography Style</span>
@@ -476,8 +516,8 @@
           </div>
         </div>
 
-        <!-- Watermark -->
-        <div class="accordion" data-section="watermark">
+        <!-- Watermark (collapsed by default in Video mode) -->
+        <div class="accordion" data-section="watermark" id="sectionWatermark">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">11</span>
             <span class="accordion__label">Watermark</span>
@@ -502,7 +542,7 @@
         </div>
 
         <!-- Aspect Ratio -->
-        <div class="accordion" data-section="aspectRatio">
+        <div class="accordion" data-section="aspectRatio" id="sectionAspectRatio">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">12</span>
             <span class="accordion__label">Aspect Ratio</span>
@@ -522,8 +562,84 @@
           </div>
         </div>
 
+        <!-- Duration (Video mode) -->
+        <div class="accordion" data-section="duration" id="sectionDuration" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V1</span>
+            <span class="accordion__label">Duration</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label">Duration</label>
+              <div class="combobox" data-combobox="duration" data-mode="single"></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="duration-custom">Custom Duration (seconds)</label>
+              <input class="input" id="duration-custom" type="number" min="1" max="60" step="1" placeholder="e.g. 7" />
+            </div>
+          </div>
+        </div>
+
+        <!-- FPS (Video mode) -->
+        <div class="accordion" data-section="fps" id="sectionFPS" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V2</span>
+            <span class="accordion__label">FPS</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label">FPS</label>
+              <div class="combobox" data-combobox="fps" data-mode="single"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motion Strength & Loop (Video mode) -->
+        <div class="accordion" data-section="motionStrength" id="sectionMotionStrength" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V3</span>
+            <span class="accordion__label">Motion Strength</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label">Motion Strength</label>
+              <div class="chip-grid" id="motionStrengthGrid" role="group" aria-label="Motion strength" data-single="1"></div>
+            </div>
+            <div class="field">
+              <label class="field__label">Loop</label>
+              <div class="chip-grid" id="loopGrid" role="group" aria-label="Loop" data-single="1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transition (Video mode) -->
+        <div class="accordion" data-section="transition" id="sectionTransition" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V4</span>
+            <span class="accordion__label">Transition</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label">Transition</label>
+              <div class="combobox" data-combobox="transition" data-mode="single"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- Advanced -->
-        <div class="accordion" data-section="advanced">
+        <div class="accordion" data-section="advanced" id="sectionAdvanced">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">13</span>
             <span class="accordion__label">Advanced</span>
@@ -537,7 +653,7 @@
               <div class="chip-grid" id="compositionGrid" role="group" aria-label="Composition" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label">Rendering Quality</label>
+              <label class="field__label" id="renderingQualityLabel">Rendering Quality</label>
               <div class="chip-grid" id="renderingGrid" role="group" aria-label="Rendering quality" data-single="1"></div>
             </div>
             <div class="field">
@@ -545,7 +661,7 @@
               <div class="chip-grid" id="expansionGrid" role="group" aria-label="Prompt expansion" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label">AI Preset</label>
+              <label class="field__label" id="aiPresetLabel">AI Preset</label>
               <div class="chip-grid" id="aiPresetGrid" role="group" aria-label="AI preset" data-single="1"></div>
             </div>
           </div>
@@ -579,7 +695,7 @@
         <div class="output__header">
           <div>
             <h2 class="panel__title">Output</h2>
-            <p class="panel__subtitle">Generated prompt &amp; negative prompt</p>
+            <p class="panel__subtitle" id="outputSubtitle">Generated prompt &amp; negative prompt</p>
           </div>
           <div class="output__actions">
             <button class="btn btn--primary btn--sm" id="generateBtn" type="button">
@@ -593,7 +709,7 @@
         <div class="output__body">
           <div class="output__block">
             <div class="output__block-head">
-              <span class="output__label">Prompt</span>
+              <span class="output__label" id="promptLabel">Prompt</span>
               <button class="btn btn--ghost btn--xs" id="copyPromptBtn" type="button" data-copy="prompt">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                 Copy
@@ -606,7 +722,7 @@
 
           <div class="output__block">
             <div class="output__block-head">
-              <span class="output__label">Negative Prompt</span>
+              <span class="output__label" id="negativeLabel">Negative Prompt</span>
               <button class="btn btn--ghost btn--xs" id="copyNegativeBtn" type="button" data-copy="negative">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                 Copy

@@ -14,6 +14,9 @@
      User must select/enter everything manually.
      =========================================================== */
   const state = {
+    // Output mode (PF-L2)
+    outputMode:          "image",   // "image" | "video"
+
     projectTypeCategory: null,
     projectTypePreset:   null,
     projectTypeCustom:   "",
@@ -21,8 +24,10 @@
     subjectImages:       [],   // dataURLs
     artStyle:            null,
     artStyleCustom:      "",
-    cameraAngle:         null,
+    cameraAngle:         null,        // Image mode
     cameraAngleCustom:   "",
+    cameraMovement:      null,        // Video mode (V0)
+    cameraMovementCustom: "",
     lighting:            null,
     lightingCustom:      "",
     colorMode:           "single", // single | dual | multi (mode is structural, not a content selection)
@@ -46,6 +51,13 @@
     promptExpansion:     null,
     aiPreset:            null,
     additionalDescription: "",      // Issue #12
+    // Video-only fields (PF-L2 stubs, wired in PF-L3)
+    duration:            null,        // V1
+    durationCustom:      "",
+    fps:                 null,        // V2
+    motionStrength:      null,        // V3
+    loop:                null,        // V3
+    transition:          null,        // V4
     // last generated
     lastResult:          null
   };
@@ -100,6 +112,236 @@
   Accordion.init(document);
 
   /* ===========================================================
+     Output Mode Toggle (PF-L2)
+     =========================================================== */
+  function initOutputMode() {
+    const seg = $("#outputModeSeg");
+    if (!seg) return;
+
+    // Read mode from URL hash (#m=image|video)
+    function getModeFromHash() {
+      const hash = window.location.hash;
+      const match = hash.match(/[#&]m=(image|video)/);
+      return match ? match[1] : "image";
+    }
+
+    function setHashMode(mode) {
+      const hash = window.location.hash;
+      const newHash = hash.replace(/([#&])m=(image|video)/, "$1m=" + mode);
+      if (newHash === hash) {
+        // No existing m= param, append
+        window.location.hash = hash + (hash ? "&" : "#") + "m=" + mode;
+      } else {
+        window.location.hash = newHash;
+      }
+    }
+
+    function applyMode(mode) {
+      state.outputMode = mode;
+
+      // Update segmented control UI
+      $all(".seg__btn", seg).forEach(function (btn) {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-selected", isActive);
+      });
+
+      // Show/hide sections per mode
+      toggleSectionsForMode(mode);
+
+      // Rebuild AI preset chips for the mode
+      rebuildAiPresetChips(mode);
+
+      // Rebuild aspect ratio grid for the mode
+      rebuildAspectRatioGrid(mode);
+
+      // Update rendering quality label
+      updateRenderingQualityLabel(mode);
+
+      // Update output panel labels
+      updateOutputPanelLabels(mode);
+
+      // Update URL hash
+      setHashMode(mode);
+    }
+
+    // Click handlers
+    seg.addEventListener("click", function (e) {
+      const btn = e.target.closest(".seg__btn");
+      if (!btn) return;
+      applyMode(btn.dataset.mode);
+    });
+
+    // Initialize from hash or default
+    const initialMode = getModeFromHash();
+    applyMode(initialMode);
+  }
+
+  /* ===========================================================
+     Show/hide sections based on output mode (per matrix §4.2)
+     =========================================================== */
+  function toggleSectionsForMode(mode) {
+    const isVideo = mode === "video";
+
+    // Section 04 Camera Angle (image-only)
+    toggleSection("sectionCameraAngle", !isVideo);
+    // Section V0 Camera Movement (video-only)
+    toggleSection("sectionCameraMovement", isVideo);
+    // Section 09 Typography (collapsed by default in video)
+    toggleSectionCollapsed("sectionTypography", isVideo);
+    // Section 11 Watermark (collapsed by default in video)
+    toggleSectionCollapsed("sectionWatermark", isVideo);
+    // Section 12 Aspect Ratio (always shown, but filtered)
+    // Sections V1-V4 (video-only)
+    toggleSection("sectionDuration", isVideo);
+    toggleSection("sectionFPS", isVideo);
+    toggleSection("sectionMotionStrength", isVideo);
+    toggleSection("sectionTransition", isVideo);
+  }
+
+  function toggleSection(sectionId, show) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    if (show) {
+      el.hidden = false;
+      // Ensure accordion is initialized
+      if (!el.classList.contains("accordion-initialized")) {
+        Accordion.init(el);
+        el.classList.add("accordion-initialized");
+      }
+    } else {
+      el.hidden = true;
+      // Close accordion if open
+      if (el.classList.contains("is-open")) {
+        el.classList.remove("is-open");
+      }
+    }
+  }
+
+  function toggleSectionCollapsed(sectionId, collapsed) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    if (collapsed && el.classList.contains("is-open")) {
+      el.classList.remove("is-open");
+    }
+    // Note: accordion stays visible, just collapsed by default
+  }
+
+  /* ===========================================================
+     Rebuild AI Preset chips for the current mode
+     =========================================================== */
+  function rebuildAiPresetChips(mode) {
+    const grid = $("#aiPresetGrid");
+    if (!grid) return;
+    const presets = mode === "video" ? D.AI_PRESETS_VIDEO : D.AI_PRESETS;
+    if (!presets) return;
+
+    // Clear grid
+    grid.innerHTML = "";
+
+    // If current preset not in new list, clear it
+    if (state.aiPreset && !presets.some(function (p) { return p.value === state.aiPreset; })) {
+      state.aiPreset = null;
+    }
+
+    presets.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.aiPreset === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", grid).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.aiPreset = item.value;
+        } else {
+          state.aiPreset = null;
+        }
+      });
+      grid.appendChild(chip);
+    });
+  }
+
+  /* ===========================================================
+     Rebuild Aspect Ratio grid for the current mode
+     =========================================================== */
+  function rebuildAspectRatioGrid(mode) {
+    const grid = $("#ratioGrid");
+    if (!grid) return;
+
+    const allRatios = D.ASPECT_RATIOS || [];
+    let ratios;
+    if (mode === "video") {
+      // Video: 16:9, 9:16, 1:1 first, then others
+      const priority = ["16:9", "9:16", "1:1"];
+      const priorityRatios = priority.map(function (v) {
+        return allRatios.find(function (r) { return r.value === v; });
+      }).filter(Boolean);
+      const otherRatios = allRatios.filter(function (r) { return !priority.includes(r.value); });
+      ratios = priorityRatios.concat(otherRatios);
+    } else {
+      ratios = allRatios;
+    }
+
+    // Clear grid
+    grid.innerHTML = "";
+
+    // If current aspect ratio not in new list, clear it
+    if (state.aspectRatio && !ratios.some(function (r) { return r.value === state.aspectRatio; })) {
+      state.aspectRatio = null;
+    }
+
+    ratios.forEach(function (r) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ratio";
+      btn.dataset.value = r.value;
+      if (r.value === state.aspectRatio) btn.classList.add("is-active");
+
+      const maxEdge = 22;
+      const long = Math.max(r.w, r.h);
+      const w = Math.round((r.w / long) * maxEdge);
+      const h = Math.round((r.h / long) * maxEdge);
+
+      btn.innerHTML =
+        '<span class="ratio__shape" style="width:' + w + 'px;height:' + h + 'px"></span>' +
+        '<span class="ratio__label">' + r.value + '</span>';
+
+      btn.addEventListener("click", function () {
+        $all(".ratio", grid).forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+        state.aspectRatio = r.value;
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ===========================================================
+     Update Rendering Quality label for video mode
+     =========================================================== */
+  function updateRenderingQualityLabel(mode) {
+    const label = $("#renderingQualityLabel");
+    if (!label) return;
+    label.textContent = mode === "video" ? "Quality + FPS hint" : "Rendering Quality";
+  }
+
+  /* ===========================================================
+     Update Output Panel labels for the current mode
+     =========================================================== */
+  function updateOutputPanelLabels(mode) {
+    const subtitle = $("#outputSubtitle");
+    const promptLabel = $("#promptLabel");
+    const negativeLabel = $("#negativeLabel");
+    if (subtitle) subtitle.textContent = mode === "video" ? "Generated video prompt & negative prompt" : "Generated prompt & negative prompt";
+    if (promptLabel) promptLabel.textContent = mode === "video" ? "Video Prompt" : "Prompt";
+    if (negativeLabel) negativeLabel.textContent = mode === "video" ? "Negative Prompt (Video)" : "Negative Prompt";
+  }
+
+  /* ===========================================================
      Initialize ComboBoxes
      =========================================================== */
   function initComboboxes() {
@@ -112,6 +354,10 @@
     const backgroundEl = $('[data-combobox="background"]');
     const moodEl = $('[data-combobox="mood"]');
     const typographyEl = $('[data-combobox="typography"]');
+    const cameraMovementEl = $('[data-combobox="cameraMovement"]');
+    const durationEl = $('[data-combobox="duration"]');
+    const fpsEl = $('[data-combobox="fps"]');
+    const transitionEl = $('[data-combobox="transition"]');
 
     // Category combobox — flat list of category names
     const catNames = Object.keys(D.PROJECT_TYPE);
@@ -184,6 +430,50 @@
       allowCustom: true,
       onChange: function (val) { state.typography = val; }
     });
+
+    // Camera Movement (Video mode)
+    if (cameraMovementEl) {
+      combos.cameraMovement = ComboBox.create(cameraMovementEl, {
+        mode: "single",
+        options: D.CAMERA_MOVEMENTS || [],
+        placeholder: "Search camera movements…",
+        allowCustom: true,
+        onChange: function (val) { state.cameraMovement = val; }
+      });
+    }
+
+    // Duration (Video mode)
+    if (durationEl) {
+      combos.duration = ComboBox.create(durationEl, {
+        mode: "single",
+        options: (D.DURATIONS || []).map(function (d) { return { value: d.value, phrase: d.phrase }; }),
+        placeholder: "Select duration…",
+        allowCustom: true,
+        onChange: function (val) { state.duration = val; }
+      });
+    }
+
+    // FPS (Video mode)
+    if (fpsEl) {
+      combos.fps = ComboBox.create(fpsEl, {
+        mode: "single",
+        options: (D.FPS_OPTIONS || []).map(function (f) { return { value: f.value, phrase: f.phrase }; }),
+        placeholder: "Select FPS…",
+        allowCustom: true,
+        onChange: function (val) { state.fps = val; }
+      });
+    }
+
+    // Transition (Video mode)
+    if (transitionEl) {
+      combos.transition = ComboBox.create(transitionEl, {
+        mode: "single",
+        options: (D.TRANSITIONS || []).map(function (t) { return { value: t.value, phrase: t.phrase }; }),
+        placeholder: "Select transition…",
+        allowCustom: true,
+        onChange: function (val) { state.transition = val; }
+      });
+    }
   }
 
   function rebuildProjectTypePresets(category) {
@@ -212,6 +502,7 @@
       "projectType-custom":      "projectTypeCustom",
       "artStyle-custom":         "artStyleCustom",
       "cameraAngle-custom":      "cameraAngleCustom",
+      "cameraMovement-custom":   "cameraMovementCustom",
       "lighting-custom":         "lightingCustom",
       "background-custom":       "backgroundCustom",
       "mood-custom":             "moodCustom",
@@ -224,7 +515,9 @@
       // Issue #11: Custom Resolution
       "custom-resolution":       "customResolution",
       // Issue #12: Additional Description
-      "additional-desc":         "additionalDescription"
+      "additional-desc":         "additionalDescription",
+      // Video-only custom inputs (PF-L2)
+      "duration-custom":         "durationCustom"
     };
     Object.keys(map).forEach(function (id) {
       const el = document.getElementById(id);
@@ -434,6 +727,61 @@
   function initAiPreset() {
     const c = initChipGrid("aiPresetGrid", "aiPreset");
     if (state.aiPreset) c.activate(state.aiPreset);
+  }
+
+  /* Video-only chip grids (PF-L2) */
+  function initMotionStrength() {
+    const el = $("#motionStrengthGrid");
+    if (!el) return;
+    el.innerHTML = "";
+    const list = D.MOTION_STRENGTH || [];
+    list.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.motionStrength === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", el).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.motionStrength = item.value;
+        } else {
+          state.motionStrength = null;
+        }
+      });
+      el.appendChild(chip);
+    });
+  }
+
+  function initLoop() {
+    const el = $("#loopGrid");
+    if (!el) return;
+    el.innerHTML = "";
+    const list = D.LOOP_OPTIONS || [];
+    list.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.loop === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", el).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.loop = item.value;
+        } else {
+          state.loop = null;
+        }
+      });
+      el.appendChild(chip);
+    });
   }
 
   /* Issue #8 — Watermark position chip grid (single-select). */
@@ -794,6 +1142,7 @@
     state.subjectImages = [];
     state.artStyle = null; state.artStyleCustom = "";
     state.cameraAngle = null; state.cameraAngleCustom = "";
+    state.cameraMovement = null; state.cameraMovementCustom = "";
     state.lighting = null; state.lightingCustom = "";
     state.background = null; state.backgroundCustom = "";
     state.backgroundImages = [];
@@ -816,6 +1165,14 @@
     state.promptExpansion = null;
     state.aiPreset = null;
     state.additionalDescription = "";
+    // Video-only fields (PF-L2)
+    state.duration = null; state.durationCustom = "";
+    state.fps = null;
+    state.motionStrength = null;
+    state.loop = null;
+    state.transition = null;
+    // Output mode resets to default "image"
+    state.outputMode = "image";
     state.lastResult = null;
 
     // Reset UI
@@ -828,6 +1185,23 @@
     $all(".chip").forEach(function (c) { c.classList.remove("is-active"); });
     $all(".ratio").forEach(function (r) { r.classList.remove("is-active"); });
     $all(".preview").forEach(function (p) { p.remove(); });
+
+    // Re-apply default output mode UI (PF-L2)
+    const seg = $("#outputModeSeg");
+    if (seg) {
+      $all(".seg__btn", seg).forEach(function (btn) {
+        const isActive = btn.dataset.mode === "image";
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-selected", isActive);
+      });
+    }
+    toggleSectionsForMode("image");
+    rebuildAiPresetChips("image");
+    rebuildAspectRatioGrid("image");
+    updateRenderingQualityLabel("image");
+    updateOutputPanelLabels("image");
+    // Update URL hash
+    window.location.hash = window.location.hash.replace(/([#&])m=(image|video)/, "$1m=image");
 
     renderSubjects();
     initColorPalette();
@@ -980,15 +1354,20 @@
     }, 50);
     if (state.artStyle && combos.artStyle) combos.artStyle.setValue(state.artStyle);
     if (state.cameraAngle && combos.cameraAngle) combos.cameraAngle.setValue(state.cameraAngle);
+    if (state.cameraMovement && combos.cameraMovement) combos.cameraMovement.setValue(state.cameraMovement);
     if (state.lighting && combos.lighting) combos.lighting.setValue(state.lighting);
     if (state.background && combos.background) combos.background.setValue(state.background);
     if (state.mood && combos.mood) combos.mood.setValue(state.mood);
     if (state.typography && combos.typography) combos.typography.setValue(state.typography);
+    if (state.duration && combos.duration) combos.duration.setValue(state.duration);
+    if (state.fps && combos.fps) combos.fps.setValue(state.fps);
+    if (state.transition && combos.transition) combos.transition.setValue(state.transition);
 
     const textMap = {
       "projectType-custom":      "projectTypeCustom",
       "artStyle-custom":         "artStyleCustom",
       "cameraAngle-custom":      "cameraAngleCustom",
+      "cameraMovement-custom":   "cameraMovementCustom",
       "lighting-custom":         "lightingCustom",
       "background-custom":       "backgroundCustom",
       "mood-custom":             "moodCustom",
@@ -997,7 +1376,8 @@
       "watermark-custom-pos":    "watermarkCustomPosition",
       "watermark-text":          "watermarkText",
       "custom-resolution":       "customResolution",
-      "additional-desc":         "additionalDescription"
+      "additional-desc":         "additionalDescription",
+      "duration-custom":         "durationCustom"
     };
     Object.keys(textMap).forEach(function (id) {
       const el = document.getElementById(id);
@@ -1014,7 +1394,9 @@
       { grid: "renderingGrid",     values: state.renderingQuality ? [state.renderingQuality] : [] },
       { grid: "expansionGrid",     values: state.promptExpansion ? [state.promptExpansion] : [] },
       { grid: "aiPresetGrid",      values: state.aiPreset ? [state.aiPreset] : [] },
-      { grid: "watermarkPosGrid",  values: state.watermarkPosition ? [state.watermarkPosition] : [] }
+      { grid: "watermarkPosGrid",  values: state.watermarkPosition ? [state.watermarkPosition] : [] },
+      { grid: "motionStrengthGrid", values: state.motionStrength ? [state.motionStrength] : [] },
+      { grid: "loopGrid",          values: state.loop ? [state.loop] : [] }
     ];
     activeChips.forEach(function (g) {
       const grid = document.getElementById(g.grid);
@@ -1035,6 +1417,17 @@
 
     // Color palette: rebuild via re-init
     initColorPalette();
+
+    // Re-apply output mode to ensure UI consistency (PF-L2)
+    if (state.outputMode) {
+      // The initOutputMode already ran, but we need to re-apply the mode-specific UI
+      // sections visibility, AI preset chips, aspect ratio grid, labels
+      toggleSectionsForMode(state.outputMode);
+      rebuildAiPresetChips(state.outputMode);
+      rebuildAspectRatioGrid(state.outputMode);
+      updateRenderingQualityLabel(state.outputMode);
+      updateOutputPanelLabels(state.outputMode);
+    }
   }
 
   /* ===========================================================
@@ -1250,6 +1643,8 @@
     initAspectRatios();
     initWatermarkPosition();   // Issue #8
     initSubjects();            // Issue #10
+    initMotionStrength();      // PF-L2 Video
+    initLoop();                // PF-L2 Video
     initDropzone("subject-dropzone", "subject-file", "subject-previews", "subjectImages");
     initDropzone("background-dropzone", "background-file", "background-previews", "backgroundImages");
     wireButtons();
@@ -1257,6 +1652,9 @@
     setYear();
     renderHistory();
     renderFavorites();
+
+    // Output Mode Toggle (PF-L2) — must run after all UI is initialized
+    initOutputMode();
 
     // Keyboard: Ctrl/Cmd+Enter generates
     document.addEventListener("keydown", function (e) {
