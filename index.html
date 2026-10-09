@@ -703,6 +703,23 @@
               Generate
             </button>
             <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">Clear</button>
+            <button class="btn btn--ghost btn--sm" id="exportBtn" type="button" title="Export state & history to JSON">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Export
+            </button>
+            <button class="btn btn--ghost btn--sm" id="importBtn" type="button" title="Import state & history from JSON">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Import
+            </button>
+            <button class="btn btn--ghost btn--sm" id="shareBtn" type="button" title="Copy shareable URL">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Share
+            </button>
+            <button class="btn btn--ghost btn--sm" id="copyAllBtn" type="button" title="Copy prompt + negative + settings">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/><path d="M9 9h11v11"/></svg>
+              Copy All
+            </button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;" />
           </div>
         </div>
 
@@ -710,10 +727,24 @@
           <div class="output__block">
             <div class="output__block-head">
               <span class="output__label" id="promptLabel">Prompt</span>
-              <button class="btn btn--ghost btn--xs" id="copyPromptBtn" type="button" data-copy="prompt">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-                Copy
-              </button>
+              <div class="output__copy-group" id="promptCopyGroup">
+                <button class="btn btn--ghost btn--xs" id="copyPromptBtn" type="button" data-copy="prompt" title="Copy prompt">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  Copy
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyNaturalBtn" type="button" title="Copy as Natural Language (ChatGPT/Flux/Gemini)">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 17H20"/><path d="M12.5 17H20"/><path d="M6.5 12H20"/><path d="M12.5 12H20"/></svg>
+                  Natural
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyMjBtn" type="button" title="Copy as Midjourney (--params)">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                  MJ-params
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copySdxlBtn" type="button" title="Copy as SDXL tags">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                  SDXL-tags
+                </button>
+              </div>
             </div>
             <div class="output__text" id="promptOutput" aria-live="polite">
               <span class="output__placeholder">Configure options on the left, then press <strong>Generate</strong>.</span>
@@ -723,13 +754,45 @@
           <div class="output__block">
             <div class="output__block-head">
               <span class="output__label" id="negativeLabel">Negative Prompt</span>
-              <button class="btn btn--ghost btn--xs" id="copyNegativeBtn" type="button" data-copy="negative">
+              <button class="btn btn--ghost btn--xs" id="copyNegativeBtn" type="button" data-copy="negative" title="Copy negative prompt">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                 Copy
               </button>
             </div>
             <div class="output__text output__text--muted" id="negativeOutput" aria-live="polite">
               <span class="output__placeholder">Negative prompt will appear here.</span>
+            </div>
+          </div>
+
+          <!-- Video model copy buttons (shown when outputMode is video) -->
+          <div class="output__block output__block--video" id="videoCopyBlock" style="display: none;">
+            <div class="output__block-head">
+              <span class="output__label">Video Formats</span>
+              <div class="output__copy-group" id="videoCopyGroup">
+                <button class="btn btn--ghost btn--xs" id="copyRunwayBtn" type="button" title="Copy as Runway Gen-3 format">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Runway
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyPikaBtn" type="button" title="Copy as Pika format">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Pika
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copySoraBtn" type="button" title="Copy as Sora format">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Sora
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyKlingBtn" type="button" title="Copy as Kling format">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Kling
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyLumaBtn" type="button" title="Copy as Luma Dream Machine format">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Luma
+                </button>
+              </div>
+            </div>
+            <div class="output__text output__text--muted" id="videoFormatOutput" aria-live="polite">
+              <span class="output__placeholder">Video format prompts will appear here when in Video mode.</span>
             </div>
           </div>
 
@@ -809,6 +872,7 @@
   <script src="js/accordion.js"></script>
   <script src="js/generator.js"></script>
   <script src="js/history.js"></script>
+  <script src="js/share.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

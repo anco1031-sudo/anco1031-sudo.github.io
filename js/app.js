@@ -161,6 +161,11 @@
       // Update output panel labels
       updateOutputPanelLabels(mode);
 
+      // PF-L5: Show/hide video copy buttons
+      if (videoCopyBlock) {
+        videoCopyBlock.style.display = mode === "video" ? "block" : "none";
+      }
+
       // Update URL hash
       setHashMode(mode);
     }
@@ -1046,6 +1051,26 @@
   const saveFavBtn = $("#saveFavoriteBtn");
   const saveHistBtn = $("#saveHistoryBtn");
 
+  // PF-L5: New copy buttons
+  const copyPromptBtn = $("#copyPromptBtn");
+  const copyNegativeBtn = $("#copyNegativeBtn");
+  const copyNaturalBtn = $("#copyNaturalBtn");
+  const copyMjBtn = $("#copyMjBtn");
+  const copySdxlBtn = $("#copySdxlBtn");
+  const copyRunwayBtn = $("#copyRunwayBtn");
+  const copyPikaBtn = $("#copyPikaBtn");
+  const copySoraBtn = $("#copySoraBtn");
+  const copyKlingBtn = $("#copyKlingBtn");
+  const copyLumaBtn = $("#copyLumaBtn");
+  const videoCopyBlock = $("#videoCopyBlock");
+  const videoFormatOutput = $("#videoFormatOutput");
+
+  // PF-L5: Export/Import/Share buttons
+  const exportBtn = $("#exportBtn");
+  const importBtn = $("#importBtn");
+  const shareBtn = $("#shareBtn");
+  const importFileInput = $("#importFileInput");
+
   function renderOutput(result) {
     if (!result) {
       promptOutput.innerHTML = '<span class="output__placeholder">Configure options on the left, then press <strong>Generate</strong>.</span>';
@@ -1053,6 +1078,8 @@
       outputMeta.innerHTML = "";
       saveFavBtn.disabled = true;
       saveHistBtn.disabled = true;
+      // Hide video copy block when no result
+      if (videoCopyBlock) videoCopyBlock.style.display = "none";
       return;
     }
 
@@ -1069,6 +1096,31 @@
 
     saveFavBtn.disabled = false;
     saveHistBtn.disabled = false;
+
+    // PF-L5: Show/hide video copy buttons based on output mode
+    if (videoCopyBlock) {
+      const isVideo = state.outputMode === "video";
+      videoCopyBlock.style.display = isVideo ? "block" : "none";
+      if (isVideo && videoFormatOutput) {
+        // Generate video format previews
+        const videoState = Object.assign({}, state, { aiPreset: "Runway Gen-3" });
+        const runwayResult = Generator.generate(videoState);
+        videoState.aiPreset = "Pika";
+        const pikaResult = Generator.generate(videoState);
+        videoState.aiPreset = "Sora";
+        const soraResult = Generator.generate(videoState);
+        videoState.aiPreset = "Kling";
+        const klingResult = Generator.generate(videoState);
+        videoState.aiPreset = "Luma Dream Machine";
+        const lumaResult = Generator.generate(videoState);
+        videoFormatOutput.innerHTML =
+          "<strong>Runway:</strong> " + (runwayResult ? runwayResult.prompt : "") + "<br><br>" +
+          "<strong>Pika:</strong> " + (pikaResult ? pikaResult.prompt : "") + "<br><br>" +
+          "<strong>Sora:</strong> " + (soraResult ? soraResult.prompt : "") + "<br><br>" +
+          "<strong>Kling:</strong> " + (klingResult ? klingResult.prompt : "") + "<br><br>" +
+          "<strong>Luma:</strong> " + (lumaResult ? lumaResult.prompt : "");
+      }
+    }
   }
 
   function doGenerate() {
@@ -1555,22 +1607,102 @@
     $("#clearBtn").addEventListener("click", doClear);
     $("#resetAllBtn").addEventListener("click", doResetAll);
 
-    $("#copyPromptBtn").addEventListener("click", function () {
-      if (!state.lastResult || !state.lastResult.prompt) {
-        toast("Nothing to copy yet.", "error"); return;
-      }
-      copyToClipboard(state.lastResult.prompt).then(function (ok) {
-        toast(ok ? "Prompt copied." : "Copy failed.", ok ? "success" : "error");
+    // PF-L5: Copy per-model buttons
+    if (copyPromptBtn) {
+      copyPromptBtn.addEventListener("click", function () {
+        if (!state.lastResult || !state.lastResult.prompt) {
+          toast("Nothing to copy yet.", "error"); return;
+        }
+        copyToClipboard(state.lastResult.prompt).then(function (ok) {
+          toast(ok ? "Prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
       });
-    });
-    $("#copyNegativeBtn").addEventListener("click", function () {
-      if (!state.lastResult || !state.lastResult.negative) {
-        toast("Nothing to copy yet.", "error"); return;
-      }
-      copyToClipboard(state.lastResult.negative).then(function (ok) {
-        toast(ok ? "Negative prompt copied." : "Copy failed.", ok ? "success" : "error");
+    }
+
+    if (copyNegativeBtn) {
+      copyNegativeBtn.addEventListener("click", function () {
+        if (!state.lastResult || !state.lastResult.negative) {
+          toast("Nothing to copy yet.", "error"); return;
+        }
+        copyToClipboard(state.lastResult.negative).then(function (ok) {
+          toast(ok ? "Negative prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
       });
-    });
+    }
+
+    if (copyNaturalBtn) {
+      copyNaturalBtn.addEventListener("click", function () {
+        PF.Share.copyNatural().then(function (ok) {
+          toast(ok ? "Natural language prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyMjBtn) {
+      copyMjBtn.addEventListener("click", function () {
+        PF.Share.copyMidjourney().then(function (ok) {
+          toast(ok ? "Midjourney prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copySdxlBtn) {
+      copySdxlBtn.addEventListener("click", function () {
+        PF.Share.copySDXL().then(function (ok) {
+          toast(ok ? "SDXL prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyRunwayBtn) {
+      copyRunwayBtn.addEventListener("click", function () {
+        PF.Share.copyRunway().then(function (ok) {
+          toast(ok ? "Runway prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyPikaBtn) {
+      copyPikaBtn.addEventListener("click", function () {
+        PF.Share.copyPika().then(function (ok) {
+          toast(ok ? "Pika prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copySoraBtn) {
+      copySoraBtn.addEventListener("click", function () {
+        PF.Share.copySora().then(function (ok) {
+          toast(ok ? "Sora prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyKlingBtn) {
+      copyKlingBtn.addEventListener("click", function () {
+        PF.Share.copyKling().then(function (ok) {
+          toast(ok ? "Kling prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyLumaBtn) {
+      copyLumaBtn.addEventListener("click", function () {
+        PF.Share.copyLuma().then(function (ok) {
+          toast(ok ? "Luma prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    // PF-L5: Copy All (prompt + negative + settings)
+    const copyAllBtn = $("#copyAllBtn");
+    if (copyAllBtn) {
+      copyAllBtn.addEventListener("click", function () {
+        PF.Share.copyAll().then(function (ok) {
+          toast(ok ? "All copied (prompt + negative + settings)." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
 
     $("#saveFavoriteBtn").addEventListener("click", function () {
       if (!state.lastResult) return;
@@ -1618,6 +1750,33 @@
         toast("Favorites cleared.");
       }
     });
+
+    // PF-L5: Export/Import/Share buttons
+    if (exportBtn) {
+      exportBtn.addEventListener("click", function () {
+        PF.Share.exportToFile();
+      });
+    }
+
+    if (importBtn && importFileInput) {
+      importBtn.addEventListener("click", function () {
+        importFileInput.click();
+      });
+      importFileInput.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        PF.Share.importFromFile(file).catch(function (err) {
+          toast("Import failed: " + err.message, "error");
+        });
+        importFileInput.value = "";
+      });
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        PF.Share.copyShareLink();
+      });
+    }
   }
 
   /* ===========================================================
@@ -1655,6 +1814,22 @@
 
     // Output Mode Toggle (PF-L2) — must run after all UI is initialized
     initOutputMode();
+
+    // PF-L5: Wire internal functions for share.js
+    if (window.PF && window.PF.Share && window.PF.Share.wireInternalFunctions) {
+      window.PF.Share.wireInternalFunctions({
+        syncUIFromState: syncUIFromState,
+        renderOutput: renderOutput,
+        renderHistory: renderHistory,
+        renderFavorites: renderFavorites,
+        toast: toast
+      });
+    }
+
+    // PF-L5: Initialize share from URL hash
+    if (window.PF && window.PF.Share && window.PF.Share.initShareFromHash) {
+      window.PF.Share.initShareFromHash();
+    }
 
     // Keyboard: Ctrl/Cmd+Enter generates
     document.addEventListener("keydown", function (e) {
