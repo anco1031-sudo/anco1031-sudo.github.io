@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="theme-color" content="#0F172A" />
 
+  <!-- Google Fonts: Noto Sans Thai + Inter (fallback) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Primary Meta -->
-  <title>PromptForge — Premium Visual Prompt Generator for AI Image Creation</title>
-  <meta name="description" content="PromptForge is a premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, and Gemini." />
-  <meta name="keywords" content="prompt generator, AI prompt generator, image prompt, midjourney prompt generator, sdxl prompt, flux prompt, ChatGPT image prompt, poster prompt, thumbnail prompt, concept art prompt, character art prompt, product render prompt, marketing asset prompt, open source prompt generator, vanilla javascript prompt generator" />
-  <meta name="author" content="PromptForge — AzkiVIP" />
+  <title>PromptForge-Louis — Premium Visual Prompt Generator for AI Image & Video Creation</title>
+  <meta name="description" content="PromptForge-Louis is a premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, Gemini, Runway Gen-3, Pika, Sora, Kling, Luma Dream Machine." />
+  <meta name="keywords" content="prompt generator, AI prompt generator, image prompt, video prompt, midjourney prompt generator, sdxl prompt, flux prompt, ChatGPT image prompt, poster prompt, thumbnail prompt, concept art prompt, character art prompt, product render prompt, marketing asset prompt, open source prompt generator, vanilla javascript prompt generator, Runway Gen-3, Pika, Sora, Kling, Luma" />
+  <meta name="author" content="PromptForge-Louis — Louis Team" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="googlebot" content="index, follow" />
-  <meta name="language" content="English" />
+  <meta name="language" content="Thai, English" />
   <meta name="revisit-after" content="7 days" />
   <meta name="rating" content="general" />
   <meta name="distribution" content="global" />
-  <link rel="canonical" href="https://azkivip.github.io/PromptForge/" />
+  <link rel="canonical" href="https://lu5her.github.io/PromptForge-Louis/" />
 
   <!-- Sitemap discovery -->
   <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml" />
@@ -25,27 +30,27 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="PromptForge" />
-  <meta property="og:title" content="PromptForge — Premium Visual Prompt Generator" />
-  <meta property="og:description" content="Craft cinematic, professional prompts for posters, thumbnails, ads, concept art, and AI image generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, and Gemini. No AI APIs." />
-  <meta property="og:url" content="https://azkivip.github.io/PromptForge/" />
-  <meta property="og:image" content="https://azkivip.github.io/PromptForge/assets/og-image.png" />
-  <meta property="og:image:secure_url" content="https://azkivip.github.io/PromptForge/assets/og-image.png" />
+  <meta property="og:site_name" content="PromptForge-Louis" />
+  <meta property="og:title" content="PromptForge-Louis — Premium Visual Prompt Generator" />
+  <meta property="og:description" content="Craft cinematic, professional prompts for posters, thumbnails, ads, concept art, and AI image/video generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, Gemini, Runway Gen-3, Pika, Sora, Kling, Luma. No AI APIs." />
+  <meta property="og:url" content="https://lu5her.github.io/PromptForge-Louis/" />
+  <meta property="og:image" content="https://lu5her.github.io/PromptForge-Louis/assets/og-image.png" />
+  <meta property="og:image:secure_url" content="https://lu5her.github.io/PromptForge-Louis/assets/og-image.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="PromptForge — premium visual prompt generator" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:locale:alternate" content="id_ID" />
+  <meta property="og:image:alt" content="PromptForge-Louis — premium visual prompt generator" />
+  <meta property="og:locale" content="th_TH" />
+  <meta property="og:locale:alternate" content="en_US" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@AzkiVIP" />
-  <meta name="twitter:creator" content="@AzkiVIP" />
-  <meta name="twitter:title" content="PromptForge — Premium Visual Prompt Generator" />
-  <meta name="twitter:description" content="Craft cinematic, professional prompts for posters, thumbnails, ads, concept art, and AI image generation. Rule-based engine. No AI APIs." />
-  <meta name="twitter:image" content="https://azkivip.github.io/PromptForge/assets/og-image.png" />
-  <meta name="twitter:image:alt" content="PromptForge — premium visual prompt generator" />
+  <meta name="twitter:site" content="@lu5her" />
+  <meta name="twitter:creator" content="@lu5her" />
+  <meta name="twitter:title" content="PromptForge-Louis — Premium Visual Prompt Generator" />
+  <meta name="twitter:description" content="Craft cinematic, professional prompts for posters, thumbnails, ads, concept art, and AI image/video generation. Rule-based engine. No AI APIs." />
+  <meta name="twitter:image" content="https://lu5her.github.io/PromptForge-Louis/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="PromptForge-Louis — premium visual prompt generator" />
 
   <!-- Favicon — multiple sizes for full browser + device support -->
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
@@ -67,33 +72,33 @@
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "PromptForge",
-    "alternateName": "PromptForge Visual Prompt Generator",
-    "url": "https://azkivip.github.io/PromptForge/",
-    "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image generation.",
-    "inLanguage": ["en", "id"],
-    "image": "https://azkivip.github.io/PromptForge/assets/og-image.png",
+    "name": "PromptForge-Louis",
+    "alternateName": "PromptForge-Louis Visual Prompt Generator",
+    "url": "https://lu5her.github.io/PromptForge-Louis/",
+    "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation.",
+    "inLanguage": ["th", "en"],
+    "image": "https://lu5her.github.io/PromptForge-Louis/assets/og-image.png",
     "isAccessibleForFree": true,
     "applicationCategory": "DesignApplication",
     "author": {
       "@type": "Person",
-      "name": "AzkiVIP",
-      "url": "https://github.com/AzkiVIP"
+      "name": "Louis Team",
+      "url": "https://github.com/lu5her"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "PromptForge",
-      "url": "https://azkivip.github.io/PromptForge/",
+      "name": "PromptForge-Louis",
+      "url": "https://lu5her.github.io/PromptForge-Louis/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://azkivip.github.io/PromptForge/assets/logo-512.png",
+        "url": "https://lu5her.github.io/PromptForge-Louis/assets/logo-512.png",
         "width": 512,
         "height": 512
       }
     },
     "potentialAction": {
       "@type": "UseAction",
-      "target": "https://azkivip.github.io/PromptForge/#generator",
+      "target": "https://lu5her.github.io/PromptForge-Louis/#generator",
       "name": "Use the prompt generator"
     }
   }
@@ -104,23 +109,23 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "PromptForge",
+    "name": "PromptForge-Louis",
     "applicationCategory": "DesignApplication",
     "applicationSubCategory": "AI Prompt Generator",
     "operatingSystem": "Any (web browser)",
     "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
-    "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image generation. Rule-based engine with no AI APIs.",
-    "url": "https://azkivip.github.io/PromptForge/",
-    "downloadUrl": "https://github.com/AzkiVIP/PromptForge/releases",
-    "installUrl": "https://azkivip.github.io/PromptForge/",
-    "screenshot": "https://azkivip.github.io/PromptForge/assets/og-image.png",
+    "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation. Rule-based engine with no AI APIs.",
+    "url": "https://lu5her.github.io/PromptForge-Louis/",
+    "downloadUrl": "https://github.com/lu5her/PromptForge-Louis/releases",
+    "installUrl": "https://lu5her.github.io/PromptForge-Louis/",
+    "screenshot": "https://lu5her.github.io/PromptForge-Louis/assets/og-image.png",
     "featureList": [
       "Rule-based prompt generation engine",
       "Smart searchable comboboxes with fuzzy match",
-      "Multiple AI presets (ChatGPT Images, Flux, SDXL, Midjourney, Gemini)",
+      "Multiple AI presets (ChatGPT Images, Flux, SDXL, Midjourney, Gemini, Runway Gen-3, Pika, Sora, Kling, Luma)",
       "Multiple subjects with importance ranking",
       "Watermark, custom effects, and custom resolution support",
-      "Auto-translation to Indonesian",
+      "TH/EN UI localization (prompt output stays English)",
       "LocalStorage history and favorites",
       "No frameworks, no build step, no dependencies"
     ],
@@ -129,19 +134,19 @@
       "price": "0",
       "priceCurrency": "USD"
     },
-    "license": "https://github.com/AzkiVIP/PromptForge/blob/main/LICENSE",
+    "license": "https://github.com/lu5her/PromptForge-Louis/blob/main/LICENSE",
     "author": {
       "@type": "Person",
-      "name": "AzkiVIP",
-      "url": "https://github.com/AzkiVIP"
+      "name": "Louis Team",
+      "url": "https://github.com/lu5her"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "PromptForge",
-      "url": "https://azkivip.github.io/PromptForge/",
+      "name": "PromptForge-Louis",
+      "url": "https://lu5her.github.io/PromptForge-Louis/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://azkivip.github.io/PromptForge/assets/logo-512.png",
+        "url": "https://lu5her.github.io/PromptForge-Louis/assets/logo-512.png",
         "width": 512,
         "height": 512
       }
@@ -161,20 +166,25 @@
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar" role="banner">
     <div class="navbar__inner">
-      <a href="#" class="brand" aria-label="PromptForge home">
-        <img src="assets/logo-cropped.png" alt="PromptForge" class="brand__mark" width="40" height="40" />
-        <span class="brand__name">Prompt<span class="brand__accent">Forge</span></span>
+      <a href="#" class="brand" aria-label="PromptForge-Louis home">
+        <img src="assets/logo-cropped.png" alt="PromptForge-Louis" class="brand__mark" width="40" height="40" />
+        <span class="brand__name">PromptForge<span class="brand__accent">-Louis</span></span>
       </a>
 
       <!-- Desktop navigation (hidden on mobile) -->
       <nav class="nav nav--desktop" aria-label="Primary desktop">
-        <a href="#generator" class="nav__link" data-nav="generator">Generator</a>
-        <a href="#history" class="nav__link" data-nav="history">History</a>
-        <a href="#favorites" class="nav__link" data-nav="favorites">Favorites</a>
+        <a href="#generator" class="nav__link" data-nav="generator" data-i18n="nav.generator">Generator</a>
+        <a href="#history" class="nav__link" data-nav="history" data-i18n="nav.history">History</a>
+        <a href="#favorites" class="nav__link" data-nav="favorites" data-i18n="nav.favorites">Favorites</a>
       </nav>
 
       <div class="navbar__actions">
-        <a class="btn btn--ghost btn--sm navbar__github" href="https://github.com/AzkiVIP/PromptForge" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <!-- Language Toggle -->
+        <button class="btn btn--ghost btn--sm navbar__lang" id="langToggle" type="button" aria-label="Switch language" title="Switch language (TH/EN)">
+          <span id="langToggleText">TH</span>
+        </button>
+
+        <a class="btn btn--ghost btn--sm navbar__github" href="https://github.com/lu5her/PromptForge-Louis" target="_blank" rel="noopener" aria-label="GitHub repository">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.2-3.1-.12-.3-.52-1.48.1-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.6.23 2.78.11 3.07.75.82 1.2 1.85 1.2 3.1 0 4.43-2.69 5.41-5.25 5.69.42.36.8 1.1.8 2.22v3.29c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/>
           </svg>
@@ -193,10 +203,10 @@
 
     <!-- Mobile navigation drawer (hidden on desktop) -->
     <nav class="nav nav--mobile" id="mobileNav" aria-label="Primary mobile" hidden>
-      <a href="#generator" class="nav__link nav__link--mobile" data-nav="generator">Generator</a>
-      <a href="#history"    class="nav__link nav__link--mobile" data-nav="history">History</a>
-      <a href="#favorites"  class="nav__link nav__link--mobile" data-nav="favorites">Favorites</a>
-      <a class="nav__link nav__link--mobile nav__link--github" href="https://github.com/AzkiVIP/PromptForge" target="_blank" rel="noopener">
+      <a href="#generator" class="nav__link nav__link--mobile" data-nav="generator" data-i18n="nav.generator">Generator</a>
+      <a href="#history"    class="nav__link nav__link--mobile" data-nav="history" data-i18n="nav.history">History</a>
+      <a href="#favorites"  class="nav__link nav__link--mobile" data-nav="favorites" data-i18n="nav.favorites">Favorites</a>
+      <a class="nav__link nav__link--mobile nav__link--github" href="https://github.com/lu5her/PromptForge-Louis" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
           <path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.2-3.1-.12-.3-.52-1.48.1-3.08 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.6.23 2.78.11 3.07.75.82 1.2 1.85 1.2 3.1 0 4.43-2.69 5.41-5.25 5.69.42.36.8 1.1.8 2.22v3.29c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/>
         </svg>
@@ -215,38 +225,63 @@
     <section class="panel panel--left" aria-label="Generator controls">
       <div class="panel__header">
         <div>
-          <h2 class="panel__title">Generator</h2>
-          <p class="panel__subtitle">Configure your visual prompt</p>
+          <h2 class="panel__title" data-i18n="panelTitle.left">Generator</h2>
+          <p class="panel__subtitle" data-i18n="panelSubtitle.left">Configure your visual prompt</p>
         </div>
-        <button class="btn btn--ghost btn--sm" id="resetAllBtn" type="button" title="Reset all fields">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-          Reset
-        </button>
+        <div class="panel__header-actions">
+          <button class="btn btn--ghost btn--sm" id="randomizeBtn" type="button" title="Surprise me — randomize unlocked fields" data-i18n="buttons.randomize">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-6-6m6-6v-4.8m0 4.8h-4.8"/><path d="M3 16.5V7.5m0 0L8.5 12M3 7.5l5.5 4.5"/></svg>
+            
+          </button>
+          <button class="btn btn--ghost btn--sm" id="resetAllBtn" type="button" title=" all fields" data-i18n="buttons.reset">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            
+          </button>
+        </div>
       </div>
 
       <div class="panel__body" id="generatorPanel">
+
+        <!-- ===================== SECTION 00: OUTPUT MODE ===================== -->
+        <div class="accordion" data-section="outputMode" id="sectionOutputMode">
+          <div class="accordion__body is-open" style="max-height: none; height: auto; overflow: visible; padding: 0 16px 16px;">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.outputMode">Output Mode</label>
+              <div class="seg" id="outputModeSeg" role="tablist" aria-label="Output mode">
+                <button class="seg__btn is-active" type="button" data-mode="image" role="tab" aria-selected="true">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/></svg>
+                  <span>Image</span>
+                </button>
+                <button class="seg__btn" type="button" data-mode="video" role="tab" aria-selected="false">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  <span>Video</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Project Type -->
         <div class="accordion" data-section="projectType">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">01</span>
-            <span class="accordion__label">Project Type</span>
+            <span class="accordion__label" data-i18n="sections.projectType">Project Type</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label" for="projectType-category">Category</label>
+              <label class="field__label" for="projectType-category" data-i18n="labels.category">Category</label>
               <div class="combobox" data-combobox="projectTypeCategory" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="projectType-preset">Preset</label>
+              <label class="field__label" for="projectType-preset" data-i18n="labels.preset">Preset</label>
               <div class="combobox" data-combobox="projectTypePreset" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="projectType-custom">Custom Project Type</label>
-              <input class="input" id="projectType-custom" type="text" placeholder="e.g. Festival Poster" />
+              <label class="field__label" for="projectType-custom" data-i18n="labels.custom">Custom Project Type</label>
+              <input class="input" id="projectType-custom" type="text" placeholder="e.g. Festival Poster" data-i18n-placeholder="placeholders.projectTypeCustom" />
             </div>
           </div>
         </div>
@@ -255,22 +290,22 @@
         <div class="accordion" data-section="subject">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">02</span>
-            <span class="accordion__label">Subject</span>
+            <span class="accordion__label" data-i18n="sections.subject">Subject</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Subjects <span class="field__hint">(add multiple — primary, secondary, background, etc.)</span></label>
+              <label class="field__label" data-i18n="labels.subjects">Subjects <span class="field__hint">(add multiple — primary, secondary, background, etc.)</span></label>
               <div class="subjects" id="subjectsList" aria-live="polite"></div>
-              <button class="btn btn--ghost btn--sm subjects__add" id="addSubjectBtn" type="button">
+              <button class="btn btn--ghost btn--sm subjects__add" id="addSubjectBtn" type="button" data-i18n="buttons.addSubject">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
                 Add Subject
               </button>
             </div>
             <div class="field">
-              <label class="field__label">Reference Images</label>
+              <label class="field__label" data-i18n="labels.referenceImages">Reference Images</label>
               <div class="dropzone" id="subject-dropzone" tabindex="0">
                 <input class="dropzone__input" id="subject-file" type="file" accept="image/*" multiple />
                 <div class="dropzone__prompt">
@@ -287,40 +322,61 @@
         <div class="accordion" data-section="artStyle">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">03</span>
-            <span class="accordion__label">Art Style</span>
+            <span class="accordion__label" data-i18n="sections.artStyle">Art Style</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Art Style</label>
+              <label class="field__label" data-i18n="sections.artStyle">Art Style</label>
               <div class="combobox" data-combobox="artStyle" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="artStyle-custom">Custom Style</label>
-              <input class="input" id="artStyle-custom" type="text" placeholder="e.g. Watercolor + Ink" />
+              <label class="field__label" for="artStyle-custom" data-i18n="labels.custom">Custom Style</label>
+              <input class="input" id="artStyle-custom" type="text" placeholder="e.g. Watercolor + Ink" data-i18n-placeholder="placeholders.artStyleCustom" />
             </div>
           </div>
         </div>
 
-        <!-- Camera Angle -->
-        <div class="accordion" data-section="cameraAngle">
+        <!-- Camera Angle (Image mode) -->
+        <div class="accordion" data-section="cameraAngle" id="sectionCameraAngle">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">04</span>
-            <span class="accordion__label">Camera Angle</span>
+            <span class="accordion__label" data-i18n="sections.cameraAngle">Camera Angle</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Camera Angle</label>
+              <label class="field__label" data-i18n="sections.cameraAngle">Camera Angle</label>
               <div class="combobox" data-combobox="cameraAngle" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="cameraAngle-custom">Custom Angle</label>
-              <input class="input" id="cameraAngle-custom" type="text" placeholder="e.g. 35° Dutch angle" />
+              <label class="field__label" for="cameraAngle-custom" data-i18n="labels.custom">Custom Angle</label>
+              <input class="input" id="cameraAngle-custom" type="text" placeholder="e.g. 35° Dutch angle" data-i18n-placeholder="placeholders.cameraAngleCustom" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera Movement (Video mode) -->
+        <div class="accordion" data-section="cameraMovement" id="sectionCameraMovement" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V0</span>
+            <span class="accordion__label" data-i18n="sections.cameraMovement">Camera Movement</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.cameraMovement">Camera Movement</label>
+              <div class="combobox" data-combobox="cameraMovement" data-mode="single"></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="cameraMovement-custom" data-i18n="labels.custom">Custom Movement</label>
+              <input class="input" id="cameraMovement-custom" type="text" placeholder="e.g. slow arc around subject" data-i18n-placeholder="placeholders.cameraMovementCustom" />
             </div>
           </div>
         </div>
@@ -329,19 +385,19 @@
         <div class="accordion" data-section="lighting">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">05</span>
-            <span class="accordion__label">Lighting</span>
+            <span class="accordion__label" data-i18n="sections.lighting">Lighting</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Lighting</label>
+              <label class="field__label" data-i18n="sections.lighting">Lighting</label>
               <div class="combobox" data-combobox="lighting" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="lighting-custom">Custom Lighting</label>
-              <input class="input" id="lighting-custom" type="text" placeholder="e.g. Soft window light" />
+              <label class="field__label" for="lighting-custom" data-i18n="labels.custom">Custom Lighting</label>
+              <input class="input" id="lighting-custom" type="text" placeholder="e.g. Soft window light" data-i18n-placeholder="placeholders.lightingCustom" />
             </div>
           </div>
         </div>
@@ -350,32 +406,32 @@
         <div class="accordion" data-section="colorPalette">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">06</span>
-            <span class="accordion__label">Color Palette</span>
+            <span class="accordion__label" data-i18n="sections.colorPalette">Color Palette</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Palette Mode</label>
+              <label class="field__label" data-i18n="labels.colorMode">Palette Mode</label>
               <div class="seg" id="colorMode" role="tablist" aria-label="Color palette mode">
-                <button class="seg__btn is-active" type="button" data-mode="single">Single</button>
-                <button class="seg__btn" type="button" data-mode="dual">Dual</button>
-                <button class="seg__btn" type="button" data-mode="multi">Multi</button>
+                <button class="seg__btn is-active" type="button" data-mode="single" data-i18n="labels.colorModeSingle">Single</button>
+                <button class="seg__btn" type="button" data-mode="dual" data-i18n="labels.colorModeDual">Dual</button>
+                <button class="seg__btn" type="button" data-mode="multi" data-i18n="labels.colorModeMulti">Multi</button>
               </div>
             </div>
             <div class="field">
-              <label class="field__label">Colors</label>
+              <label class="field__label" data-i18n="labels.custom">Colors</label>
               <div class="color-row" id="colorRow">
                 <div class="color-slot" data-slot="0">
                   <input type="color" class="color-slot__picker" value="#3B82F6" />
                   <input type="text" class="color-slot__hex" value="#3B82F6" maxlength="7" />
                 </div>
               </div>
-              <button class="btn btn--ghost btn--sm color-row__add" id="colorAddBtn" type="button" hidden>+ Add color</button>
+              <button class="btn btn--ghost btn--sm color-row__add" id="colorAddBtn" type="button" hidden data-i18n="buttons.addColor">+ Add color</button>
             </div>
             <div class="field">
-              <label class="field__label">Live Preview</label>
+              <label class="field__label" data-i18n="labels.custom">Live Preview</label>
               <div class="palette-preview" id="palettePreview"></div>
             </div>
           </div>
@@ -385,22 +441,22 @@
         <div class="accordion" data-section="background">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">07</span>
-            <span class="accordion__label">Background</span>
+            <span class="accordion__label" data-i18n="sections.background">Background</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Background Scene</label>
+              <label class="field__label" data-i18n="sections.background">Background Scene</label>
               <div class="combobox" data-combobox="background" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="background-custom">Custom Background</label>
-              <input class="input" id="background-custom" type="text" placeholder="e.g. Floating islands at dawn" />
+              <label class="field__label" for="background-custom" data-i18n="labels.custom">Custom Background</label>
+              <input class="input" id="background-custom" type="text" placeholder="e.g. Floating islands at dawn" data-i18n-placeholder="placeholders.backgroundCustom" />
             </div>
             <div class="field">
-              <label class="field__label">Background Reference</label>
+              <label class="field__label" data-i18n="labels.backgroundReference">Background Reference</label>
               <div class="dropzone" id="background-dropzone" tabindex="0">
                 <input class="dropzone__input" id="background-file" type="file" accept="image/*" />
                 <div class="dropzone__prompt">
@@ -417,40 +473,40 @@
         <div class="accordion" data-section="mood">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">08</span>
-            <span class="accordion__label">Mood</span>
+            <span class="accordion__label" data-i18n="sections.mood">Mood</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Mood</label>
+              <label class="field__label" data-i18n="sections.mood">Mood</label>
               <div class="combobox" data-combobox="mood" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="mood-custom">Custom Mood</label>
-              <input class="input" id="mood-custom" type="text" placeholder="e.g. Nostalgic serenity" />
+              <label class="field__label" for="mood-custom" data-i18n="labels.custom">Custom Mood</label>
+              <input class="input" id="mood-custom" type="text" placeholder="e.g. Nostalgic serenity" data-i18n-placeholder="placeholders.moodCustom" />
             </div>
           </div>
         </div>
 
-        <!-- Typography -->
-        <div class="accordion" data-section="typography">
+        <!-- Typography (collapsed by default in Video mode) -->
+        <div class="accordion" data-section="typography" id="sectionTypography">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">09</span>
-            <span class="accordion__label">Typography Style</span>
+            <span class="accordion__label" data-i18n="sections.typography">Typography Style</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Typography</label>
+              <label class="field__label" data-i18n="sections.typography">Typography</label>
               <div class="combobox" data-combobox="typography" data-mode="single"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="typography-custom">Custom Typography</label>
-              <input class="input" id="typography-custom" type="text" placeholder="e.g. Serif headline, sans body" />
+              <label class="field__label" for="typography-custom" data-i18n="labels.custom">Custom Typography</label>
+              <input class="input" id="typography-custom" type="text" placeholder="e.g. Serif headline, sans body" data-i18n-placeholder="placeholders.typographyCustom" />
             </div>
           </div>
         </div>
@@ -459,93 +515,169 @@
         <div class="accordion" data-section="effects">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">10</span>
-            <span class="accordion__label">Effects</span>
+            <span class="accordion__label" data-i18n="sections.effects">Effects</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Effects (multi-select)</label>
+              <label class="field__label" data-i18n="sections.effects">Effects (multi-select)</label>
               <div class="chip-grid" id="effectsGrid" role="group" aria-label="Effects"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="effects-custom">Custom Effects <span class="field__hint">(comma-separated, e.g. floating particles, energy aura, magic sparks)</span></label>
-              <input class="input" id="effects-custom" type="text" placeholder="floating particles, energy aura, magic sparks" />
+              <label class="field__label" for="effects-custom" data-i18n="labels.customEffects">Custom Effects <span class="field__hint">(comma-separated, e.g. floating particles, energy aura, magic sparks)</span></label>
+              <input class="input" id="effects-custom" type="text" placeholder="floating particles, energy aura, magic sparks" data-i18n-placeholder="placeholders.effectsCustom" />
             </div>
           </div>
         </div>
 
-        <!-- Watermark -->
-        <div class="accordion" data-section="watermark">
+        <!-- Watermark (collapsed by default in Video mode) -->
+        <div class="accordion" data-section="watermark" id="sectionWatermark">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">11</span>
-            <span class="accordion__label">Watermark</span>
+            <span class="accordion__label" data-i18n="sections.watermark">Watermark</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Watermark Position</label>
+              <label class="field__label" data-i18n="labels.watermarkPosition">Watermark Position</label>
               <div class="chip-grid" id="watermarkPosGrid" role="group" aria-label="Watermark position" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="watermark-custom-pos">Custom Position</label>
-              <input class="input" id="watermark-custom-pos" type="text" placeholder="e.g. bottom-right corner, 20px from edge" />
+              <label class="field__label" for="watermark-custom-pos" data-i18n="labels.watermarkCustomPos">Custom Position</label>
+              <input class="input" id="watermark-custom-pos" type="text" placeholder="e.g. bottom-right corner, 20px from edge" data-i18n-placeholder="placeholders.watermarkCustomPos" />
             </div>
             <div class="field">
-              <label class="field__label" for="watermark-text">Watermark Text</label>
-              <input class="input" id="watermark-text" type="text" placeholder="e.g. @PromptForge" />
+              <label class="field__label" for="watermark-text" data-i18n="labels.watermarkText">Watermark Text</label>
+              <input class="input" id="watermark-text" type="text" placeholder="e.g. @PromptForge-Louis" data-i18n-placeholder="placeholders.watermarkText" />
             </div>
           </div>
         </div>
 
         <!-- Aspect Ratio -->
-        <div class="accordion" data-section="aspectRatio">
+        <div class="accordion" data-section="aspectRatio" id="sectionAspectRatio">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">12</span>
-            <span class="accordion__label">Aspect Ratio</span>
+            <span class="accordion__label" data-i18n="sections.aspectRatio">Aspect Ratio</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Aspect Ratio</label>
+              <label class="field__label" data-i18n="sections.aspectRatio">Aspect Ratio</label>
               <div class="ratio-grid" id="ratioGrid" role="group" aria-label="Aspect ratio"></div>
             </div>
             <div class="field">
-              <label class="field__label" for="custom-resolution">Custom Resolution <span class="field__hint">(overrides aspect ratio when provided)</span></label>
-              <input class="input" id="custom-resolution" type="text" placeholder="e.g. 1920x1080, 3840x2160, 1080x1920" />
+              <label class="field__label" for="custom-resolution" data-i18n="labels.customResolution">Custom Resolution <span class="field__hint">(overrides aspect ratio when provided)</span></label>
+              <input class="input" id="custom-resolution" type="text" placeholder="e.g. 1920x1080, 3840x2160, 1080x1920" data-i18n-placeholder="placeholders.customResolution" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Duration (Video mode) -->
+        <div class="accordion" data-section="duration" id="sectionDuration" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V1</span>
+            <span class="accordion__label" data-i18n="sections.duration">Duration</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.duration">Duration</label>
+              <div class="combobox" data-combobox="duration" data-mode="single"></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="duration-custom" data-i18n="labels.custom">Custom Duration (seconds)</label>
+              <input class="input" id="duration-custom" type="number" min="1" max="60" step="1" placeholder="e.g. 7" data-i18n-placeholder="placeholders.durationCustom" />
+            </div>
+          </div>
+        </div>
+
+        <!-- FPS (Video mode) -->
+        <div class="accordion" data-section="fps" id="sectionFPS" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V2</span>
+            <span class="accordion__label" data-i18n="sections.fps">FPS</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.fps">FPS</label>
+              <div class="combobox" data-combobox="fps" data-mode="single"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motion Strength & Loop (Video mode) -->
+        <div class="accordion" data-section="motionStrength" id="sectionMotionStrength" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V3</span>
+            <span class="accordion__label" data-i18n="sections.motionStrength">Motion Strength</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.motionStrength">Motion Strength</label>
+              <div class="chip-grid" id="motionStrengthGrid" role="group" aria-label="Motion strength" data-single="1"></div>
+            </div>
+            <div class="field">
+              <label class="field__label" data-i18n="labels.loop">Loop</label>
+              <div class="chip-grid" id="loopGrid" role="group" aria-label="Loop" data-single="1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transition (Video mode) -->
+        <div class="accordion" data-section="transition" id="sectionTransition" hidden>
+          <button class="accordion__head" type="button" aria-expanded="false">
+            <span class="accordion__index">V4</span>
+            <span class="accordion__label" data-i18n="sections.transition">Transition</span>
+            <span class="accordion__chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+          </button>
+          <div class="accordion__body">
+            <div class="field">
+              <label class="field__label" data-i18n="sections.transition">Transition</label>
+              <div class="combobox" data-combobox="transition" data-mode="single"></div>
             </div>
           </div>
         </div>
 
         <!-- Advanced -->
-        <div class="accordion" data-section="advanced">
+        <div class="accordion" data-section="advanced" id="sectionAdvanced">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">13</span>
-            <span class="accordion__label">Advanced</span>
+            <span class="accordion__label" data-i18n="sections.advanced">Advanced</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label">Composition</label>
+              <label class="field__label" data-i18n="labels.composition">Composition</label>
               <div class="chip-grid" id="compositionGrid" role="group" aria-label="Composition" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label">Rendering Quality</label>
+              <label class="field__label" id="renderingQualityLabel" data-i18n="labels.renderingQuality">Rendering Quality</label>
               <div class="chip-grid" id="renderingGrid" role="group" aria-label="Rendering quality" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label">Prompt Expansion</label>
+              <label class="field__label" data-i18n="labels.promptExpansion">Prompt Expansion</label>
               <div class="chip-grid" id="expansionGrid" role="group" aria-label="Prompt expansion" data-single="1"></div>
             </div>
             <div class="field">
-              <label class="field__label">AI Preset</label>
+              <label class="field__label" id="aiPresetLabel" data-i18n="labels.aiPreset">AI Preset</label>
               <div class="chip-grid" id="aiPresetGrid" role="group" aria-label="AI preset" data-single="1"></div>
             </div>
           </div>
@@ -555,15 +687,15 @@
         <div class="accordion" data-section="additional">
           <button class="accordion__head" type="button" aria-expanded="false">
             <span class="accordion__index">14</span>
-            <span class="accordion__label">Additional Description</span>
+            <span class="accordion__label" data-i18n="sections.additional">Additional Description</span>
             <span class="accordion__chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </span>
           </button>
           <div class="accordion__body">
             <div class="field">
-              <label class="field__label" for="additional-desc">Extra Instructions / Notes <span class="field__hint">(always appended to the generated prompt)</span></label>
-              <textarea class="textarea" id="additional-desc" rows="5" placeholder="e.g. Make sure the dragon's eyes glow softly. Avoid any text in the image. The mood should feel melancholic but hopeful."></textarea>
+              <label class="field__label" for="additional-desc" data-i18n="labels.additionalDesc">Extra Instructions / Notes <span class="field__hint">(always appended to the generated prompt)</span></label>
+              <textarea class="textarea" id="additional-desc" rows="5" placeholder="e.g. Make sure the dragon's eyes glow softly. Avoid any text in the image. The mood should feel melancholic but hopeful." data-i18n-placeholder="placeholders.additionalDesc"></textarea>
             </div>
           </div>
         </div>
@@ -578,36 +710,80 @@
       <div class="output" id="output">
         <div class="output__header">
           <div>
-            <h2 class="panel__title">Output</h2>
-            <p class="panel__subtitle">Generated prompt &amp; negative prompt</p>
+            <h2 class="panel__title" data-i18n="panelTitle.right">Output</h2>
+            <p class="panel__subtitle" id="outputSubtitle" data-i18n="outputSubtitle.image">d prompt & negative prompt</p>
           </div>
-          <div class="output__actions">
-            <button class="btn btn--primary btn--sm" id="generateBtn" type="button">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/><path d="m12 3 9 9-9 9-9-9 9-9Z"/></svg>
-              Generate
-            </button>
-            <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">Clear</button>
+          <div class="output__header-actions">
+            <!-- Prompt Quality Meter (PF-L6) -->
+            <div class="quality-meter" id="qualityMeter" aria-label="Prompt quality meter">
+              <div class="quality-meter__bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="quality-meter__fill" id="qualityMeterFill"></div>
+              </div>
+              <div class="quality-meter__labels">
+                <span class="quality-meter__pct" id="qualityMeterPct">0%</span>
+                <span class="quality-meter__tokens" id="qualityMeterTokens">~0 tokens</span>
+              </div>
+              <div class="quality-meter__warning" id="qualityMeterWarning" hidden></div>
+            </div>
+            <div class="output__actions">
+              <button class="btn btn--primary btn--sm" id="generateBtn" type="button" data-i18n="buttons.generate">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/><path d="m12 3 9 9-9 9-9-9 9-9Z"/></svg>
+                
+              </button>
+              <button class="btn btn--ghost btn--sm" id="clearBtn" type="button" data-i18n="buttons.clear">Clear</button>
+              <button class="btn btn--ghost btn--sm" id="exportBtn" type="button" title="Export state & history to JSON" data-i18n="buttons.export">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Export
+              </button>
+              <button class="btn btn--ghost btn--sm" id="importBtn" type="button" title="Import state & history from JSON" data-i18n="buttons.import">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import
+              </button>
+              <button class="btn btn--ghost btn--sm" id="shareBtn" type="button" title="Copy shareable URL" data-i18n="buttons.share">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Share
+              </button>
+              <button class="btn btn--ghost btn--sm" id="copyAllBtn" type="button" title="Copy prompt + negative + settings" data-i18n="buttons.copyAll">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1-2-2h10"/><path d="M9 9h11v11"/></svg>
+                Copy All
+              </button>
+              <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+            </div>
           </div>
         </div>
 
         <div class="output__body">
           <div class="output__block">
             <div class="output__block-head">
-              <span class="output__label">Prompt</span>
-              <button class="btn btn--ghost btn--xs" id="copyPromptBtn" type="button" data-copy="prompt">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-                Copy
-              </button>
+              <span class="output__label" id="promptLabel" data-i18n="labels.outputPrompt">Prompt</span>
+              <div class="output__copy-group" id="promptCopyGroup">
+                <button class="btn btn--ghost btn--xs" id="copyPromptBtn" type="button" data-copy="prompt" title="Copy prompt" data-i18n="buttons.copy">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  Copy
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyNaturalBtn" type="button" title="Copy as Natural Language (ChatGPT/Flux/Gemini)" data-i18n="buttons.copyNatural">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 17H20"/><path d="M12.5 17H20"/><path d="M6.5 12H20"/><path d="M12.5 12H20"/></svg>
+                  Natural
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyMjBtn" type="button" title="Copy as Midjourney (--params)" data-i18n="buttons.copyMj">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                  MJ-params
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copySdxlBtn" type="button" title="Copy as SDXL tags" data-i18n="buttons.copySdxl">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></svg>
+                  SDXL-tags
+                </button>
+              </div>
             </div>
             <div class="output__text" id="promptOutput" aria-live="polite">
-              <span class="output__placeholder">Configure options on the left, then press <strong>Generate</strong>.</span>
+              <span class="output__placeholder">Configure options on the left, then press <strong></strong>.</span>
             </div>
           </div>
 
           <div class="output__block">
             <div class="output__block-head">
-              <span class="output__label">Negative Prompt</span>
-              <button class="btn btn--ghost btn--xs" id="copyNegativeBtn" type="button" data-copy="negative">
+              <span class="output__label" id="negativeLabel" data-i18n="labels.outputNegative">Negative Prompt</span>
+              <button class="btn btn--ghost btn--xs" id="copyNegativeBtn" type="button" data-copy="negative" title="Copy negative prompt" data-i18n="buttons.copy">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                 Copy
               </button>
@@ -617,16 +793,48 @@
             </div>
           </div>
 
+          <!-- Video model copy buttons (shown when outputMode is video) -->
+          <div class="output__block output__block--video" id="videoCopyBlock" style="display: none;">
+            <div class="output__block-head">
+              <span class="output__label" data-i18n="labels.videoFormats">Video Formats</span>
+              <div class="output__copy-group" id="videoCopyGroup">
+                <button class="btn btn--ghost btn--xs" id="copyRunwayBtn" type="button" title="Copy as Runway Gen-3 format" data-i18n="buttons.copyRunway">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Runway
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyPikaBtn" type="button" title="Copy as Pika format" data-i18n="buttons.copyPika">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Pika
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copySoraBtn" type="button" title="Copy as Sora format" data-i18n="buttons.copySora">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Sora
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyKlingBtn" type="button" title="Copy as Kling format" data-i18n="buttons.copyKling">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Kling
+                </button>
+                <button class="btn btn--ghost btn--xs" id="copyLumaBtn" type="button" title="Copy as Luma Dream Machine format" data-i18n="buttons.copyLuma">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  Luma
+                </button>
+              </div>
+            </div>
+            <div class="output__text output__text--muted" id="videoFormatOutput" aria-live="polite">
+              <span class="output__placeholder">Video format prompts will appear here when in Video mode.</span>
+            </div>
+          </div>
+
           <div class="output__meta" id="outputMeta"></div>
 
           <div class="output__save">
-            <button class="btn btn--ghost btn--sm" id="saveFavoriteBtn" type="button" disabled>
+            <button class="btn btn--ghost btn--sm" id="saveFavoriteBtn" type="button" disabled data-i18n="buttons.saveFavorite">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>
-              Save to Favorites
+              
             </button>
-            <button class="btn btn--ghost btn--sm" id="saveHistoryBtn" type="button" disabled>
+            <button class="btn btn--ghost btn--sm" id="saveHistoryBtn" type="button" disabled data-i18n="buttons.saveHistory">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
-              Save to History
+              
             </button>
           </div>
         </div>
@@ -636,11 +844,30 @@
       <div class="history" id="history">
         <div class="history__head">
           <div>
-            <h3 class="panel__title panel__title--sm">History</h3>
-            <p class="panel__subtitle">Recent prompts (stored locally)</p>
+            <h3 class="panel__title panel__title--sm" data-i18n="history.title">History</h3>
+            <p class="panel__subtitle" data-i18n="history.subtitle">Recent prompts (stored locally)</p>
           </div>
-          <button class="btn btn--ghost btn--xs" id="clearHistoryBtn" type="button">Clear all</button>
+          <button class="btn btn--ghost btn--xs" id="clearHistoryBtn" type="button" data-i18n="buttons.clearHistory">Clear all</button>
         </div>
+        
+        <!-- History Search & Filter Bar (PF-L6) -->
+        <div class="history__toolbar" id="historyToolbar">
+          <div class="history__search-wrap">
+            <svg class="history__search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" class="history__search" id="historySearch" placeholder="Search prompts…" aria-label="Search history" data-i18n-placeholder="history.searchPlaceholder" />
+          </div>
+          <div class="history__filters">
+            <select class="history__filter" id="historyFilterMode" aria-label="Filter by mode" data-i18n-title="history.filterMode">
+              <option value="" data-i18n="history.filterMode">All Modes</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+            <select class="history__filter" id="historyFilterPreset" aria-label="Filter by preset" data-i18n-title="history.filterPreset">
+              <option value="" data-i18n="history.filterPreset">All Presets</option>
+            </select>
+          </div>
+        </div>
+        
         <div class="history__body" id="historyList" aria-live="polite"></div>
       </div>
 
@@ -648,10 +875,10 @@
       <div class="history" id="favorites">
         <div class="history__head">
           <div>
-            <h3 class="panel__title panel__title--sm">Favorites</h3>
+            <h3 class="panel__title panel__title--sm" data-i18n="favorites.title">Favorites</h3>
             <p class="panel__subtitle">Starred prompts (stored locally)</p>
           </div>
-          <button class="btn btn--ghost btn--xs" id="clearFavoritesBtn" type="button">Clear all</button>
+          <button class="btn btn--ghost btn--xs" id="clearFavoritesBtn" type="button" data-i18n="buttons.clearFavorites">Clear all</button>
         </div>
         <div class="history__body" id="favoritesList" aria-live="polite"></div>
       </div>
@@ -659,33 +886,35 @@
     </section>
   </main>
 
-  <!-- Toast -->
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer" role="contentinfo">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="assets/logo-cropped.png" alt="PromptForge" class="brand__mark brand__mark--sm" width="32" height="32" />
+        <img src="assets/logo-cropped.png" alt="PromptForge-Louis" class="brand__mark brand__mark--sm" width="32" height="32" />
         <div>
-          <div class="footer__title">PromptForge</div>
+          <div class="footer__title">PromptForge-Louis</div>
           <div class="footer__sub">Premium visual prompt generator · Open source</div>
         </div>
       </div>
 
       <div class="footer__links">
-        <a href="https://github.com/AzkiVIP/PromptForge" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://github.com/AzkiVIP/PromptForge/issues" target="_blank" rel="noopener">Issues</a>
-        <a href="https://github.com/AzkiVIP/PromptForge#license" target="_blank" rel="noopener">License</a>
+        <a href="https://github.com/lu5her/PromptForge-Louis" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/lu5her/PromptForge-Louis/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/lu5her/PromptForge-Louis#license" target="_blank" rel="noopener">License</a>
       </div>
 
       <div class="footer__copy">
-        <div>© <span id="year"></span> PromptForge</div>
-        <div>MIT License · Built with HTML, CSS &amp; Vanilla JS</div>
+        <div>© <span id="year"></span> PromptForge-Louis</div>
+        <div>MIT License · Built with HTML, CSS & Vanilla JS</div>
+        <div class="footer__credit">Based on <a href="https://github.com/AzkiVIP/PromptForge" target="_blank" rel="noopener">PromptForge by AzkiVIP</a> (MIT).</div>
       </div>
       
     </div>
   </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 
   <!-- Scripts (defer not strictly needed; loaded in order at end of body) -->
   <script src="js/data.js"></script>
@@ -693,6 +922,7 @@
   <script src="js/accordion.js"></script>
   <script src="js/generator.js"></script>
   <script src="js/history.js"></script>
+  <script src="js/share.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

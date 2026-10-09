@@ -1,5 +1,5 @@
 /* =========================================================
-   PromptForge — app.js
+   PromptForge-Louis — app.js
    Main application wiring. Initializes all UI components,
    reads/writes state, drives the generator + history UI.
    ========================================================= */
@@ -10,10 +10,166 @@
   const { ComboBox, Accordion, Generator, History } = global.PF;
 
   /* ===========================================================
+     i18n System (PF-L4) — TH/EN UI localization
+     =========================================================== */
+  const i18n = {
+    currentLang: "th",
+    translations: {},
+    loaded: false,
+
+    async init() {
+      // Load saved language or default to Thai
+      const saved = localStorage.getItem("pf-lang");
+      if (saved === "en" || saved === "th") {
+        this.currentLang = saved;
+      }
+      await this.loadTranslations(this.currentLang);
+      this.applyTranslations();
+      this.updateLangToggleUI();
+      this.loaded = true;
+    },
+
+    async loadTranslations(lang) {
+      try {
+        const resp = await fetch(`data/i18n/${lang}.json`, { cache: "no-cache" });
+        if (!resp.ok) throw new Error(`Failed to load ${lang}.json`);
+        this.translations = await resp.json();
+        this.currentLang = lang;
+        localStorage.setItem("pf-lang", lang);
+      } catch (err) {
+        console.error("[i18n] Load failed:", err);
+        // Fallback to English if Thai fails
+        if (lang !== "en") {
+          await this.loadTranslations("en");
+        }
+      }
+    },
+
+    t(key) {
+      const keys = key.split(".");
+      let val = this.translations;
+      for (const k of keys) {
+        if (val && typeof val === "object" && k in val) {
+          val = val[k];
+        } else {
+          return key; // Return key as fallback
+        }
+      }
+      return typeof val === "string" ? val : key;
+    },
+
+    applyTranslations() {
+      // Elements with data-i18n attribute
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const translation = this.t(key);
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+          if (el.placeholder !== undefined && !el.value) {
+            el.placeholder = translation;
+          } else if (el.type === "button" || el.type === "submit") {
+            el.value = translation;
+          } else {
+            el.textContent = translation;
+          }
+        } else {
+          el.textContent = translation;
+        }
+      });
+
+      // Elements with data-i18n-placeholder
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        el.placeholder = this.t(key);
+      });
+
+      // Elements with data-i18n-title
+      document.querySelectorAll("[data-i18n-title]").forEach(el => {
+        const key = el.dataset.i18nTitle;
+        el.title = this.t(key);
+      });
+
+      // Update document title
+      document.title = this.t("app.title") + " — " + this.t("app.subtitle");
+
+      // Update output panel subtitle based on mode
+      const subtitleEl = document.getElementById("outputSubtitle");
+      if (subtitleEl) {
+        const modeKey = this.currentLang === "th" ? "outputSubtitle.video" : "outputSubtitle.image";
+        // Actually we need to check state.outputMode
+        const isVideo = global.PF?.app?.state?.outputMode === "video";
+        subtitleEl.textContent = this.t(isVideo ? "outputSubtitle.video" : "outputSubtitle.image");
+      }
+
+      // Update panel titles/subtitles
+      const leftTitle = document.querySelector(".panel--left .panel__title");
+      const leftSub = document.querySelector(".panel--left .panel__subtitle");
+      const rightTitle = document.querySelector(".panel--right .panel__title");
+      const rightSub = document.querySelector(".panel--right .panel__subtitle");
+      if (leftTitle) leftTitle.textContent = this.t("panelTitle.left");
+      if (leftSub) leftSub.textContent = this.t("panelSubtitle.left");
+      if (rightTitle) rightTitle.textContent = this.t("panelTitle.right");
+      if (rightSub) rightSub.textContent = this.t("panelSubtitle.right");
+
+      // Update history/favorites titles
+      const histTitle = document.querySelector("#history .panel__title");
+      const histSub = document.querySelector("#history .panel__subtitle");
+      const favTitle = document.querySelector("#favorites .panel__title");
+      const favSub = document.querySelector("#favorites .panel__subtitle");
+      if (histTitle) histTitle.textContent = this.t("history.title");
+      if (histSub) histSub.textContent = this.t("history.subtitle");
+      if (favTitle) favTitle.textContent = this.t("favorites.title");
+      if (favSub) favSub.textContent = this.t("favorites.subtitle");
+
+      // Update search placeholder
+      const histSearch = document.getElementById("historySearch");
+      if (histSearch) histSearch.placeholder = this.t("history.searchPlaceholder");
+
+      // Update filter labels
+      const filterMode = document.getElementById("historyFilterMode");
+      const filterPreset = document.getElementById("historyFilterPreset");
+      if (filterMode) {
+        const firstOpt = filterMode.querySelector("option");
+        if (firstOpt) firstOpt.textContent = this.t("history.filterMode");
+      }
+      if (filterPreset) {
+        const firstOpt = filterPreset.querySelector("option");
+        if (firstOpt) firstOpt.textContent = this.t("history.filterPreset");
+      }
+    },
+
+    toggleLanguage() {
+      const newLang = this.currentLang === "th" ? "en" : "th";
+      this.loadTranslations(newLang).then(() => {
+        this.applyTranslations();
+        this.updateLangToggleUI();
+      });
+    },
+
+    updateLangToggleUI() {
+      const btn = document.getElementById("langToggle");
+      const text = document.getElementById("langToggleText");
+      if (btn && text) {
+        text.textContent = this.currentLang === "th" ? "TH" : "EN";
+        btn.setAttribute("aria-label", this.currentLang === "th" ? "Switch to English" : "สลับเป็นภาษาไทย");
+        btn.title = this.currentLang === "th" ? "Switch to English" : "สลับเป็นภาษาไทย";
+      }
+      // Update html lang attribute
+      document.documentElement.lang = this.currentLang === "th" ? "th" : "en";
+    }
+  };
+
+  // Expose i18n globally for other modules
+  global.PF = global.PF || {};
+  global.PF.i18n = i18n;
+
+  /* ===========================================================
      Central app state — ALL fields start empty/null (Issue #1).
      User must select/enter everything manually.
      =========================================================== */
   const state = {
+    // Output mode (PF-L2)
+    outputMode:          "image",   // "image" | "video"
+
     projectTypeCategory: null,
     projectTypePreset:   null,
     projectTypeCustom:   "",
@@ -21,8 +177,10 @@
     subjectImages:       [],   // dataURLs
     artStyle:            null,
     artStyleCustom:      "",
-    cameraAngle:         null,
+    cameraAngle:         null,        // Image mode
     cameraAngleCustom:   "",
+    cameraMovement:      null,        // Video mode (V0)
+    cameraMovementCustom: "",
     lighting:            null,
     lightingCustom:      "",
     colorMode:           "single", // single | dual | multi (mode is structural, not a content selection)
@@ -46,8 +204,59 @@
     promptExpansion:     null,
     aiPreset:            null,
     additionalDescription: "",      // Issue #12
+    // Video-only fields (PF-L2 stubs, wired in PF-L3)
+    duration:            null,        // V1
+    durationCustom:      "",
+    fps:                 null,        // V2
+    motionStrength:      null,        // V3
+    loop:                null,        // V3
+    transition:          null,        // V4
     // last generated
     lastResult:          null
+  };
+
+  /* ===========================================================
+     PF-L6: Field Lock State — tracks which fields are locked from randomization
+     =========================================================== */
+  const fieldLocks = {
+    projectTypeCategory: false,
+    projectTypePreset: false,
+    projectTypeCustom: false,
+    subjects: false,
+    artStyle: false,
+    artStyleCustom: false,
+    cameraAngle: false,
+    cameraAngleCustom: false,
+    cameraMovement: false,
+    cameraMovementCustom: false,
+    lighting: false,
+    lightingCustom: false,
+    colorMode: false,
+    colors: false,
+    background: false,
+    backgroundCustom: false,
+    mood: false,
+    moodCustom: false,
+    typography: false,
+    typographyCustom: false,
+    effects: false,
+    customEffects: false,
+    watermarkPosition: false,
+    watermarkCustomPosition: false,
+    watermarkText: false,
+    aspectRatio: false,
+    customResolution: false,
+    composition: false,
+    renderingQuality: false,
+    promptExpansion: false,
+    aiPreset: false,
+    additionalDescription: false,
+    duration: false,
+    durationCustom: false,
+    fps: false,
+    motionStrength: false,
+    loop: false,
+    transition: false
   };
 
   /* ComboBox instances registry */
@@ -100,6 +309,242 @@
   Accordion.init(document);
 
   /* ===========================================================
+     Output Mode Toggle (PF-L2)
+     =========================================================== */
+  function initOutputMode() {
+    const seg = $("#outputModeSeg");
+    if (!seg) return;
+
+    // Read mode from URL hash (#m=image|video)
+    function getModeFromHash() {
+      const hash = window.location.hash;
+      const match = hash.match(/[#&]m=(image|video)/);
+      return match ? match[1] : "image";
+    }
+
+    function setHashMode(mode) {
+      const hash = window.location.hash;
+      const newHash = hash.replace(/([#&])m=(image|video)/, "$1m=" + mode);
+      if (newHash === hash) {
+        // No existing m= param, append
+        window.location.hash = hash + (hash ? "&" : "#") + "m=" + mode;
+      } else {
+        window.location.hash = newHash;
+      }
+    }
+
+    function applyMode(mode) {
+      state.outputMode = mode;
+
+      // Update segmented control UI
+      $all(".seg__btn", seg).forEach(function (btn) {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-selected", isActive);
+      });
+
+      // Show/hide sections per mode
+      toggleSectionsForMode(mode);
+
+      // Rebuild AI preset chips for the mode
+      rebuildAiPresetChips(mode);
+
+      // Rebuild aspect ratio grid for the mode
+      rebuildAspectRatioGrid(mode);
+
+      // Update rendering quality label
+      updateRenderingQualityLabel(mode);
+
+      // Update output panel labels
+      updateOutputPanelLabels(mode);
+
+      // PF-L5: Show/hide video copy buttons
+      if (videoCopyBlock) {
+        videoCopyBlock.style.display = mode === "video" ? "block" : "none";
+      }
+
+      // Update URL hash
+      setHashMode(mode);
+    }
+
+    // Click handlers
+    seg.addEventListener("click", function (e) {
+      const btn = e.target.closest(".seg__btn");
+      if (!btn) return;
+      applyMode(btn.dataset.mode);
+    });
+
+    // Initialize from hash or default
+    const initialMode = getModeFromHash();
+    applyMode(initialMode);
+  }
+
+  /* ===========================================================
+     Show/hide sections based on output mode (per matrix §4.2)
+     =========================================================== */
+  function toggleSectionsForMode(mode) {
+    const isVideo = mode === "video";
+
+    // Section 04 Camera Angle (image-only)
+    toggleSection("sectionCameraAngle", !isVideo);
+    // Section V0 Camera Movement (video-only)
+    toggleSection("sectionCameraMovement", isVideo);
+    // Section 09 Typography (collapsed by default in video)
+    toggleSectionCollapsed("sectionTypography", isVideo);
+    // Section 11 Watermark (collapsed by default in video)
+    toggleSectionCollapsed("sectionWatermark", isVideo);
+    // Section 12 Aspect Ratio (always shown, but filtered)
+    // Sections V1-V4 (video-only)
+    toggleSection("sectionDuration", isVideo);
+    toggleSection("sectionFPS", isVideo);
+    toggleSection("sectionMotionStrength", isVideo);
+    toggleSection("sectionTransition", isVideo);
+  }
+
+  function toggleSection(sectionId, show) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    if (show) {
+      el.hidden = false;
+      // Ensure accordion is initialized
+      if (!el.classList.contains("accordion-initialized")) {
+        Accordion.init(el);
+        el.classList.add("accordion-initialized");
+      }
+    } else {
+      el.hidden = true;
+      // Close accordion if open
+      if (el.classList.contains("is-open")) {
+        el.classList.remove("is-open");
+      }
+    }
+  }
+
+  function toggleSectionCollapsed(sectionId, collapsed) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    if (collapsed && el.classList.contains("is-open")) {
+      el.classList.remove("is-open");
+    }
+    // Note: accordion stays visible, just collapsed by default
+  }
+
+  /* ===========================================================
+     Rebuild AI Preset chips for the current mode
+     =========================================================== */
+  function rebuildAiPresetChips(mode) {
+    const grid = $("#aiPresetGrid");
+    if (!grid) return;
+    const presets = mode === "video" ? D.AI_PRESETS_VIDEO : D.AI_PRESETS;
+    if (!presets) return;
+
+    // Clear grid
+    grid.innerHTML = "";
+
+    // If current preset not in new list, clear it
+    if (state.aiPreset && !presets.some(function (p) { return p.value === state.aiPreset; })) {
+      state.aiPreset = null;
+    }
+
+    presets.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.aiPreset === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", grid).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.aiPreset = item.value;
+        } else {
+          state.aiPreset = null;
+        }
+      });
+      grid.appendChild(chip);
+    });
+  }
+
+  /* ===========================================================
+     Rebuild Aspect Ratio grid for the current mode
+     =========================================================== */
+  function rebuildAspectRatioGrid(mode) {
+    const grid = $("#ratioGrid");
+    if (!grid) return;
+
+    const allRatios = D.ASPECT_RATIOS || [];
+    let ratios;
+    if (mode === "video") {
+      // Video: 16:9, 9:16, 1:1 first, then others
+      const priority = ["16:9", "9:16", "1:1"];
+      const priorityRatios = priority.map(function (v) {
+        return allRatios.find(function (r) { return r.value === v; });
+      }).filter(Boolean);
+      const otherRatios = allRatios.filter(function (r) { return !priority.includes(r.value); });
+      ratios = priorityRatios.concat(otherRatios);
+    } else {
+      ratios = allRatios;
+    }
+
+    // Clear grid
+    grid.innerHTML = "";
+
+    // If current aspect ratio not in new list, clear it
+    if (state.aspectRatio && !ratios.some(function (r) { return r.value === state.aspectRatio; })) {
+      state.aspectRatio = null;
+    }
+
+    ratios.forEach(function (r) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ratio";
+      btn.dataset.value = r.value;
+      if (r.value === state.aspectRatio) btn.classList.add("is-active");
+
+      const maxEdge = 22;
+      const long = Math.max(r.w, r.h);
+      const w = Math.round((r.w / long) * maxEdge);
+      const h = Math.round((r.h / long) * maxEdge);
+
+      btn.innerHTML =
+        '<span class="ratio__shape" style="width:' + w + 'px;height:' + h + 'px"></span>' +
+        '<span class="ratio__label">' + r.value + '</span>';
+
+      btn.addEventListener("click", function () {
+        $all(".ratio", grid).forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+        state.aspectRatio = r.value;
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ===========================================================
+     Update Rendering Quality label for video mode
+     =========================================================== */
+  function updateRenderingQualityLabel(mode) {
+    const label = $("#renderingQualityLabel");
+    if (!label) return;
+    label.textContent = mode === "video" ? "Quality + FPS hint" : "Rendering Quality";
+  }
+
+  /* ===========================================================
+     Update Output Panel labels for the current mode
+     =========================================================== */
+  function updateOutputPanelLabels(mode) {
+    const subtitle = $("#outputSubtitle");
+    const promptLabel = $("#promptLabel");
+    const negativeLabel = $("#negativeLabel");
+    const i18n = global.PF.i18n;
+    if (subtitle) subtitle.textContent = mode === "video" ? i18n.t("outputSubtitle.video") : i18n.t("outputSubtitle.image");
+    if (promptLabel) promptLabel.textContent = mode === "video" ? i18n.t("labels.videoPrompt") : i18n.t("labels.outputPrompt");
+    if (negativeLabel) negativeLabel.textContent = mode === "video" ? i18n.t("labels.videoNegative") : i18n.t("labels.outputNegative");
+  }
+
+  /* ===========================================================
      Initialize ComboBoxes
      =========================================================== */
   function initComboboxes() {
@@ -112,6 +557,10 @@
     const backgroundEl = $('[data-combobox="background"]');
     const moodEl = $('[data-combobox="mood"]');
     const typographyEl = $('[data-combobox="typography"]');
+    const cameraMovementEl = $('[data-combobox="cameraMovement"]');
+    const durationEl = $('[data-combobox="duration"]');
+    const fpsEl = $('[data-combobox="fps"]');
+    const transitionEl = $('[data-combobox="transition"]');
 
     // Category combobox — flat list of category names
     const catNames = Object.keys(D.PROJECT_TYPE);
@@ -184,6 +633,50 @@
       allowCustom: true,
       onChange: function (val) { state.typography = val; }
     });
+
+    // Camera Movement (Video mode)
+    if (cameraMovementEl) {
+      combos.cameraMovement = ComboBox.create(cameraMovementEl, {
+        mode: "single",
+        options: D.CAMERA_MOVEMENTS || [],
+        placeholder: "Search camera movements…",
+        allowCustom: true,
+        onChange: function (val) { state.cameraMovement = val; }
+      });
+    }
+
+    // Duration (Video mode)
+    if (durationEl) {
+      combos.duration = ComboBox.create(durationEl, {
+        mode: "single",
+        options: (D.DURATIONS || []).map(function (d) { return { value: d.value, phrase: d.phrase }; }),
+        placeholder: "Select duration…",
+        allowCustom: true,
+        onChange: function (val) { state.duration = val; }
+      });
+    }
+
+    // FPS (Video mode)
+    if (fpsEl) {
+      combos.fps = ComboBox.create(fpsEl, {
+        mode: "single",
+        options: (D.FPS_OPTIONS || []).map(function (f) { return { value: f.value, phrase: f.phrase }; }),
+        placeholder: "Select FPS…",
+        allowCustom: true,
+        onChange: function (val) { state.fps = val; }
+      });
+    }
+
+    // Transition (Video mode)
+    if (transitionEl) {
+      combos.transition = ComboBox.create(transitionEl, {
+        mode: "single",
+        options: (D.TRANSITIONS || []).map(function (t) { return { value: t.value, phrase: t.phrase }; }),
+        placeholder: "Select transition…",
+        allowCustom: true,
+        onChange: function (val) { state.transition = val; }
+      });
+    }
   }
 
   function rebuildProjectTypePresets(category) {
@@ -212,6 +705,7 @@
       "projectType-custom":      "projectTypeCustom",
       "artStyle-custom":         "artStyleCustom",
       "cameraAngle-custom":      "cameraAngleCustom",
+      "cameraMovement-custom":   "cameraMovementCustom",
       "lighting-custom":         "lightingCustom",
       "background-custom":       "backgroundCustom",
       "mood-custom":             "moodCustom",
@@ -224,7 +718,9 @@
       // Issue #11: Custom Resolution
       "custom-resolution":       "customResolution",
       // Issue #12: Additional Description
-      "additional-desc":         "additionalDescription"
+      "additional-desc":         "additionalDescription",
+      // Video-only custom inputs (PF-L2)
+      "duration-custom":         "durationCustom"
     };
     Object.keys(map).forEach(function (id) {
       const el = document.getElementById(id);
@@ -436,6 +932,61 @@
     if (state.aiPreset) c.activate(state.aiPreset);
   }
 
+  /* Video-only chip grids (PF-L2) */
+  function initMotionStrength() {
+    const el = $("#motionStrengthGrid");
+    if (!el) return;
+    el.innerHTML = "";
+    const list = D.MOTION_STRENGTH || [];
+    list.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.motionStrength === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", el).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.motionStrength = item.value;
+        } else {
+          state.motionStrength = null;
+        }
+      });
+      el.appendChild(chip);
+    });
+  }
+
+  function initLoop() {
+    const el = $("#loopGrid");
+    if (!el) return;
+    el.innerHTML = "";
+    const list = D.LOOP_OPTIONS || [];
+    list.forEach(function (item) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = item.value;
+      chip.dataset.value = item.value;
+      if (state.loop === item.value) chip.classList.add("is-active");
+      chip.addEventListener("click", function () {
+        $all(".chip", el).forEach(function (c) {
+          if (c !== chip) c.classList.remove("is-active");
+        });
+        chip.classList.toggle("is-active");
+        if (chip.classList.contains("is-active")) {
+          state.loop = item.value;
+        } else {
+          state.loop = null;
+        }
+      });
+      el.appendChild(chip);
+    });
+  }
+
   /* Issue #8 — Watermark position chip grid (single-select). */
   function initWatermarkPosition() {
     const el = $("#watermarkPosGrid");
@@ -518,6 +1069,19 @@
       const actions = document.createElement("div");
       actions.className = "subject-row__actions";
 
+      // Lock button for subject (PF-L6)
+      const lockBtn = document.createElement("button");
+      lockBtn.type = "button";
+      lockBtn.className = "subject-row__lock" + (fieldLocks.subjects ? " is-locked" : "");
+      lockBtn.setAttribute("aria-label", fieldLocks.subjects ? "Unlock subject from randomization" : "Lock subject from randomization");
+      lockBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      lockBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        fieldLocks.subjects = !fieldLocks.subjects;
+        lockBtn.classList.toggle("is-locked", fieldLocks.subjects);
+        lockBtn.setAttribute("aria-label", fieldLocks.subjects ? "Unlock subject from randomization" : "Lock subject from randomization");
+      });
+
       const upBtn = document.createElement("button");
       upBtn.type = "button";
       upBtn.className = "subject-row__btn";
@@ -556,6 +1120,7 @@
         renderSubjects();
       });
 
+      actions.appendChild(lockBtn);
       actions.appendChild(upBtn);
       actions.appendChild(downBtn);
       actions.appendChild(delBtn);
@@ -698,13 +1263,36 @@
   const saveFavBtn = $("#saveFavoriteBtn");
   const saveHistBtn = $("#saveHistoryBtn");
 
+  // PF-L5: New copy buttons
+  const copyPromptBtn = $("#copyPromptBtn");
+  const copyNegativeBtn = $("#copyNegativeBtn");
+  const copyNaturalBtn = $("#copyNaturalBtn");
+  const copyMjBtn = $("#copyMjBtn");
+  const copySdxlBtn = $("#copySdxlBtn");
+  const copyRunwayBtn = $("#copyRunwayBtn");
+  const copyPikaBtn = $("#copyPikaBtn");
+  const copySoraBtn = $("#copySoraBtn");
+  const copyKlingBtn = $("#copyKlingBtn");
+  const copyLumaBtn = $("#copyLumaBtn");
+  const videoCopyBlock = $("#videoCopyBlock");
+  const videoFormatOutput = $("#videoFormatOutput");
+
+  // PF-L5: Export/Import/Share buttons
+  const exportBtn = $("#exportBtn");
+  const importBtn = $("#importBtn");
+  const shareBtn = $("#shareBtn");
+  const importFileInput = $("#importFileInput");
+
   function renderOutput(result) {
+    const i18n = global.PF.i18n;
     if (!result) {
-      promptOutput.innerHTML = '<span class="output__placeholder">Configure options on the left, then press <strong>Generate</strong>.</span>';
-      negativeOutput.innerHTML = '<span class="output__placeholder">Negative prompt will appear here.</span>';
+      promptOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
+      negativeOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
       outputMeta.innerHTML = "";
       saveFavBtn.disabled = true;
       saveHistBtn.disabled = true;
+      // Hide video copy block when no result
+      if (videoCopyBlock) videoCopyBlock.style.display = "none";
       return;
     }
 
@@ -721,6 +1309,263 @@
 
     saveFavBtn.disabled = false;
     saveHistBtn.disabled = false;
+
+    // PF-L5: Show/hide video copy buttons based on output mode
+    if (videoCopyBlock) {
+      const isVideo = state.outputMode === "video";
+      videoCopyBlock.style.display = isVideo ? "block" : "none";
+      if (isVideo && videoFormatOutput) {
+        // Generate video format previews
+        const videoState = Object.assign({}, state, { aiPreset: "Runway Gen-3" });
+        const runwayResult = Generator.generate(videoState);
+        videoState.aiPreset = "Pika";
+        const pikaResult = Generator.generate(videoState);
+        videoState.aiPreset = "Sora";
+        const soraResult = Generator.generate(videoState);
+        videoState.aiPreset = "Kling";
+        const klingResult = Generator.generate(videoState);
+        videoState.aiPreset = "Luma Dream Machine";
+        const lumaResult = Generator.generate(videoState);
+        videoFormatOutput.innerHTML =
+          "<strong>" + i18n.t("buttons.copyRunway") + ":</strong> " + (runwayResult ? runwayResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyPika") + ":</strong> " + (pikaResult ? pikaResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copySora") + ":</strong> " + (soraResult ? soraResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyKling") + ":</strong> " + (klingResult ? klingResult.prompt : "") + "<br><br>" +
+          "<strong>" + i18n.t("buttons.copyLuma") + ":</strong> " + (lumaResult ? lumaResult.prompt : "");
+      }
+    }
+
+    // PF-L6: Update quality meter
+    updateQualityMeter();
+  }
+
+  /* ===========================================================
+     PF-L6: Quality Meter — completion % + token estimate
+     =========================================================== */
+  const qualityMeterFill = $("#qualityMeterFill");
+  const qualityMeterPct = $("#qualityMeterPct");
+  const qualityMeterTokens = $("#qualityMeterTokens");
+  const qualityMeterWarning = $("#qualityMeterWarning");
+  const qualityMeterBar = $("#qualityMeter");
+
+  // Model token limits (approximate)
+  const MODEL_LIMITS = {
+    "ChatGPT Images": 4096,
+    "Flux": 512,
+    "SDXL": 77,
+    "Midjourney": 2500,
+    "Gemini": 2048,
+    "Runway Gen-3": 500,
+    "Pika": 500,
+    "Sora": 1000,
+    "Kling": 500,
+    "Luma Dream Machine": 500
+  };
+
+  function estimateTokens(text) {
+    if (!text) return 0;
+    // Rough estimate: ~1 token per 4 characters for English
+    return Math.ceil(text.length / 4);
+  }
+
+  function calculateCompletion(state) {
+    // 14 core sections (per spec §6 item 7)
+    const sections = [
+      // 1. Project Type (category OR preset OR custom)
+      !!(state.projectTypeCategory || state.projectTypePreset || (state.projectTypeCustom && state.projectTypeCustom.trim())),
+      // 2. Subject (at least one with text)
+      !!(state.subjects && state.subjects.some(function (s) { return s.text && s.text.trim(); })),
+      // 3. Art Style
+      !!(state.artStyle || (state.artStyleCustom && state.artStyleCustom.trim())),
+      // 4. Camera Angle / Camera Movement (depends on mode)
+      state.outputMode === "video" 
+        ? !!(state.cameraMovement || (state.cameraMovementCustom && state.cameraMovementCustom.trim()))
+        : !!(state.cameraAngle || (state.cameraAngleCustom && state.cameraAngleCustom.trim())),
+      // 5. Lighting
+      !!(state.lighting || (state.lightingCustom && state.lightingCustom.trim())),
+      // 6. Color Palette (at least one color)
+      !!(state.colors && state.colors.length > 0),
+      // 7. Background
+      !!(state.background || (state.backgroundCustom && state.backgroundCustom.trim())),
+      // 8. Mood
+      !!(state.mood || (state.moodCustom && state.moodCustom.trim())),
+      // 9. Typography
+      !!(state.typography || (state.typographyCustom && state.typographyCustom.trim())),
+      // 10. Effects (built-in OR custom)
+      !!(state.effects && state.effects.length > 0 || (state.customEffects && state.customEffects.trim())),
+      // 11. Watermark
+      !!(state.watermarkText && state.watermarkText.trim()),
+      // 12. Aspect Ratio / Custom Resolution
+      !!(state.aspectRatio || (state.customResolution && state.customResolution.trim())),
+      // 13. Advanced (composition OR renderingQuality OR promptExpansion OR aiPreset)
+      !!(state.composition || state.renderingQuality || state.promptExpansion || state.aiPreset),
+      // 14. Additional Description
+      !!(state.additionalDescription && state.additionalDescription.trim())
+    ];
+    
+    const filled = sections.filter(Boolean).length;
+    return Math.round((filled / sections.length) * 100);
+  }
+
+  function updateQualityMeter() {
+    if (!qualityMeterFill || !qualityMeterPct || !qualityMeterTokens) return;
+    
+    const pct = calculateCompletion(state);
+    const promptText = state.lastResult ? state.lastResult.prompt : "";
+    const negativeText = state.lastResult ? state.lastResult.negative : "";
+    const tokenEstimate = estimateTokens(promptText + " " + negativeText);
+    
+    // Update bar
+    qualityMeterFill.style.width = pct + "%";
+    qualityMeterFill.setAttribute("aria-valuenow", pct);
+    
+    // Update color based on percentage
+    if (pct < 30) {
+      qualityMeterFill.style.background = "var(--danger)";
+    } else if (pct < 70) {
+      qualityMeterFill.style.background = "linear-gradient(90deg, var(--warning), var(--success))";
+    } else {
+      qualityMeterFill.style.background = "var(--success)";
+    }
+    
+    qualityMeterPct.textContent = pct + "%";
+    qualityMeterTokens.textContent = "~" + tokenEstimate + " tokens";
+    
+    // Token limit warning
+    const preset = state.aiPreset;
+    const limit = preset ? MODEL_LIMITS[preset] : null;
+    if (limit && tokenEstimate > limit) {
+      qualityMeterWarning.hidden = false;
+      qualityMeterWarning.textContent = "⚠ Exceeds " + preset + " limit (~" + limit + " tokens)";
+    } else if (limit && tokenEstimate > limit * 0.8) {
+      qualityMeterWarning.hidden = false;
+      qualityMeterWarning.textContent = "⚠ Approaching " + preset + " limit (~" + limit + " tokens)";
+    } else {
+      qualityMeterWarning.hidden = true;
+    }
+  }
+
+  /* ===========================================================
+     PF-L6: Randomize — fills unlocked fields with random values
+     =========================================================== */
+  function doRandomize() {
+    const randomizeBtn = $("#randomizeBtn");
+    if (randomizeBtn) {
+      randomizeBtn.classList.add("is-randomizing");
+      randomizeBtn.disabled = true;
+    }
+    
+    // Collect all randomizable fields with their option sources
+    const randomizableFields = [
+      // Project Type
+      { key: "projectTypeCategory", source: () => Object.keys(D.PROJECT_TYPE), lock: "projectTypeCategory", setter: (v) => { state.projectTypeCategory = v; rebuildProjectTypePresets(v); } },
+      { key: "projectTypePreset", source: () => D.PROJECT_TYPE[state.projectTypeCategory] || [], lock: "projectTypePreset", setter: (v) => { state.projectTypePreset = v; } },
+      { key: "projectTypeCustom", source: () => ["Custom Project " + Math.floor(Math.random() * 1000)], lock: "projectTypeCustom", setter: (v) => { state.projectTypeCustom = v; document.getElementById("projectType-custom").value = v; } },
+      
+      // Subject (special handling - multiple subjects)
+      { key: "subjects", source: () => ["Mystical forest guardian", "Cyberpunk samurai", "Steampunk airship captain", "Victorian ghost hunter", "Neon-lit street racer", "Ancient ruin explorer", "Cosmic entity", "Post-apocalyptic survivor", "Fantasy bard", "Mecha pilot"], lock: "subjects", setter: (v) => { 
+          if (!state.subjects.length) {
+            state.subjects.push({ id: makeSubjectId(), text: v, importance: "Primary" });
+          } else if (!fieldLocks.subjects) {
+            state.subjects[0].text = v;
+          }
+          renderSubjects();
+        } },
+      
+      // Art Style
+      { key: "artStyle", source: () => D.ART_STYLE.map(s => s.value), lock: "artStyle", setter: (v) => { state.artStyle = v; if (combos.artStyle) combos.artStyle.setValue(v); } },
+      { key: "artStyleCustom", source: () => ["Mixed media " + Math.floor(Math.random() * 100)], lock: "artStyleCustom", setter: (v) => { state.artStyleCustom = v; document.getElementById("artStyle-custom").value = v; } },
+      
+      // Camera Angle / Movement
+      { key: "cameraAngle", source: () => D.CAMERA_ANGLE.map(s => s.value), lock: "cameraAngle", setter: (v) => { state.cameraAngle = v; if (combos.cameraAngle) combos.cameraAngle.setValue(v); } },
+      { key: "cameraAngleCustom", source: () => ["Custom angle " + Math.floor(Math.random() * 100) + "°"], lock: "cameraAngleCustom", setter: (v) => { state.cameraAngleCustom = v; document.getElementById("cameraAngle-custom").value = v; } },
+      { key: "cameraMovement", source: () => (D.CAMERA_MOVEMENTS || []).map(s => s.value), lock: "cameraMovement", setter: (v) => { state.cameraMovement = v; if (combos.cameraMovement) combos.cameraMovement.setValue(v); } },
+      { key: "cameraMovementCustom", source: () => ["Custom movement " + Math.floor(Math.random() * 100)], lock: "cameraMovementCustom", setter: (v) => { state.cameraMovementCustom = v; document.getElementById("cameraMovement-custom").value = v; } },
+      
+      // Lighting
+      { key: "lighting", source: () => D.LIGHTING.map(s => s.value), lock: "lighting", setter: (v) => { state.lighting = v; if (combos.lighting) combos.lighting.setValue(v); } },
+      { key: "lightingCustom", source: () => ["Custom lighting " + Math.floor(Math.random() * 100)], lock: "lightingCustom", setter: (v) => { state.lightingCustom = v; document.getElementById("lighting-custom").value = v; } },
+      
+      // Color Palette
+      { key: "colorMode", source: () => ["single", "dual", "multi"], lock: "colorMode", setter: (v) => { state.colorMode = v; initColorPalette(); } },
+      { key: "colors", source: () => ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#06B6D4", "#F97316", "#84CC16", "#A855F7"], lock: "colors", setter: (v) => { state.colors = [v]; initColorPalette(); } },
+      
+      // Background
+      { key: "background", source: () => D.BACKGROUND.map(s => s.value), lock: "background", setter: (v) => { state.background = v; if (combos.background) combos.background.setValue(v); } },
+      { key: "backgroundCustom", source: () => ["Custom background " + Math.floor(Math.random() * 100)], lock: "backgroundCustom", setter: (v) => { state.backgroundCustom = v; document.getElementById("background-custom").value = v; } },
+      
+      // Mood
+      { key: "mood", source: () => D.MOOD.map(s => s.value), lock: "mood", setter: (v) => { state.mood = v; if (combos.mood) combos.mood.setValue(v); } },
+      { key: "moodCustom", source: () => ["Custom mood " + Math.floor(Math.random() * 100)], lock: "moodCustom", setter: (v) => { state.moodCustom = v; document.getElementById("mood-custom").value = v; } },
+      
+      // Typography
+      { key: "typography", source: () => D.TYPOGRAPHY.map(s => s.value), lock: "typography", setter: (v) => { state.typography = v; if (combos.typography) combos.typography.setValue(v); } },
+      { key: "typographyCustom", source: () => ["Custom typography " + Math.floor(Math.random() * 100)], lock: "typographyCustom", setter: (v) => { state.typographyCustom = v; document.getElementById("typography-custom").value = v; } },
+      
+      // Effects
+      { key: "effects", source: () => D.EFFECTS.map(s => s.value), lock: "effects", setter: (v) => { state.effects = [v]; initEffects(); } },
+      { key: "customEffects", source: () => ["floating particles, energy aura, magic sparks, volumetric lighting, lens flare"], lock: "customEffects", setter: (v) => { state.customEffects = v; document.getElementById("effects-custom").value = v; } },
+      
+      // Watermark
+      { key: "watermarkPosition", source: () => D.WATERMARK_POSITIONS.map(s => s.value), lock: "watermarkPosition", setter: (v) => { state.watermarkPosition = v; initWatermarkPosition(); } },
+      { key: "watermarkCustomPosition", source: () => ["Custom position " + Math.floor(Math.random() * 100)], lock: "watermarkCustomPosition", setter: (v) => { state.watermarkCustomPosition = v; document.getElementById("watermark-custom-pos").value = v; } },
+      { key: "watermarkText", source: () => ["@PromptForge", "@MyBrand", "© 2024", "Watermark"], lock: "watermarkText", setter: (v) => { state.watermarkText = v; document.getElementById("watermark-text").value = v; } },
+      
+      // Aspect Ratio
+      { key: "aspectRatio", source: () => D.ASPECT_RATIOS.map(s => s.value), lock: "aspectRatio", setter: (v) => { state.aspectRatio = v; rebuildAspectRatioGrid(state.outputMode); } },
+      { key: "customResolution", source: () => ["1920x1080", "3840x2160", "1080x1920", "1280x720", "2048x2048"], lock: "customResolution", setter: (v) => { state.customResolution = v; document.getElementById("custom-resolution").value = v; } },
+      
+      // Advanced
+      { key: "composition", source: () => D.COMPOSITION.map(s => s.value), lock: "composition", setter: (v) => { state.composition = v; initComposition(); } },
+      { key: "renderingQuality", source: () => D.RENDERING_QUALITY.map(s => s.value), lock: "renderingQuality", setter: (v) => { state.renderingQuality = v; initRendering(); } },
+      { key: "promptExpansion", source: () => D.PROMPT_EXPANSION.map(s => s.value), lock: "promptExpansion", setter: (v) => { state.promptExpansion = v; initExpansion(); } },
+      { key: "aiPreset", source: () => (state.outputMode === "video" ? D.AI_PRESETS_VIDEO : D.AI_PRESETS).map(s => s.value), lock: "aiPreset", setter: (v) => { state.aiPreset = v; rebuildAiPresetChips(state.outputMode); } },
+      
+      // Additional Description
+      { key: "additionalDescription", source: () => ["Add dramatic lighting. Enhance details. Make it cinematic.", "Focus on texture and material quality. Avoid blurry areas.", "Ensure coherent anatomy. No extra limbs. Clean composition."], lock: "additionalDescription", setter: (v) => { state.additionalDescription = v; document.getElementById("additional-desc").value = v; } },
+      
+      // Video-only
+      { key: "duration", source: () => (D.DURATIONS || []).map(s => s.value), lock: "duration", setter: (v) => { state.duration = v; if (combos.duration) combos.duration.setValue(v); } },
+      { key: "durationCustom", source: () => [String(Math.floor(Math.random() * 10) + 1)], lock: "durationCustom", setter: (v) => { state.durationCustom = v; document.getElementById("duration-custom").value = v; } },
+      { key: "fps", source: () => (D.FPS_OPTIONS || []).map(s => s.value), lock: "fps", setter: (v) => { state.fps = v; if (combos.fps) combos.fps.setValue(v); } },
+      { key: "motionStrength", source: () => (D.MOTION_STRENGTH || []).map(s => s.value), lock: "motionStrength", setter: (v) => { state.motionStrength = v; initMotionStrength(); } },
+      { key: "loop", source: () => (D.LOOP_OPTIONS || []).map(s => s.value), lock: "loop", setter: (v) => { state.loop = v; initLoop(); } },
+      { key: "transition", source: () => (D.TRANSITIONS || []).map(s => s.value), lock: "transition", setter: (v) => { state.transition = v; if (combos.transition) combos.transition.setValue(v); } }
+    ];
+    
+    // Randomize unlocked fields
+    randomizableFields.forEach(function (field) {
+      if (fieldLocks[field.lock]) return; // Skip locked fields
+      
+      const options = field.source();
+      if (options && options.length > 0) {
+        const randomValue = options[Math.floor(Math.random() * options.length)];
+        field.setter(randomValue);
+      }
+    });
+    
+    // Sync UI for chip grids that don't have combos
+    initEffects();
+    initComposition();
+    initRendering();
+    initExpansion();
+    initAiPreset();
+    initWatermarkPosition();
+    initMotionStrength();
+    initLoop();
+    rebuildAspectRatioGrid(state.outputMode);
+    initColorPalette();
+    renderSubjects();
+    
+    // Update quality meter
+    updateQualityMeter();
+    
+    if (randomizeBtn) {
+      randomizeBtn.classList.remove("is-randomizing");
+      randomizeBtn.disabled = false;
+    }
+    
+    toast("Randomized unlocked fields!", "success");
   }
 
   function doGenerate() {
@@ -785,6 +1630,7 @@
     // Clear only the output panel
     state.lastResult = null;
     renderOutput(null);
+    updateQualityMeter();
     toast("Output cleared.");
   }
 
@@ -794,6 +1640,7 @@
     state.subjectImages = [];
     state.artStyle = null; state.artStyleCustom = "";
     state.cameraAngle = null; state.cameraAngleCustom = "";
+    state.cameraMovement = null; state.cameraMovementCustom = "";
     state.lighting = null; state.lightingCustom = "";
     state.background = null; state.backgroundCustom = "";
     state.backgroundImages = [];
@@ -816,6 +1663,14 @@
     state.promptExpansion = null;
     state.aiPreset = null;
     state.additionalDescription = "";
+    // Video-only fields (PF-L2)
+    state.duration = null; state.durationCustom = "";
+    state.fps = null;
+    state.motionStrength = null;
+    state.loop = null;
+    state.transition = null;
+    // Output mode resets to default "image"
+    state.outputMode = "image";
     state.lastResult = null;
 
     // Reset UI
@@ -828,6 +1683,23 @@
     $all(".chip").forEach(function (c) { c.classList.remove("is-active"); });
     $all(".ratio").forEach(function (r) { r.classList.remove("is-active"); });
     $all(".preview").forEach(function (p) { p.remove(); });
+
+    // Re-apply default output mode UI (PF-L2)
+    const seg = $("#outputModeSeg");
+    if (seg) {
+      $all(".seg__btn", seg).forEach(function (btn) {
+        const isActive = btn.dataset.mode === "image";
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-selected", isActive);
+      });
+    }
+    toggleSectionsForMode("image");
+    rebuildAiPresetChips("image");
+    rebuildAspectRatioGrid("image");
+    updateRenderingQualityLabel("image");
+    updateOutputPanelLabels("image");
+    // Update URL hash
+    window.location.hash = window.location.hash.replace(/([#&])m=(image|video)/, "$1m=image");
 
     renderSubjects();
     initColorPalette();
@@ -911,6 +1783,16 @@
     });
 
     actions.appendChild(restoreBtn);
+
+    // Restore as Draft (PF-L6) — restores without regenerating
+    const restoreDraftBtn = document.createElement("button");
+    restoreDraftBtn.className = "entry__btn entry__btn--restore";
+    restoreDraftBtn.type = "button";
+    restoreDraftBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Draft';
+    restoreDraftBtn.title = "Restore as draft (edit before generating)";
+    restoreDraftBtn.addEventListener("click", function () { restoreEntry(entry, true); });
+
+    actions.appendChild(restoreDraftBtn);
     actions.appendChild(copyBtn);
     actions.appendChild(starBtn);
     actions.appendChild(delBtn);
@@ -921,11 +1803,11 @@
     return card;
   }
 
-  function renderHistory() {
+  function renderHistory(query, modeFilter, presetFilter) {
     const list = $("#historyList");
     if (!list) return;
     list.innerHTML = "";
-    const items = History.getHistory();
+    const items = History.searchHistory(query || "", modeFilter || "", presetFilter || "");
     if (items.length === 0) {
       list.innerHTML = '<div class="history__empty">No history yet. Generate a prompt to see it here.</div>';
       return;
@@ -945,7 +1827,7 @@
     items.forEach(function (e) { list.appendChild(renderEntry(e, true)); });
   }
 
-  function restoreEntry(entry) {
+  function restoreEntry(entry, asDraft) {
     // Restore state from entry
     if (entry.state) {
       Object.keys(entry.state).forEach(function (k) {
@@ -959,18 +1841,36 @@
     }
     // Re-sync UI
     syncUIFromState();
-    renderOutput({
-      prompt: entry.prompt,
-      negative: entry.negative,
-      meta: [],
-      state: entry.state,
-      timestamp: entry.timestamp,
-      id: entry.id
-    });
-    state.lastResult = { prompt: entry.prompt, negative: entry.negative, id: entry.id, timestamp: entry.timestamp };
-    saveFavBtn.disabled = false;
-    saveHistBtn.disabled = false;
-    toast("Restored. Press Generate to regenerate.");
+    
+    if (asDraft) {
+      // Restore as draft: show the prompt in output but don't set as lastResult
+      renderOutput({
+        prompt: entry.prompt,
+        negative: entry.negative,
+        meta: [],
+        state: entry.state,
+        timestamp: entry.timestamp,
+        id: entry.id
+      });
+      state.lastResult = null; // Don't treat as generated result
+      saveFavBtn.disabled = true;
+      saveHistBtn.disabled = true;
+      toast("Restored as draft. Edit fields then press Generate.");
+    } else {
+      // Full restore with lastResult
+      renderOutput({
+        prompt: entry.prompt,
+        negative: entry.negative,
+        meta: [],
+        state: entry.state,
+        timestamp: entry.timestamp,
+        id: entry.id
+      });
+      state.lastResult = { prompt: entry.prompt, negative: entry.negative, id: entry.id, timestamp: entry.timestamp };
+      saveFavBtn.disabled = false;
+      saveHistBtn.disabled = false;
+      toast("Restored. Press Generate to regenerate.");
+    }
   }
 
   function syncUIFromState() {
@@ -980,15 +1880,20 @@
     }, 50);
     if (state.artStyle && combos.artStyle) combos.artStyle.setValue(state.artStyle);
     if (state.cameraAngle && combos.cameraAngle) combos.cameraAngle.setValue(state.cameraAngle);
+    if (state.cameraMovement && combos.cameraMovement) combos.cameraMovement.setValue(state.cameraMovement);
     if (state.lighting && combos.lighting) combos.lighting.setValue(state.lighting);
     if (state.background && combos.background) combos.background.setValue(state.background);
     if (state.mood && combos.mood) combos.mood.setValue(state.mood);
     if (state.typography && combos.typography) combos.typography.setValue(state.typography);
+    if (state.duration && combos.duration) combos.duration.setValue(state.duration);
+    if (state.fps && combos.fps) combos.fps.setValue(state.fps);
+    if (state.transition && combos.transition) combos.transition.setValue(state.transition);
 
     const textMap = {
       "projectType-custom":      "projectTypeCustom",
       "artStyle-custom":         "artStyleCustom",
       "cameraAngle-custom":      "cameraAngleCustom",
+      "cameraMovement-custom":   "cameraMovementCustom",
       "lighting-custom":         "lightingCustom",
       "background-custom":       "backgroundCustom",
       "mood-custom":             "moodCustom",
@@ -997,7 +1902,8 @@
       "watermark-custom-pos":    "watermarkCustomPosition",
       "watermark-text":          "watermarkText",
       "custom-resolution":       "customResolution",
-      "additional-desc":         "additionalDescription"
+      "additional-desc":         "additionalDescription",
+      "duration-custom":         "durationCustom"
     };
     Object.keys(textMap).forEach(function (id) {
       const el = document.getElementById(id);
@@ -1014,7 +1920,9 @@
       { grid: "renderingGrid",     values: state.renderingQuality ? [state.renderingQuality] : [] },
       { grid: "expansionGrid",     values: state.promptExpansion ? [state.promptExpansion] : [] },
       { grid: "aiPresetGrid",      values: state.aiPreset ? [state.aiPreset] : [] },
-      { grid: "watermarkPosGrid",  values: state.watermarkPosition ? [state.watermarkPosition] : [] }
+      { grid: "watermarkPosGrid",  values: state.watermarkPosition ? [state.watermarkPosition] : [] },
+      { grid: "motionStrengthGrid", values: state.motionStrength ? [state.motionStrength] : [] },
+      { grid: "loopGrid",          values: state.loop ? [state.loop] : [] }
     ];
     activeChips.forEach(function (g) {
       const grid = document.getElementById(g.grid);
@@ -1035,6 +1943,17 @@
 
     // Color palette: rebuild via re-init
     initColorPalette();
+
+    // Re-apply output mode to ensure UI consistency (PF-L2)
+    if (state.outputMode) {
+      // The initOutputMode already ran, but we need to re-apply the mode-specific UI
+      // sections visibility, AI preset chips, aspect ratio grid, labels
+      toggleSectionsForMode(state.outputMode);
+      rebuildAiPresetChips(state.outputMode);
+      rebuildAspectRatioGrid(state.outputMode);
+      updateRenderingQualityLabel(state.outputMode);
+      updateOutputPanelLabels(state.outputMode);
+    }
   }
 
   /* ===========================================================
@@ -1162,22 +2081,108 @@
     $("#clearBtn").addEventListener("click", doClear);
     $("#resetAllBtn").addEventListener("click", doResetAll);
 
-    $("#copyPromptBtn").addEventListener("click", function () {
-      if (!state.lastResult || !state.lastResult.prompt) {
-        toast("Nothing to copy yet.", "error"); return;
-      }
-      copyToClipboard(state.lastResult.prompt).then(function (ok) {
-        toast(ok ? "Prompt copied." : "Copy failed.", ok ? "success" : "error");
+    // PF-L6: Randomize button
+    const randomizeBtn = $("#randomizeBtn");
+    if (randomizeBtn) {
+      randomizeBtn.addEventListener("click", doRandomize);
+    }
+
+    // PF-L5: Copy per-model buttons
+    if (copyPromptBtn) {
+      copyPromptBtn.addEventListener("click", function () {
+        if (!state.lastResult || !state.lastResult.prompt) {
+          toast("Nothing to copy yet.", "error"); return;
+        }
+        copyToClipboard(state.lastResult.prompt).then(function (ok) {
+          toast(ok ? "Prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
       });
-    });
-    $("#copyNegativeBtn").addEventListener("click", function () {
-      if (!state.lastResult || !state.lastResult.negative) {
-        toast("Nothing to copy yet.", "error"); return;
-      }
-      copyToClipboard(state.lastResult.negative).then(function (ok) {
-        toast(ok ? "Negative prompt copied." : "Copy failed.", ok ? "success" : "error");
+    }
+
+    if (copyNegativeBtn) {
+      copyNegativeBtn.addEventListener("click", function () {
+        if (!state.lastResult || !state.lastResult.negative) {
+          toast("Nothing to copy yet.", "error"); return;
+        }
+        copyToClipboard(state.lastResult.negative).then(function (ok) {
+          toast(ok ? "Negative prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
       });
-    });
+    }
+
+    if (copyNaturalBtn) {
+      copyNaturalBtn.addEventListener("click", function () {
+        PF.Share.copyNatural().then(function (ok) {
+          toast(ok ? "Natural language prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyMjBtn) {
+      copyMjBtn.addEventListener("click", function () {
+        PF.Share.copyMidjourney().then(function (ok) {
+          toast(ok ? "Midjourney prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copySdxlBtn) {
+      copySdxlBtn.addEventListener("click", function () {
+        PF.Share.copySDXL().then(function (ok) {
+          toast(ok ? "SDXL prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyRunwayBtn) {
+      copyRunwayBtn.addEventListener("click", function () {
+        PF.Share.copyRunway().then(function (ok) {
+          toast(ok ? "Runway prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyPikaBtn) {
+      copyPikaBtn.addEventListener("click", function () {
+        PF.Share.copyPika().then(function (ok) {
+          toast(ok ? "Pika prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copySoraBtn) {
+      copySoraBtn.addEventListener("click", function () {
+        PF.Share.copySora().then(function (ok) {
+          toast(ok ? "Sora prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyKlingBtn) {
+      copyKlingBtn.addEventListener("click", function () {
+        PF.Share.copyKling().then(function (ok) {
+          toast(ok ? "Kling prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    if (copyLumaBtn) {
+      copyLumaBtn.addEventListener("click", function () {
+        PF.Share.copyLuma().then(function (ok) {
+          toast(ok ? "Luma prompt copied." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
+
+    // PF-L5: Copy All (prompt + negative + settings)
+    const copyAllBtn = $("#copyAllBtn");
+    if (copyAllBtn) {
+      copyAllBtn.addEventListener("click", function () {
+        PF.Share.copyAll().then(function (ok) {
+          toast(ok ? "All copied (prompt + negative + settings)." : "Copy failed.", ok ? "success" : "error");
+        });
+      });
+    }
 
     $("#saveFavoriteBtn").addEventListener("click", function () {
       if (!state.lastResult) return;
@@ -1225,6 +2230,76 @@
         toast("Favorites cleared.");
       }
     });
+
+    // PF-L5: Export/Import/Share buttons
+    if (exportBtn) {
+      exportBtn.addEventListener("click", function () {
+        PF.Share.exportToFile();
+      });
+    }
+
+    if (importBtn && importFileInput) {
+      importBtn.addEventListener("click", function () {
+        importFileInput.click();
+      });
+      importFileInput.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        PF.Share.importFromFile(file).catch(function (err) {
+          toast("Import failed: " + err.message, "error");
+        });
+        importFileInput.value = "";
+      });
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        PF.Share.copyShareLink();
+      });
+    }
+
+    // PF-L6: History search & filter toolbar
+    const historySearch = $("#historySearch");
+    const historyFilterMode = $("#historyFilterMode");
+    const historyFilterPreset = $("#historyFilterPreset");
+
+    function refreshHistoryPresets() {
+      if (!historyFilterPreset) return;
+      const presets = History.getHistoryPresets();
+      const currentValue = historyFilterPreset.value;
+      historyFilterPreset.innerHTML = '<option value="">All Presets</option>';
+      presets.forEach(function (preset) {
+        const opt = document.createElement("option");
+        opt.value = preset;
+        opt.textContent = preset;
+        historyFilterPreset.appendChild(opt);
+      });
+      // Restore selection if still valid
+      if (presets.includes(currentValue)) {
+        historyFilterPreset.value = currentValue;
+      }
+    }
+
+    function applyHistoryFilters() {
+      const query = historySearch ? historySearch.value : "";
+      const modeFilter = historyFilterMode ? historyFilterMode.value : "";
+      const presetFilter = historyFilterPreset ? historyFilterPreset.value : "";
+      renderHistory(query, modeFilter, presetFilter);
+      refreshHistoryPresets();
+    }
+
+    if (historySearch) {
+      historySearch.addEventListener("input", applyHistoryFilters);
+    }
+    if (historyFilterMode) {
+      historyFilterMode.addEventListener("change", applyHistoryFilters);
+    }
+    if (historyFilterPreset) {
+      historyFilterPreset.addEventListener("change", applyHistoryFilters);
+    }
+
+    // Initial preset population
+    refreshHistoryPresets();
   }
 
   /* ===========================================================
@@ -1236,9 +2311,20 @@
   }
 
   /* ===========================================================
-     Boot
+     Boot — waits for async data load (pf:data-ready)
      =========================================================== */
-  function boot() {
+  async function boot() {
+    // Initialize i18n first (PF-L4)
+    await i18n.init();
+
+    // Wire language toggle button
+    const langToggle = document.getElementById("langToggle");
+    if (langToggle) {
+      langToggle.addEventListener("click", function () {
+        i18n.toggleLanguage();
+      });
+    }
+
     initComboboxes();
     bindInputs();
     initColorPalette();
@@ -1250,6 +2336,8 @@
     initAspectRatios();
     initWatermarkPosition();   // Issue #8
     initSubjects();            // Issue #10
+    initMotionStrength();      // PF-L2 Video
+    initLoop();                // PF-L2 Video
     initDropzone("subject-dropzone", "subject-file", "subject-previews", "subjectImages");
     initDropzone("background-dropzone", "background-file", "background-previews", "backgroundImages");
     wireButtons();
@@ -1257,6 +2345,25 @@
     setYear();
     renderHistory();
     renderFavorites();
+
+    // Output Mode Toggle (PF-L2) — must run after all UI is initialized
+    initOutputMode();
+
+    // PF-L5: Wire internal functions for share.js
+    if (window.PF && window.PF.Share && window.PF.Share.wireInternalFunctions) {
+      window.PF.Share.wireInternalFunctions({
+        syncUIFromState: syncUIFromState,
+        renderOutput: renderOutput,
+        renderHistory: renderHistory,
+        renderFavorites: renderFavorites,
+        toast: toast
+      });
+    }
+
+    // PF-L5: Initialize share from URL hash
+    if (window.PF && window.PF.Share && window.PF.Share.initShareFromHash) {
+      window.PF.Share.initShareFromHash();
+    }
 
     // Keyboard: Ctrl/Cmd+Enter generates
     document.addEventListener("keydown", function (e) {
@@ -1266,14 +2373,31 @@
       }
     });
 
-    // Welcome toast
-    setTimeout(function () { toast("Welcome to PromptForge. Configure & press Generate."); }, 500);
+    // Welcome toast (localized)
+    setTimeout(function () { toast(i18n.t("toast.welcome")); }, 500);
+  }
+
+  function startApp() {
+    if (window.PF_DATA) {
+      // Data already loaded (sync fallback or very fast)
+      boot();
+    } else {
+      // Wait for async loader
+      window.addEventListener("pf:data-ready", function onDataReady(e) {
+        window.removeEventListener("pf:data-ready", onDataReady);
+        boot();
+      });
+      window.addEventListener("pf:data-error", function onDataError(e) {
+        window.removeEventListener("pf:data-error", onDataError);
+        toast("Failed to load data: " + e.detail.message, "error");
+      });
+    }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
+    document.addEventListener("DOMContentLoaded", startApp);
   } else {
-    boot();
+    startApp();
   }
 
   // Expose for debugging

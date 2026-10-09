@@ -1,0 +1,74 @@
+{
+  "artStyles": [
+    { "value": "Photorealistic", "phrase": "photorealistic rendering" },
+    { "value": "Hyperrealistic", "phrase": "hyperrealistic detailing" },
+    { "value": "Cinematic", "phrase": "cinematic stylization" },
+    { "value": "Anime", "phrase": "anime illustration style" },
+    { "value": "Pixar", "phrase": "Pixar 3D animation style" },
+    { "value": "Minecraft", "phrase": "Minecraft voxel block style" },
+    { "value": "Low Poly", "phrase": "low poly 3D style" },
+    { "value": "Cyberpunk", "phrase": "cyberpunk neon aesthetic" },
+    { "value": "Fantasy", "phrase": "epic fantasy art style" },
+    { "value": "Dark Fantasy", "phrase": "dark fantasy art style" },
+    { "value": "Sci-Fi", "phrase": "science fiction art style" },
+    { "value": "Stylized 3D", "phrase": "stylized 3D render" },
+    { "value": "Blender Render", "phrase": "Blender Cycles render" },
+    { "value": "Oil Painting", "phrase": "oil painting texture" },
+    { "value": "Watercolor", "phrase": "watercolor illustration" },
+    { "value": "Concept Sketch", "phrase": "concept sketch with line art" },
+    { "value": "Comic Book", "phrase": "comic book illustration" },
+    { "value": "Pixel Art", "phrase": "retro pixel art" },
+    { "value": "Studio Ghibli", "phrase": "Studio Ghibli painterly style" },
+    { "value": "Digital Painting", "phrase": "digital painting" },
+    { "value": "Matte Painting", "phrase": "matte painting" },
+    { "value": "Claymation", "phrase": "claymation stop-motion style" },
+    { "value": "Vaporwave", "phrase": "vaporwave aesthetic" },
+    { "value": "Ukiyo-e", "phrase": "ukiyo-e Japanese woodblock style" },
+    { "value": "Gothic", "phrase": "gothic art style" },
+    { "value": "Noir", "phrase": "film noir monochrome style" }
+  ],
+  "typography": [
+    { "value": "Modern", "phrase": "modern sans-serif typography" },
+    { "value": "Luxury", "phrase": "elegant luxury serif typography" },
+    { "value": "Bold", "phrase": "bold heavy display typography" },
+    { "value": "Minimalist", "phrase": "minimalist clean typography" },
+    { "value": "Corporate", "phrase": "corporate professional typography" },
+    { "value": "Esports", "phrase": "aggressive esports display typography" },
+    { "value": "Minecraft Pixel", "phrase": "Minecraft pixel font typography" },
+    { "value": "Futuristic", "phrase": "futuristic sci-fi typography" },
+    { "value": "Hand-Lettered", "phrase": "hand-lettered script typography" },
+    { "value": "Vintage", "phrase": "vintage retro typography" },
+    { "value": "Gothic", "phrase": "gothic blackletter typography" },
+    { "value": "Graffiti", "phrase": "graffiti street typography" }
+  ],
+  "composition": [
+    { "value": "Center Focus", "phrase": "centered focus composition" },
+    { "value": "Rule of Thirds", "phrase": "rule-of-thirds composition" },
+    { "value": "Symmetrical", "phrase": "symmetrical balanced composition" },
+    { "value": "Dynamic Layout", "phrase": "dynamic asymmetric composition" },
+    { "value": "Minimalist", "phrase": "minimalist negative-space composition" },
+    { "value": "Golden Ratio", "phrase": "golden-ratio spiral composition" }
+  ],
+  "watermarkPositions": [
+    { "value": "Center", "phrase": "centered watermark" },
+    { "value": "Top Center", "phrase": "top-center watermark" },
+    { "value": "Bottom Center", "phrase": "bottom-center watermark" },
+    { "value": "Top Left", "phrase": "top-left watermark" },
+    { "value": "Top Right", "phrase": "top-right watermark" },
+    { "value": "Bottom Left", "phrase": "bottom-left watermark" },
+    { "value": "Bottom Right", "phrase": "bottom-right watermark" },
+    { "value": "Custom Position", "phrase": "custom-position watermark" }
+  ],
+  "subjectImportance": [
+    { "value": "Primary", "phrase": "primary subject" },
+    { "value": "Secondary", "phrase": "secondary subject" },
+    { "value": "Tertiary", "phrase": "tertiary subject" },
+    { "value": "Background", "phrase": "background subject" }
+  ],
+  "promptExpansion": [
+    { "value": "Short", "weight": 0 },
+    { "value": "Medium", "weight": 1 },
+    { "value": "Detailed", "weight": 2 },
+    { "value": "Extreme", "weight": 3 }
+  ]
+}

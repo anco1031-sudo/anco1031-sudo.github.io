@@ -1,0 +1,50 @@
+{
+  "negativeBase": [
+    "low quality",
+    "blurry",
+    "distorted",
+    "deformed",
+    "bad anatomy",
+    "extra limbs",
+    "missing limbs",
+    "watermark",
+    "signature",
+    "text artifacts",
+    "jpeg artifacts",
+    "oversaturated",
+    "underexposed",
+    "overexposed",
+    "grainy",
+    "noisy",
+    "poor composition",
+    "cropped subject",
+    "out of frame"
+  ],
+  "negativeByMood": {
+    "Horror": ["overly bright", "cheerful palette"],
+    "Luxury": ["cluttered background", "messy details", "harsh shadows"],
+    "Professional": ["chaotic elements", "excessive effects", "amateur render"],
+    "Friendly": ["dark mood", "horror elements"],
+    "Epic": ["flat lighting", "low contrast", "bland composition"]
+  },
+  "negativeVideoBase": [
+    "warping",
+    "morphing",
+    "flicker",
+    "temporal flicker",
+    "extra limbs",
+    "inconsistent face",
+    "physics violations",
+    "teleporting objects",
+    "blurry motion",
+    "frame blending artifacts",
+    "shape-shifting",
+    "sudden cuts",
+    "jitter",
+    "ghosting",
+    "motion blur artifacts",
+    "inconsistent lighting",
+    "color shift",
+    "identity drift"
+  ]
+}

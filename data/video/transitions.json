@@ -1,0 +1,10 @@
+{
+  "transitions": [
+    { "value": "Cut", "phrase": "hard cut transition" },
+    { "value": "Fade", "phrase": "fade in/out transition" },
+    { "value": "Dissolve", "phrase": "cross dissolve transition" },
+    { "value": "Morph", "phrase": "morph transition between scenes" },
+    { "value": "Whip Pan", "phrase": "whip pan transition" },
+    { "value": "None", "phrase": "no transition" }
+  ]
+}

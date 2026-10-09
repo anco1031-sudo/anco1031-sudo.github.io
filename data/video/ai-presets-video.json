@@ -1,0 +1,36 @@
+{
+  "aiPresets": [
+    {
+      "value": "Runway Gen-3",
+      "suffix": ", camera: slow dolly-in, motion: normal, duration 5s, 24fps, aspect 16:9",
+      "negativeSuffix": "warping, morphing, flicker, extra limbs, inconsistent face",
+      "paramStyle": false
+    },
+    {
+      "value": "Pika",
+      "suffix": "/create + motion strength:normal + --ar 16:9 --fps 24 --dur 5s",
+      "negativeSuffix": "warping, morphing, flicker, extra limbs, inconsistent face, sudden cuts",
+      "paramStyle": true
+    },
+    {
+      "value": "Sora",
+      "suffix": "Duration: 5 seconds, 24 fps, 16:9, seamless loop: no.",
+      "negativeSuffix": "physics violations, teleporting objects",
+      "paramStyle": false,
+      "preferNatural": true
+    },
+    {
+      "value": "Kling",
+      "suffix": ", professional cinematography, 5s, 30fps",
+      "negativeSuffix": "blurry motion, frame blending artifacts",
+      "paramStyle": false,
+      "preferNatural": true
+    },
+    {
+      "value": "Luma Dream Machine",
+      "suffix": " --motion normal",
+      "negativeSuffix": "temporal flicker, shape-shifting",
+      "paramStyle": true
+    }
+  ]
+}

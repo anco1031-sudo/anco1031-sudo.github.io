@@ -1,17 +1,18 @@
 <div align="center">
-  <a href="https://azkivip.github.io/PromptForge/">
-    <img src="assets/logo-cropped.png" alt="PromptForge" width="80" height="80" />
+  <a href="https://lu5her.github.io/PromptForge-Louis/">
+    <img src="assets/logo-cropped.png" alt="PromptForge-Louis" width="80" height="80" />
   </a>
-  <h1>PromptForge</h1>
-  <p><strong>Premium Visual Prompt Generator</strong></p>
+  <h1>PromptForge-Louis</h1>
+  <p><strong>Premium Visual Prompt Generator for AI Image & Video</strong></p>
   <p>
     <img src="https://img.shields.io/badge/Open_Source-3B82F6?style=flat-square" alt="Open Source" />
     <img src="https://img.shields.io/badge/Vanilla_HTML_%2F_CSS_%2F_JS-1E293B?style=flat-square" alt="Vanilla HTML / CSS / JS" />
     <img src="https://img.shields.io/badge/GitHub_Pages_Ready-10B981?style=flat-square" alt="GitHub Pages Ready" />
+    <img src="https://img.shields.io/badge/i18n_TH%2FEN-F59E0B?style=flat-square" alt="i18n TH/EN" />
   </p>
 </div>
 
-> Craft cinematic, professional prompts for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image generation.
+> Craft cinematic, professional prompts for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation.
 
 Built with **HTML5, CSS3, and Vanilla JavaScript** — no frameworks, no build step, no dependencies. Just open `index.html` or host the folder on GitHub Pages.
 
@@ -25,13 +26,14 @@ Built with **HTML5, CSS3, and Vanilla JavaScript** — no frameworks, no build s
 - **Collapsible accordion sections** — independent (open multiple at once), no reserved space when collapsed.
 - **Smart searchable comboboxes** — fuzzy-search dropdowns with keyboard navigation, custom-input support, and option grouping.
 - **Rule-based generation engine** — not string concatenation. Auto-enriches prompts based on selected combinations (e.g. *Minecraft + Dark Fantasy + Epic + Volumetric Lighting* automatically adds *cinematic atmosphere, dramatic shadows, high detail environment, professional composition, epic fantasy mood*).
-- **AI presets** — ChatGPT Images, Flux, SDXL, Midjourney, Gemini. Each preset produces a prompt formatted for that model (natural-language vs tag-list vs `--ar` parameters).
+- **AI presets** — ChatGPT Images, Flux, SDXL, Midjourney, Gemini (Image) + Runway Gen-3, Pika, Sora, Kling, Luma Dream Machine (Video). Each preset produces a prompt formatted for that model (natural-language vs tag-list vs `--ar` parameters).
 - **Color palette builder** — single / dual / multi modes, color picker + HEX input, live preview.
 - **Image uploads** — drag-and-drop reference images for Subject and Background.
 - **History + Favorites** — LocalStorage-backed, with restore, copy, star, and delete.
 - **SEO-ready** — `robots.txt`, `sitemap.xml`, `manifest.json`, Open Graph, Twitter Card, JSON-LD, multi-size PNG favicon + ICO.
 - **Responsive** — adapts gracefully from large desktop down to mobile, with hamburger menu at ≤980px.
 - **Accessible** — keyboard navigation, ARIA roles, reduced-motion support, focus management.
+- **i18n (TH/EN)** — UI language toggle (top-right), persisted in localStorage, default Thai. Prompt output stays English for best model compatibility.
 
 ---
 
@@ -70,17 +72,28 @@ PromptForge/
 
 ## How to Use
 
-1. **Open `index.html`** in any modern browser. No server, no build step required.
-2. On the **left panel**, configure your prompt:
+**⚠️ Must run via local HTTP server** — `file://` protocol is blocked by browser CORS for `fetch()` calls to load JSON data modules.
+
+```bash
+# Quick start (Python 3)
+python3 -m http.server 8080
+# Then open http://localhost:8080/index.html
+```
+
+Alternative: `npx serve .` or any static file server.
+
+Once running:
+
+1. On the **left panel**, configure your prompt:
    - Pick a **Project Type** category & preset (or type a custom one).
    - Open each accordion section to set **Subject, Art Style, Camera Angle, Lighting, Color Palette, Background, Mood, Typography, Effects, Aspect Ratio**, and **Advanced** options.
    - Each searchable field is a combobox — click it, then type to fuzzy-search.
-3. Click **Generate** (or press `Ctrl/Cmd + Enter`).
-4. On the **right panel**:
+2. Click **Generate** (or press `Ctrl/Cmd + Enter`).
+3. On the **right panel**:
    - Read the **Prompt** and **Negative Prompt**.
    - **Copy** either with one click.
    - **Save to Favorites** or **Save to History**.
-5. **History** and **Favorites** sections below the output let you **restore**, **copy**, **star**, or **delete** any saved entry. All data is stored in your browser's LocalStorage — nothing leaves your machine.
+4. **History** and **Favorites** sections below the output let you **restore**, **copy**, **star**, or **delete** any saved entry. All data is stored in your browser's LocalStorage — nothing leaves your machine.
 
 ---
 
@@ -131,16 +144,17 @@ Works in all modern browsers (Chrome, Firefox, Safari, Edge). Uses ES6+, CSS Gri
 
 ## License
 
-MIT License — see [LICENSE](https://github.com/AzkiVIP/PromptForge/blob/main/LICENSE).
+MIT License — see [LICENSE](LICENSE).
 
 ---
 
 ## Repository
 
-[https://github.com/AzkiVIP/PromptForge](https://github.com/AzkiVIP/PromptForge)
+[https://github.com/lu5her/PromptForge-Louis](https://github.com/lu5her/PromptForge-Louis)
 
 Built with HTML, CSS &amp; Vanilla JavaScript.
 
 ## Credits
 
-Created by AzkiVIP  <img src="https://i.imgur.com/vMTgvCV.png" width="16">.
+Based on PromptForge by AzkiVIP (MIT).
+Customized by Louis Team.  <img src="https://i.imgur.com/vMTgvCV.png" width="16">.

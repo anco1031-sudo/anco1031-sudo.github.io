@@ -1,5 +1,5 @@
-# PromptForge robots.txt
-# https://azkivip.github.io/PromptForge/
+# PromptForge-Louis robots.txt
+# https://lu5her.github.io/PromptForge-Louis/
 
 User-agent: *
 Allow: /
@@ -35,4 +35,4 @@ User-agent: PerplexityBot
 Allow: /
 
 # Sitemap
-Sitemap: https://azkivip.github.io/PromptForge/sitemap.xml
+Sitemap: https://lu5her.github.io/PromptForge-Louis/sitemap.xml
