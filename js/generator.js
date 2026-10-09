@@ -281,9 +281,199 @@
     return base;
   }
 
+  /* Compose video prompt — adds motion/time params before quality tail */
+  function composeVideo(p, state) {
+    const isVideo = state.outputMode === "video";
+    if (!isVideo) return composeNatural(p);
+
+    // Start with natural language base
+    let base = composeNatural(p);
+
+    // Get the active video preset for syntax style
+    const preset = D.AI_PRESETS_VIDEO.find(function (a) { return a.value === state.aiPreset; });
+
+    // Build motion/time values from user selections
+    let cameraMovementPhrase = "";
+    if (state.cameraMovement) {
+      const cm = (D.CAMERA_MOVEMENTS || []).find(function (c) { return c.value === state.cameraMovement; });
+      cameraMovementPhrase = cm ? cm.phrase : state.cameraMovement;
+    } else if (state.cameraMovementCustom && state.cameraMovementCustom.trim()) {
+      cameraMovementPhrase = state.cameraMovementCustom.trim();
+    }
+
+    let durationPhrase = "";
+    let durationSeconds = "";
+    if (state.duration) {
+      const dur = (D.DURATIONS || []).find(function (d) { return d.value === state.duration; });
+      durationPhrase = dur ? dur.phrase : state.duration;
+      durationSeconds = state.duration.replace("s", "");
+    } else if (state.durationCustom && state.durationCustom.trim()) {
+      durationPhrase = state.durationCustom.trim() + " seconds";
+      durationSeconds = state.durationCustom.trim();
+    }
+
+    let fpsPhrase = "";
+    let fpsValue = "";
+    if (state.fps) {
+      const fps = (D.FPS_OPTIONS || []).find(function (f) { return f.value === state.fps; });
+      fpsPhrase = fps ? fps.phrase : state.fps + " fps";
+      fpsValue = state.fps;
+    }
+
+    let motionStrengthPhrase = "";
+    let motionStrengthValue = "";
+    if (state.motionStrength) {
+      const ms = (D.MOTION_STRENGTH || []).find(function (m) { return m.value === state.motionStrength; });
+      motionStrengthPhrase = ms ? ms.phrase : state.motionStrength.toLowerCase();
+      motionStrengthValue = state.motionStrength.toLowerCase();
+    }
+
+    let loopPhrase = "";
+    if (state.loop) {
+      const lp = (D.LOOP_OPTIONS || []).find(function (l) { return l.value === state.loop; });
+      loopPhrase = lp ? lp.phrase : (state.loop.toLowerCase() === "on" ? "seamless loop" : "no loop");
+    }
+
+    let transitionPhrase = "";
+    if (state.transition) {
+      const tr = (D.TRANSITIONS || []).find(function (t) { return t.value === state.transition; });
+      if (tr && tr.value !== "None") transitionPhrase = tr.phrase;
+      else if (state.transition !== "None") transitionPhrase = state.transition.toLowerCase() + " transition";
+    }
+
+    // Aspect ratio
+    let aspectLabel = "";
+    let aspectRatioValue = "";
+    if (state.customResolution && state.customResolution.trim()) {
+      aspectLabel = state.customResolution.trim();
+      const arMatch = aspectLabel.match(/(\d+)[:x×*](\d+)/i);
+      if (arMatch) aspectRatioValue = arMatch[1] + ":" + arMatch[2];
+    } else if (state.aspectRatio) {
+      const ar = D.ASPECT_RATIOS.find(function (a) { return a.value === state.aspectRatio; });
+      if (ar) {
+        aspectLabel = ar.value;
+        aspectRatioValue = ar.value;
+      }
+    }
+
+    // Apply preset-specific syntax
+    if (preset) {
+      // For presets with paramStyle (Pika, Luma), use their suffix format with placeholder replacement
+      if (preset.paramStyle) {
+        let suffix = preset.suffix;
+        // Replace motion strength placeholder
+        if (motionStrengthValue) {
+          suffix = suffix.replace(/motion strength:[^\s+]+/i, "motion strength:" + motionStrengthValue)
+                         .replace(/--motion\s+\w+/i, "--motion " + motionStrengthValue);
+        }
+        // Replace duration placeholder
+        if (durationSeconds) {
+          suffix = suffix.replace(/--dur\s+\d+s?/i, "--dur " + durationSeconds + "s")
+                         .replace(/duration\s+\d+s?/i, "duration " + durationSeconds + "s");
+        }
+        // Replace fps placeholder
+        if (fpsValue) {
+          suffix = suffix.replace(/--fps\s+\d+/i, "--fps " + fpsValue);
+        }
+        // Replace aspect ratio placeholder
+        if (aspectRatioValue) {
+          suffix = suffix.replace(/--ar\s+[\d:]+/i, "--ar " + aspectRatioValue);
+        }
+        base = base.replace(/[.!?]$/, "") + suffix;
+      } else {
+        // Natural language presets (Runway, Sora, Kling) — use preset suffix as template
+        // Replace placeholders in preset suffix with user selections
+        let suffix = preset.suffix || "";
+        
+        // Runway pattern: ", camera: slow dolly-in, motion: normal, duration 5s, 24fps, aspect 16:9"
+        if (cameraMovementPhrase) {
+          suffix = suffix.replace(/camera:\s*[^,]+/i, "camera: " + cameraMovementPhrase);
+        }
+        if (motionStrengthValue) {
+          suffix = suffix.replace(/motion:\s*[^,]+/i, "motion: " + motionStrengthValue);
+        }
+        if (durationSeconds) {
+          suffix = suffix.replace(/duration\s*\d+s?/i, "duration " + durationSeconds + "s");
+        }
+        if (fpsValue) {
+          suffix = suffix.replace(/\d+fps/i, fpsValue + "fps");
+        }
+        if (aspectRatioValue) {
+          suffix = suffix.replace(/aspect\s*[\d:]+/i, "aspect " + aspectRatioValue);
+        }
+        
+        // Sora pattern: "Duration: 5 seconds, 24 fps, 16:9, seamless loop: no."
+        if (durationPhrase) {
+          suffix = suffix.replace(/Duration:\s*[^,]+/i, "Duration: " + durationPhrase);
+        }
+        if (fpsPhrase) {
+          suffix = suffix.replace(/\d+\s*fps/i, fpsPhrase);
+        }
+        if (aspectRatioValue) {
+          suffix = suffix.replace(/\d+:\d+/i, aspectRatioValue);
+        }
+        if (loopPhrase) {
+          suffix = suffix.replace(/seamless loop:\s*\w+/i, "seamless loop: " + (loopPhrase === "seamless loop" ? "yes" : "no"));
+        }
+        
+        // Kling pattern: ", professional cinematography, 5s, 30fps"
+        if (durationSeconds) {
+          suffix = suffix.replace(/\d+s\b/, durationSeconds + "s");
+        }
+        if (fpsValue) {
+          suffix = suffix.replace(/\d+fps\b/, fpsValue + "fps");
+        }
+
+        // Append the processed suffix with proper separator
+        if (suffix && suffix.trim()) {
+          const trimmedBase = base.replace(/[.!?]$/, "");
+          // If suffix doesn't start with comma/space, add one
+          const needsSeparator = !/^[,\s]/.test(suffix.trim());
+          base = trimmedBase + (needsSeparator ? ", " : "") + suffix.trim();
+        } else {
+          // Fallback: use our built motion parts
+          const fallbackParts = [];
+          if (cameraMovementPhrase) fallbackParts.push(cameraMovementPhrase);
+          if (durationPhrase) fallbackParts.push(durationPhrase);
+          if (fpsPhrase) fallbackParts.push(fpsPhrase);
+          if (motionStrengthPhrase) fallbackParts.push("motion: " + motionStrengthPhrase);
+          if (loopPhrase) fallbackParts.push(loopPhrase);
+          if (transitionPhrase) fallbackParts.push(transitionPhrase);
+          if (fallbackParts.length) {
+            base = base.replace(/[.!?]$/, "") + ", " + fallbackParts.join(", ") + ".";
+          }
+        }
+      }
+    } else {
+      // No preset selected — default natural language with motion parts
+      const fallbackParts = [];
+      if (cameraMovementPhrase) fallbackParts.push(cameraMovementPhrase);
+      if (durationPhrase) fallbackParts.push(durationPhrase);
+      if (fpsPhrase) fallbackParts.push(fpsPhrase);
+      if (motionStrengthPhrase) fallbackParts.push("motion: " + motionStrengthPhrase);
+      if (loopPhrase) fallbackParts.push(loopPhrase);
+      if (transitionPhrase) fallbackParts.push(transitionPhrase);
+      if (fallbackParts.length) {
+        base = base.replace(/[.!?]$/, "") + ", " + fallbackParts.join(", ") + ".";
+      }
+    }
+
+    // Add aspect ratio/resolution note for natural language models (if not already in suffix)
+    if (aspectLabel && preset && preset.preferNatural && !/aspect|resolution/i.test(base.slice(-100))) {
+      base += " Aspect ratio / resolution: " + aspectLabel + ".";
+    } else if (aspectLabel && !preset && !/aspect|resolution/i.test(base.slice(-100))) {
+      base += " Aspect ratio / resolution: " + aspectLabel + ".";
+    }
+
+    return base;
+  }
+
   /* Negative prompt builder */
   function buildNegative(state, aiPreset) {
-    const neg = D.NEGATIVE_BASE.slice();
+    const isVideo = state.outputMode === "video";
+    const negBase = isVideo ? (D.NEGATIVE_VIDEO_BASE || D.NEGATIVE_BASE) : D.NEGATIVE_BASE;
+    const neg = negBase.slice();
+    
     if (state.mood && D.NEGATIVE_BY_MOOD[state.mood]) {
       neg.push.apply(neg, D.NEGATIVE_BY_MOOD[state.mood]);
     }
@@ -295,9 +485,10 @@
     var filtered = neg.filter(function (n) { return !/watermark/.test(n); });
     let out = uniq(filtered).join(", ");
 
-    const preset = D.AI_PRESETS.find(function (a) { return a.value === aiPreset; });
+    const presetsList = isVideo ? D.AI_PRESETS_VIDEO : D.AI_PRESETS;
+    const preset = presetsList.find(function (a) { return a.value === aiPreset; });
     if (preset && preset.negativeSuffix) {
-      // If user explicitly wants a watermark, strip "watermark" from SDXL negative suffix too
+      // If user explicitly wants a watermark, strip "watermark" from negative suffix too
       var suffix = preset.negativeSuffix;
       if (state.watermarkText && state.watermarkText.trim()) {
         suffix = suffix.replace(/,?\s*watermark/gi, "");
@@ -312,7 +503,9 @@
   function generate(state) {
     if (!state) return null;
     const payload = buildPayload(state);
-    const preset = D.AI_PRESETS.find(function (a) { return a.value === state.aiPreset; }) || D.AI_PRESETS[0];
+    const isVideo = state.outputMode === "video";
+    const presetsList = isVideo ? D.AI_PRESETS_VIDEO : D.AI_PRESETS;
+    const preset = presetsList.find(function (a) { return a.value === state.aiPreset; }) || presetsList[0];
 
     let prompt;
     let aspectTag = "";
@@ -331,7 +524,10 @@
       }
     }
 
-    if (preset.value === "Midjourney") {
+    if (isVideo) {
+      // Video mode: use composeVideo
+      prompt = composeVideo(payload, state);
+    } else if (preset.value === "Midjourney") {
       prompt = composeMidjourney(payload, state);
       // Midjourney already includes --ar inline
     } else if (preset.value === "SDXL") {
@@ -364,6 +560,14 @@
       meta.push({ label: "Subjects", value: String(state.subjects.filter(function (s) { return s.text && s.text.trim(); }).length) });
     }
     if (state.watermarkText && state.watermarkText.trim()) meta.push({ label: "Watermark", value: state.watermarkPosition || "Bottom Right" });
+    // Video-specific meta
+    if (isVideo) {
+      if (state.duration) meta.push({ label: "Duration", value: state.duration });
+      else if (state.durationCustom) meta.push({ label: "Duration", value: state.durationCustom + "s" });
+      if (state.fps) meta.push({ label: "FPS", value: state.fps + " fps" });
+      if (state.motionStrength) meta.push({ label: "Motion", value: state.motionStrength });
+      if (state.loop) meta.push({ label: "Loop", value: state.loop });
+    }
 
     return {
       prompt: prompt,
