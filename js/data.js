@@ -264,6 +264,7 @@
       /* Negatives */
       NEGATIVE_BASE: negativesData.negativeBase,
       NEGATIVE_BY_MOOD: negativesData.negativeByMood,
+      NEGATIVE_VIDEO_BASE: negativesData.negativeVideoBase || [],
 
       /* Color palettes (for UI) */
       COLOR_PALETTES: colorPalettesData.palettes,

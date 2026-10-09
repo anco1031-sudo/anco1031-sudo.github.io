@@ -62,6 +62,50 @@
     lastResult:          null
   };
 
+  /* ===========================================================
+     PF-L6: Field Lock State — tracks which fields are locked from randomization
+     =========================================================== */
+  const fieldLocks = {
+    projectTypeCategory: false,
+    projectTypePreset: false,
+    projectTypeCustom: false,
+    subjects: false,
+    artStyle: false,
+    artStyleCustom: false,
+    cameraAngle: false,
+    cameraAngleCustom: false,
+    cameraMovement: false,
+    cameraMovementCustom: false,
+    lighting: false,
+    lightingCustom: false,
+    colorMode: false,
+    colors: false,
+    background: false,
+    backgroundCustom: false,
+    mood: false,
+    moodCustom: false,
+    typography: false,
+    typographyCustom: false,
+    effects: false,
+    customEffects: false,
+    watermarkPosition: false,
+    watermarkCustomPosition: false,
+    watermarkText: false,
+    aspectRatio: false,
+    customResolution: false,
+    composition: false,
+    renderingQuality: false,
+    promptExpansion: false,
+    aiPreset: false,
+    additionalDescription: false,
+    duration: false,
+    durationCustom: false,
+    fps: false,
+    motionStrength: false,
+    loop: false,
+    transition: false
+  };
+
   /* ComboBox instances registry */
   const combos = {};
 
@@ -871,6 +915,19 @@
       const actions = document.createElement("div");
       actions.className = "subject-row__actions";
 
+      // Lock button for subject (PF-L6)
+      const lockBtn = document.createElement("button");
+      lockBtn.type = "button";
+      lockBtn.className = "subject-row__lock" + (fieldLocks.subjects ? " is-locked" : "");
+      lockBtn.setAttribute("aria-label", fieldLocks.subjects ? "Unlock subject from randomization" : "Lock subject from randomization");
+      lockBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      lockBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        fieldLocks.subjects = !fieldLocks.subjects;
+        lockBtn.classList.toggle("is-locked", fieldLocks.subjects);
+        lockBtn.setAttribute("aria-label", fieldLocks.subjects ? "Unlock subject from randomization" : "Lock subject from randomization");
+      });
+
       const upBtn = document.createElement("button");
       upBtn.type = "button";
       upBtn.className = "subject-row__btn";
@@ -909,6 +966,7 @@
         renderSubjects();
       });
 
+      actions.appendChild(lockBtn);
       actions.appendChild(upBtn);
       actions.appendChild(downBtn);
       actions.appendChild(delBtn);
@@ -1121,6 +1179,238 @@
           "<strong>Luma:</strong> " + (lumaResult ? lumaResult.prompt : "");
       }
     }
+
+    // PF-L6: Update quality meter
+    updateQualityMeter();
+  }
+
+  /* ===========================================================
+     PF-L6: Quality Meter — completion % + token estimate
+     =========================================================== */
+  const qualityMeterFill = $("#qualityMeterFill");
+  const qualityMeterPct = $("#qualityMeterPct");
+  const qualityMeterTokens = $("#qualityMeterTokens");
+  const qualityMeterWarning = $("#qualityMeterWarning");
+  const qualityMeterBar = $("#qualityMeter");
+
+  // Model token limits (approximate)
+  const MODEL_LIMITS = {
+    "ChatGPT Images": 4096,
+    "Flux": 512,
+    "SDXL": 77,
+    "Midjourney": 2500,
+    "Gemini": 2048,
+    "Runway Gen-3": 500,
+    "Pika": 500,
+    "Sora": 1000,
+    "Kling": 500,
+    "Luma Dream Machine": 500
+  };
+
+  function estimateTokens(text) {
+    if (!text) return 0;
+    // Rough estimate: ~1 token per 4 characters for English
+    return Math.ceil(text.length / 4);
+  }
+
+  function calculateCompletion(state) {
+    // 14 core sections (per spec §6 item 7)
+    const sections = [
+      // 1. Project Type (category OR preset OR custom)
+      !!(state.projectTypeCategory || state.projectTypePreset || (state.projectTypeCustom && state.projectTypeCustom.trim())),
+      // 2. Subject (at least one with text)
+      !!(state.subjects && state.subjects.some(function (s) { return s.text && s.text.trim(); })),
+      // 3. Art Style
+      !!(state.artStyle || (state.artStyleCustom && state.artStyleCustom.trim())),
+      // 4. Camera Angle / Camera Movement (depends on mode)
+      state.outputMode === "video" 
+        ? !!(state.cameraMovement || (state.cameraMovementCustom && state.cameraMovementCustom.trim()))
+        : !!(state.cameraAngle || (state.cameraAngleCustom && state.cameraAngleCustom.trim())),
+      // 5. Lighting
+      !!(state.lighting || (state.lightingCustom && state.lightingCustom.trim())),
+      // 6. Color Palette (at least one color)
+      !!(state.colors && state.colors.length > 0),
+      // 7. Background
+      !!(state.background || (state.backgroundCustom && state.backgroundCustom.trim())),
+      // 8. Mood
+      !!(state.mood || (state.moodCustom && state.moodCustom.trim())),
+      // 9. Typography
+      !!(state.typography || (state.typographyCustom && state.typographyCustom.trim())),
+      // 10. Effects (built-in OR custom)
+      !!(state.effects && state.effects.length > 0 || (state.customEffects && state.customEffects.trim())),
+      // 11. Watermark
+      !!(state.watermarkText && state.watermarkText.trim()),
+      // 12. Aspect Ratio / Custom Resolution
+      !!(state.aspectRatio || (state.customResolution && state.customResolution.trim())),
+      // 13. Advanced (composition OR renderingQuality OR promptExpansion OR aiPreset)
+      !!(state.composition || state.renderingQuality || state.promptExpansion || state.aiPreset),
+      // 14. Additional Description
+      !!(state.additionalDescription && state.additionalDescription.trim())
+    ];
+    
+    const filled = sections.filter(Boolean).length;
+    return Math.round((filled / sections.length) * 100);
+  }
+
+  function updateQualityMeter() {
+    if (!qualityMeterFill || !qualityMeterPct || !qualityMeterTokens) return;
+    
+    const pct = calculateCompletion(state);
+    const promptText = state.lastResult ? state.lastResult.prompt : "";
+    const negativeText = state.lastResult ? state.lastResult.negative : "";
+    const tokenEstimate = estimateTokens(promptText + " " + negativeText);
+    
+    // Update bar
+    qualityMeterFill.style.width = pct + "%";
+    qualityMeterFill.setAttribute("aria-valuenow", pct);
+    
+    // Update color based on percentage
+    if (pct < 30) {
+      qualityMeterFill.style.background = "var(--danger)";
+    } else if (pct < 70) {
+      qualityMeterFill.style.background = "linear-gradient(90deg, var(--warning), var(--success))";
+    } else {
+      qualityMeterFill.style.background = "var(--success)";
+    }
+    
+    qualityMeterPct.textContent = pct + "%";
+    qualityMeterTokens.textContent = "~" + tokenEstimate + " tokens";
+    
+    // Token limit warning
+    const preset = state.aiPreset;
+    const limit = preset ? MODEL_LIMITS[preset] : null;
+    if (limit && tokenEstimate > limit) {
+      qualityMeterWarning.hidden = false;
+      qualityMeterWarning.textContent = "⚠ Exceeds " + preset + " limit (~" + limit + " tokens)";
+    } else if (limit && tokenEstimate > limit * 0.8) {
+      qualityMeterWarning.hidden = false;
+      qualityMeterWarning.textContent = "⚠ Approaching " + preset + " limit (~" + limit + " tokens)";
+    } else {
+      qualityMeterWarning.hidden = true;
+    }
+  }
+
+  /* ===========================================================
+     PF-L6: Randomize — fills unlocked fields with random values
+     =========================================================== */
+  function doRandomize() {
+    const randomizeBtn = $("#randomizeBtn");
+    if (randomizeBtn) {
+      randomizeBtn.classList.add("is-randomizing");
+      randomizeBtn.disabled = true;
+    }
+    
+    // Collect all randomizable fields with their option sources
+    const randomizableFields = [
+      // Project Type
+      { key: "projectTypeCategory", source: () => Object.keys(D.PROJECT_TYPE), lock: "projectTypeCategory", setter: (v) => { state.projectTypeCategory = v; rebuildProjectTypePresets(v); } },
+      { key: "projectTypePreset", source: () => D.PROJECT_TYPE[state.projectTypeCategory] || [], lock: "projectTypePreset", setter: (v) => { state.projectTypePreset = v; } },
+      { key: "projectTypeCustom", source: () => ["Custom Project " + Math.floor(Math.random() * 1000)], lock: "projectTypeCustom", setter: (v) => { state.projectTypeCustom = v; document.getElementById("projectType-custom").value = v; } },
+      
+      // Subject (special handling - multiple subjects)
+      { key: "subjects", source: () => ["Mystical forest guardian", "Cyberpunk samurai", "Steampunk airship captain", "Victorian ghost hunter", "Neon-lit street racer", "Ancient ruin explorer", "Cosmic entity", "Post-apocalyptic survivor", "Fantasy bard", "Mecha pilot"], lock: "subjects", setter: (v) => { 
+          if (!state.subjects.length) {
+            state.subjects.push({ id: makeSubjectId(), text: v, importance: "Primary" });
+          } else if (!fieldLocks.subjects) {
+            state.subjects[0].text = v;
+          }
+          renderSubjects();
+        } },
+      
+      // Art Style
+      { key: "artStyle", source: () => D.ART_STYLE.map(s => s.value), lock: "artStyle", setter: (v) => { state.artStyle = v; if (combos.artStyle) combos.artStyle.setValue(v); } },
+      { key: "artStyleCustom", source: () => ["Mixed media " + Math.floor(Math.random() * 100)], lock: "artStyleCustom", setter: (v) => { state.artStyleCustom = v; document.getElementById("artStyle-custom").value = v; } },
+      
+      // Camera Angle / Movement
+      { key: "cameraAngle", source: () => D.CAMERA_ANGLE.map(s => s.value), lock: "cameraAngle", setter: (v) => { state.cameraAngle = v; if (combos.cameraAngle) combos.cameraAngle.setValue(v); } },
+      { key: "cameraAngleCustom", source: () => ["Custom angle " + Math.floor(Math.random() * 100) + "°"], lock: "cameraAngleCustom", setter: (v) => { state.cameraAngleCustom = v; document.getElementById("cameraAngle-custom").value = v; } },
+      { key: "cameraMovement", source: () => (D.CAMERA_MOVEMENTS || []).map(s => s.value), lock: "cameraMovement", setter: (v) => { state.cameraMovement = v; if (combos.cameraMovement) combos.cameraMovement.setValue(v); } },
+      { key: "cameraMovementCustom", source: () => ["Custom movement " + Math.floor(Math.random() * 100)], lock: "cameraMovementCustom", setter: (v) => { state.cameraMovementCustom = v; document.getElementById("cameraMovement-custom").value = v; } },
+      
+      // Lighting
+      { key: "lighting", source: () => D.LIGHTING.map(s => s.value), lock: "lighting", setter: (v) => { state.lighting = v; if (combos.lighting) combos.lighting.setValue(v); } },
+      { key: "lightingCustom", source: () => ["Custom lighting " + Math.floor(Math.random() * 100)], lock: "lightingCustom", setter: (v) => { state.lightingCustom = v; document.getElementById("lighting-custom").value = v; } },
+      
+      // Color Palette
+      { key: "colorMode", source: () => ["single", "dual", "multi"], lock: "colorMode", setter: (v) => { state.colorMode = v; initColorPalette(); } },
+      { key: "colors", source: () => ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#06B6D4", "#F97316", "#84CC16", "#A855F7"], lock: "colors", setter: (v) => { state.colors = [v]; initColorPalette(); } },
+      
+      // Background
+      { key: "background", source: () => D.BACKGROUND.map(s => s.value), lock: "background", setter: (v) => { state.background = v; if (combos.background) combos.background.setValue(v); } },
+      { key: "backgroundCustom", source: () => ["Custom background " + Math.floor(Math.random() * 100)], lock: "backgroundCustom", setter: (v) => { state.backgroundCustom = v; document.getElementById("background-custom").value = v; } },
+      
+      // Mood
+      { key: "mood", source: () => D.MOOD.map(s => s.value), lock: "mood", setter: (v) => { state.mood = v; if (combos.mood) combos.mood.setValue(v); } },
+      { key: "moodCustom", source: () => ["Custom mood " + Math.floor(Math.random() * 100)], lock: "moodCustom", setter: (v) => { state.moodCustom = v; document.getElementById("mood-custom").value = v; } },
+      
+      // Typography
+      { key: "typography", source: () => D.TYPOGRAPHY.map(s => s.value), lock: "typography", setter: (v) => { state.typography = v; if (combos.typography) combos.typography.setValue(v); } },
+      { key: "typographyCustom", source: () => ["Custom typography " + Math.floor(Math.random() * 100)], lock: "typographyCustom", setter: (v) => { state.typographyCustom = v; document.getElementById("typography-custom").value = v; } },
+      
+      // Effects
+      { key: "effects", source: () => D.EFFECTS.map(s => s.value), lock: "effects", setter: (v) => { state.effects = [v]; initEffects(); } },
+      { key: "customEffects", source: () => ["floating particles, energy aura, magic sparks, volumetric lighting, lens flare"], lock: "customEffects", setter: (v) => { state.customEffects = v; document.getElementById("effects-custom").value = v; } },
+      
+      // Watermark
+      { key: "watermarkPosition", source: () => D.WATERMARK_POSITIONS.map(s => s.value), lock: "watermarkPosition", setter: (v) => { state.watermarkPosition = v; initWatermarkPosition(); } },
+      { key: "watermarkCustomPosition", source: () => ["Custom position " + Math.floor(Math.random() * 100)], lock: "watermarkCustomPosition", setter: (v) => { state.watermarkCustomPosition = v; document.getElementById("watermark-custom-pos").value = v; } },
+      { key: "watermarkText", source: () => ["@PromptForge", "@MyBrand", "© 2024", "Watermark"], lock: "watermarkText", setter: (v) => { state.watermarkText = v; document.getElementById("watermark-text").value = v; } },
+      
+      // Aspect Ratio
+      { key: "aspectRatio", source: () => D.ASPECT_RATIOS.map(s => s.value), lock: "aspectRatio", setter: (v) => { state.aspectRatio = v; rebuildAspectRatioGrid(state.outputMode); } },
+      { key: "customResolution", source: () => ["1920x1080", "3840x2160", "1080x1920", "1280x720", "2048x2048"], lock: "customResolution", setter: (v) => { state.customResolution = v; document.getElementById("custom-resolution").value = v; } },
+      
+      // Advanced
+      { key: "composition", source: () => D.COMPOSITION.map(s => s.value), lock: "composition", setter: (v) => { state.composition = v; initComposition(); } },
+      { key: "renderingQuality", source: () => D.RENDERING_QUALITY.map(s => s.value), lock: "renderingQuality", setter: (v) => { state.renderingQuality = v; initRendering(); } },
+      { key: "promptExpansion", source: () => D.PROMPT_EXPANSION.map(s => s.value), lock: "promptExpansion", setter: (v) => { state.promptExpansion = v; initExpansion(); } },
+      { key: "aiPreset", source: () => (state.outputMode === "video" ? D.AI_PRESETS_VIDEO : D.AI_PRESETS).map(s => s.value), lock: "aiPreset", setter: (v) => { state.aiPreset = v; rebuildAiPresetChips(state.outputMode); } },
+      
+      // Additional Description
+      { key: "additionalDescription", source: () => ["Add dramatic lighting. Enhance details. Make it cinematic.", "Focus on texture and material quality. Avoid blurry areas.", "Ensure coherent anatomy. No extra limbs. Clean composition."], lock: "additionalDescription", setter: (v) => { state.additionalDescription = v; document.getElementById("additional-desc").value = v; } },
+      
+      // Video-only
+      { key: "duration", source: () => (D.DURATIONS || []).map(s => s.value), lock: "duration", setter: (v) => { state.duration = v; if (combos.duration) combos.duration.setValue(v); } },
+      { key: "durationCustom", source: () => [String(Math.floor(Math.random() * 10) + 1)], lock: "durationCustom", setter: (v) => { state.durationCustom = v; document.getElementById("duration-custom").value = v; } },
+      { key: "fps", source: () => (D.FPS_OPTIONS || []).map(s => s.value), lock: "fps", setter: (v) => { state.fps = v; if (combos.fps) combos.fps.setValue(v); } },
+      { key: "motionStrength", source: () => (D.MOTION_STRENGTH || []).map(s => s.value), lock: "motionStrength", setter: (v) => { state.motionStrength = v; initMotionStrength(); } },
+      { key: "loop", source: () => (D.LOOP_OPTIONS || []).map(s => s.value), lock: "loop", setter: (v) => { state.loop = v; initLoop(); } },
+      { key: "transition", source: () => (D.TRANSITIONS || []).map(s => s.value), lock: "transition", setter: (v) => { state.transition = v; if (combos.transition) combos.transition.setValue(v); } }
+    ];
+    
+    // Randomize unlocked fields
+    randomizableFields.forEach(function (field) {
+      if (fieldLocks[field.lock]) return; // Skip locked fields
+      
+      const options = field.source();
+      if (options && options.length > 0) {
+        const randomValue = options[Math.floor(Math.random() * options.length)];
+        field.setter(randomValue);
+      }
+    });
+    
+    // Sync UI for chip grids that don't have combos
+    initEffects();
+    initComposition();
+    initRendering();
+    initExpansion();
+    initAiPreset();
+    initWatermarkPosition();
+    initMotionStrength();
+    initLoop();
+    rebuildAspectRatioGrid(state.outputMode);
+    initColorPalette();
+    renderSubjects();
+    
+    // Update quality meter
+    updateQualityMeter();
+    
+    if (randomizeBtn) {
+      randomizeBtn.classList.remove("is-randomizing");
+      randomizeBtn.disabled = false;
+    }
+    
+    toast("Randomized unlocked fields!", "success");
   }
 
   function doGenerate() {
@@ -1185,6 +1475,7 @@
     // Clear only the output panel
     state.lastResult = null;
     renderOutput(null);
+    updateQualityMeter();
     toast("Output cleared.");
   }
 
@@ -1337,6 +1628,16 @@
     });
 
     actions.appendChild(restoreBtn);
+
+    // Restore as Draft (PF-L6) — restores without regenerating
+    const restoreDraftBtn = document.createElement("button");
+    restoreDraftBtn.className = "entry__btn entry__btn--restore";
+    restoreDraftBtn.type = "button";
+    restoreDraftBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Draft';
+    restoreDraftBtn.title = "Restore as draft (edit before generating)";
+    restoreDraftBtn.addEventListener("click", function () { restoreEntry(entry, true); });
+
+    actions.appendChild(restoreDraftBtn);
     actions.appendChild(copyBtn);
     actions.appendChild(starBtn);
     actions.appendChild(delBtn);
@@ -1347,11 +1648,11 @@
     return card;
   }
 
-  function renderHistory() {
+  function renderHistory(query, modeFilter, presetFilter) {
     const list = $("#historyList");
     if (!list) return;
     list.innerHTML = "";
-    const items = History.getHistory();
+    const items = History.searchHistory(query || "", modeFilter || "", presetFilter || "");
     if (items.length === 0) {
       list.innerHTML = '<div class="history__empty">No history yet. Generate a prompt to see it here.</div>';
       return;
@@ -1371,7 +1672,7 @@
     items.forEach(function (e) { list.appendChild(renderEntry(e, true)); });
   }
 
-  function restoreEntry(entry) {
+  function restoreEntry(entry, asDraft) {
     // Restore state from entry
     if (entry.state) {
       Object.keys(entry.state).forEach(function (k) {
@@ -1385,18 +1686,36 @@
     }
     // Re-sync UI
     syncUIFromState();
-    renderOutput({
-      prompt: entry.prompt,
-      negative: entry.negative,
-      meta: [],
-      state: entry.state,
-      timestamp: entry.timestamp,
-      id: entry.id
-    });
-    state.lastResult = { prompt: entry.prompt, negative: entry.negative, id: entry.id, timestamp: entry.timestamp };
-    saveFavBtn.disabled = false;
-    saveHistBtn.disabled = false;
-    toast("Restored. Press Generate to regenerate.");
+    
+    if (asDraft) {
+      // Restore as draft: show the prompt in output but don't set as lastResult
+      renderOutput({
+        prompt: entry.prompt,
+        negative: entry.negative,
+        meta: [],
+        state: entry.state,
+        timestamp: entry.timestamp,
+        id: entry.id
+      });
+      state.lastResult = null; // Don't treat as generated result
+      saveFavBtn.disabled = true;
+      saveHistBtn.disabled = true;
+      toast("Restored as draft. Edit fields then press Generate.");
+    } else {
+      // Full restore with lastResult
+      renderOutput({
+        prompt: entry.prompt,
+        negative: entry.negative,
+        meta: [],
+        state: entry.state,
+        timestamp: entry.timestamp,
+        id: entry.id
+      });
+      state.lastResult = { prompt: entry.prompt, negative: entry.negative, id: entry.id, timestamp: entry.timestamp };
+      saveFavBtn.disabled = false;
+      saveHistBtn.disabled = false;
+      toast("Restored. Press Generate to regenerate.");
+    }
   }
 
   function syncUIFromState() {
@@ -1607,6 +1926,12 @@
     $("#clearBtn").addEventListener("click", doClear);
     $("#resetAllBtn").addEventListener("click", doResetAll);
 
+    // PF-L6: Randomize button
+    const randomizeBtn = $("#randomizeBtn");
+    if (randomizeBtn) {
+      randomizeBtn.addEventListener("click", doRandomize);
+    }
+
     // PF-L5: Copy per-model buttons
     if (copyPromptBtn) {
       copyPromptBtn.addEventListener("click", function () {
@@ -1777,6 +2102,49 @@
         PF.Share.copyShareLink();
       });
     }
+
+    // PF-L6: History search & filter toolbar
+    const historySearch = $("#historySearch");
+    const historyFilterMode = $("#historyFilterMode");
+    const historyFilterPreset = $("#historyFilterPreset");
+
+    function refreshHistoryPresets() {
+      if (!historyFilterPreset) return;
+      const presets = History.getHistoryPresets();
+      const currentValue = historyFilterPreset.value;
+      historyFilterPreset.innerHTML = '<option value="">All Presets</option>';
+      presets.forEach(function (preset) {
+        const opt = document.createElement("option");
+        opt.value = preset;
+        opt.textContent = preset;
+        historyFilterPreset.appendChild(opt);
+      });
+      // Restore selection if still valid
+      if (presets.includes(currentValue)) {
+        historyFilterPreset.value = currentValue;
+      }
+    }
+
+    function applyHistoryFilters() {
+      const query = historySearch ? historySearch.value : "";
+      const modeFilter = historyFilterMode ? historyFilterMode.value : "";
+      const presetFilter = historyFilterPreset ? historyFilterPreset.value : "";
+      renderHistory(query, modeFilter, presetFilter);
+      refreshHistoryPresets();
+    }
+
+    if (historySearch) {
+      historySearch.addEventListener("input", applyHistoryFilters);
+    }
+    if (historyFilterMode) {
+      historyFilterMode.addEventListener("change", applyHistoryFilters);
+    }
+    if (historyFilterPreset) {
+      historyFilterPreset.addEventListener("change", applyHistoryFilters);
+    }
+
+    // Initial preset population
+    refreshHistoryPresets();
   }
 
   /* ===========================================================

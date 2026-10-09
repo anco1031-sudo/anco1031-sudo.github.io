@@ -218,10 +218,16 @@
           <h2 class="panel__title">Generator</h2>
           <p class="panel__subtitle">Configure your visual prompt</p>
         </div>
-        <button class="btn btn--ghost btn--sm" id="resetAllBtn" type="button" title="Reset all fields">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-          Reset
-        </button>
+        <div class="panel__header-actions">
+          <button class="btn btn--ghost btn--sm" id="randomizeBtn" type="button" title="Surprise me — randomize unlocked fields">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-6-6m6-6v-4.8m0 4.8h-4.8"/><path d="M3 16.5V7.5m0 0L8.5 12M3 7.5l5.5 4.5"/></svg>
+            Surprise Me
+          </button>
+          <button class="btn btn--ghost btn--sm" id="resetAllBtn" type="button" title="Reset all fields">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            Reset
+          </button>
+        </div>
       </div>
 
       <div class="panel__body" id="generatorPanel">
@@ -695,31 +701,44 @@
         <div class="output__header">
           <div>
             <h2 class="panel__title">Output</h2>
-            <p class="panel__subtitle" id="outputSubtitle">Generated prompt &amp; negative prompt</p>
+            <p class="panel__subtitle" id="outputSubtitle">Generated prompt & negative prompt</p>
           </div>
-          <div class="output__actions">
-            <button class="btn btn--primary btn--sm" id="generateBtn" type="button">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/><path d="m12 3 9 9-9 9-9-9 9-9Z"/></svg>
-              Generate
-            </button>
-            <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">Clear</button>
-            <button class="btn btn--ghost btn--sm" id="exportBtn" type="button" title="Export state & history to JSON">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Export
-            </button>
-            <button class="btn btn--ghost btn--sm" id="importBtn" type="button" title="Import state & history from JSON">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Import
-            </button>
-            <button class="btn btn--ghost btn--sm" id="shareBtn" type="button" title="Copy shareable URL">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Share
-            </button>
-            <button class="btn btn--ghost btn--sm" id="copyAllBtn" type="button" title="Copy prompt + negative + settings">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/><path d="M9 9h11v11"/></svg>
-              Copy All
-            </button>
-            <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+          <div class="output__header-actions">
+            <!-- Prompt Quality Meter (PF-L6) -->
+            <div class="quality-meter" id="qualityMeter" aria-label="Prompt quality meter">
+              <div class="quality-meter__bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="quality-meter__fill" id="qualityMeterFill"></div>
+              </div>
+              <div class="quality-meter__labels">
+                <span class="quality-meter__pct" id="qualityMeterPct">0%</span>
+                <span class="quality-meter__tokens" id="qualityMeterTokens">~0 tokens</span>
+              </div>
+              <div class="quality-meter__warning" id="qualityMeterWarning" hidden></div>
+            </div>
+            <div class="output__actions">
+              <button class="btn btn--primary btn--sm" id="generateBtn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/><path d="m12 3 9 9-9 9-9-9 9-9Z"/></svg>
+                Generate
+              </button>
+              <button class="btn btn--ghost btn--sm" id="clearBtn" type="button">Clear</button>
+              <button class="btn btn--ghost btn--sm" id="exportBtn" type="button" title="Export state & history to JSON">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Export
+              </button>
+              <button class="btn btn--ghost btn--sm" id="importBtn" type="button" title="Import state & history from JSON">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import
+              </button>
+              <button class="btn btn--ghost btn--sm" id="shareBtn" type="button" title="Copy shareable URL">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Share
+              </button>
+              <button class="btn btn--ghost btn--sm" id="copyAllBtn" type="button" title="Copy prompt + negative + settings">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1-2-2h10"/><path d="M9 9h11v11"/></svg>
+                Copy All
+              </button>
+              <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+            </div>
           </div>
         </div>
 
@@ -820,6 +839,25 @@
           </div>
           <button class="btn btn--ghost btn--xs" id="clearHistoryBtn" type="button">Clear all</button>
         </div>
+        
+        <!-- History Search & Filter Bar (PF-L6) -->
+        <div class="history__toolbar" id="historyToolbar">
+          <div class="history__search-wrap">
+            <svg class="history__search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" class="history__search" id="historySearch" placeholder="Search prompts…" aria-label="Search history" />
+          </div>
+          <div class="history__filters">
+            <select class="history__filter" id="historyFilterMode" aria-label="Filter by mode">
+              <option value="">All Modes</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+            <select class="history__filter" id="historyFilterPreset" aria-label="Filter by preset">
+              <option value="">All Presets</option>
+            </select>
+          </div>
+        </div>
+        
         <div class="history__body" id="historyList" aria-live="polite"></div>
       </div>
 

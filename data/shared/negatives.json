@@ -26,5 +26,25 @@
     "Professional": ["chaotic elements", "excessive effects", "amateur render"],
     "Friendly": ["dark mood", "horror elements"],
     "Epic": ["flat lighting", "low contrast", "bland composition"]
-  }
+  },
+  "negativeVideoBase": [
+    "warping",
+    "morphing",
+    "flicker",
+    "temporal flicker",
+    "extra limbs",
+    "inconsistent face",
+    "physics violations",
+    "teleporting objects",
+    "blurry motion",
+    "frame blending artifacts",
+    "shape-shifting",
+    "sudden cuts",
+    "jitter",
+    "ghosting",
+    "motion blur artifacts",
+    "inconsistent lighting",
+    "color shift",
+    "identity drift"
+  ]
 }

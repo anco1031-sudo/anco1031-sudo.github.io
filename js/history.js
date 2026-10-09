@@ -2,6 +2,7 @@
    PromptForge — history.js
    LocalStorage-backed history & favorites with restore,
    delete, and star/unstar. Single shared API.
+   PF-L6: Added search, filter, and restore-as-draft support.
    ========================================================= */
 (function (global) {
   "use strict";
@@ -79,6 +80,42 @@
 
   function clearFavorites() { write(KEYS.favorites, []); }
 
+  /* ---------- PF-L6: Search & Filter ---------- */
+  function searchHistory(query, modeFilter, presetFilter) {
+    const list = getHistory();
+    if (!query && !modeFilter && !presetFilter) return list;
+    
+    const q = (query || "").toLowerCase().trim();
+    return list.filter(function (e) {
+      if (q) {
+        const haystack = [
+          e.prompt,
+          e.negative,
+          e.state && e.state.aiPreset,
+          e.state && e.state.projectTypePreset,
+          e.state && e.state.projectTypeCategory,
+          e.state && e.state.projectTypeCustom,
+          e.state && e.state.artStyle,
+          e.state && e.state.artStyleCustom
+        ].filter(Boolean).join(" ").toLowerCase();
+        if (haystack.indexOf(q) === -1) return false;
+      }
+      if (modeFilter && e.state && e.state.outputMode !== modeFilter) return false;
+      if (presetFilter && e.state && e.state.aiPreset !== presetFilter) return false;
+      return true;
+    });
+  }
+
+  /* ---------- PF-L6: Get unique presets from history for filter dropdown ---------- */
+  function getHistoryPresets() {
+    const list = getHistory();
+    const presets = new Set();
+    list.forEach(function (e) {
+      if (e.state && e.state.aiPreset) presets.add(e.state.aiPreset);
+    });
+    return Array.from(presets).sort();
+  }
+
   /* ---------- Helpers ---------- */
   function makeId() {
     return "pf_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
@@ -110,7 +147,9 @@
     isFavorite: isFavorite,
     clearFavorites: clearFavorites,
     makeId: makeId,
-    timeAgo: timeAgo
+    timeAgo: timeAgo,
+    searchHistory: searchHistory,
+    getHistoryPresets: getHistoryPresets
   };
 
 })(typeof window !== "undefined" ? window : this);
