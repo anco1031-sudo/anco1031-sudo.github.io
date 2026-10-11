@@ -91,7 +91,12 @@
     "composition": "Composition",
     "renderingQuality": "Rendering Quality",
     "promptExpansion": "Prompt Expansion",
-    "aiPreset": "AI Preset"
+    "aiPreset": "AI Preset",
+    "autoTranslate": "Auto-translate TH→EN",
+    "autoTranslateHint": "(Free-text fields only)",
+    "translationNotesTitle": "Translation Notes",
+    "original": "Original",
+    "translated": "Translated"
   },
   "placeholders": {
     "projectTypeCustom": "e.g. Festival Poster",
@@ -129,7 +134,10 @@
     "randomized": "Randomized unlocked fields!",
     "restored": "Restored. Press Generate to regenerate.",
     "restoredDraft": "Restored as draft. Edit fields then press Generate.",
-    "deleted": "Deleted."
+    "deleted": "Deleted.",
+    "translating": "Translating…",
+    "fallbackNote": "Quota full/offline — using original",
+    "offlineNote": "Offline — using original"
   },
   "meta": {
     "preset": "Preset",

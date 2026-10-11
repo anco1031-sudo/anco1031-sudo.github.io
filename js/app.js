@@ -204,6 +204,7 @@
     promptExpansion:     null,
     aiPreset:            null,
     additionalDescription: "",      // Issue #12
+    autoTranslate:       true,        // PF-L7: Auto-translate TH→EN toggle
     // Video-only fields (PF-L2 stubs, wired in PF-L3)
     duration:            null,        // V1
     durationCustom:      "",
@@ -1283,8 +1284,11 @@
   const shareBtn = $("#shareBtn");
   const importFileInput = $("#importFileInput");
 
-  function renderOutput(result) {
+  function renderOutput(result, translationNotes) {
     const i18n = global.PF.i18n;
+    const translationNotesEl = $("#translationNotes");
+    const translationNotesList = $("#translationNotesList");
+
     if (!result) {
       promptOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
       negativeOutput.innerHTML = '<span class="output__placeholder">' + i18n.t("placeholders.additionalDesc") + '</span>';
@@ -1293,6 +1297,7 @@
       saveHistBtn.disabled = true;
       // Hide video copy block when no result
       if (videoCopyBlock) videoCopyBlock.style.display = "none";
+      if (translationNotesEl) translationNotesEl.style.display = "none";
       return;
     }
 
@@ -1309,6 +1314,28 @@
 
     saveFavBtn.disabled = false;
     saveHistBtn.disabled = false;
+
+    // Render translation notes (PF-L7)
+    if (translationNotesEl && translationNotesList) {
+      if (translationNotes && translationNotes.length > 0) {
+        translationNotesEl.style.display = "block";
+        translationNotesList.innerHTML = translationNotes.map(function (note) {
+          var fallbackBadge = note.fallback
+            ? '<span class="translation-notes__fallback" data-i18n="toast.fallbackNote">' + i18n.t("toast.fallbackNote") + '</span>'
+            : '';
+          return (
+            '<li class="translation-notes__item">' +
+              '<span class="translation-notes__field">' + note.field + ':</span>' +
+              '<span class="translation-notes__original">' + i18n.t("labels.original") + ': ' + note.original + '</span>' +
+              '<span class="translation-notes__translated">' + i18n.t("labels.translated") + ': ' + note.translated + '</span>' +
+              fallbackBadge +
+            '</li>'
+          );
+        }).join("");
+      } else {
+        translationNotesEl.style.display = "none";
+      }
+    }
 
     // PF-L5: Show/hide video copy buttons based on output mode
     if (videoCopyBlock) {
@@ -1568,26 +1595,64 @@
     toast("Randomized unlocked fields!", "success");
   }
 
-  function doGenerate() {
-    const result = Generator.generate(state);
+  async function doGenerate() {
+    const generateBtn = $("#generateBtn");
+    const i18n = global.PF.i18n;
+
+    // Check if auto-translate is enabled and translate state if needed
+    let enState = state;
+    let translationNotes = [];
+
+    if (state.autoTranslate && global.PF && global.PF.Translate) {
+      generateBtn.disabled = true;
+      generateBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>' +
+        ' <span data-i18n="toast.translating">' + i18n.t("toast.translating") + '</span>';
+      generateBtn.classList.add("is-translating");
+
+      try {
+        const translated = await global.PF.Translate.translateState(state);
+        enState = translated.enState;
+        translationNotes = translated.notes;
+
+        // Show fallback toast if any field used fallback
+        const hasFallback = translationNotes.some(function (n) { return n.fallback; });
+        if (hasFallback) {
+          toast(i18n.t("toast.fallbackNote"), "warning");
+        }
+      } catch (e) {
+        console.error("[PF] Translation failed:", e);
+        toast(i18n.t("toast.offlineNote"), "warning");
+        enState = state; // Use original state on error
+        translationNotes = [];
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/><path d="m12 3 9 9-9 9-9-9 9-9Z"/></svg>' +
+          ' <span data-i18n="buttons.generate">' + i18n.t("buttons.generate") + '</span>';
+        generateBtn.classList.remove("is-translating");
+      }
+    }
+
+    // Generate prompt with translated state
+    const result = Generator.generate(enState);
     if (!result || !result.prompt) {
-      toast("Add at least one option first.", "error");
+      toast(i18n.t("toast.errorGenerate"), "error");
       return;
     }
     result.id = History.makeId();
     state.lastResult = result;
-    renderOutput(result);
+    renderOutput(result, translationNotes);
 
-    // Issue #9 — Auto-translation feedback: if any user-entered text was
-    // translated to Indonesian, surface that in a toast.
-    var translationNote = detectTranslationInState(state);
-    if (translationNote) {
-      toast(translationNote, "success");
+    // Show translation notes toast if any translations occurred
+    if (translationNotes.length > 0) {
+      var fields = translationNotes.map(function (n) { return n.field; }).join(", ");
+      toast("Translated: " + fields + ". " + i18n.t("toast.generated"), "success");
     } else {
-      toast("Prompt generated & saved to history.", "success");
+      toast(i18n.t("toast.generated"), "success");
     }
 
-    // Auto-save to history
+    // Auto-save to history (save original state, not translated)
     History.addToHistory({
       id: result.id,
       prompt: result.prompt,
@@ -2324,6 +2389,28 @@
         i18n.toggleLanguage();
       });
     }
+
+    // PF-L7: Initialize auto-translate toggle
+    const toggle1 = $("#autoTranslateToggle1");
+    const toggle2 = $("#autoTranslateToggle2");
+    const savedAutoTranslate = global.PF.Translate ? global.PF.Translate.getEnabled() : true;
+    state.autoTranslate = savedAutoTranslate;
+
+    function syncAutoTranslateToggles(checked) {
+      if (toggle1) toggle1.checked = checked;
+      if (toggle2) toggle2.checked = checked;
+    }
+
+    function onAutoTranslateChange(e) {
+      const checked = e.target.checked;
+      state.autoTranslate = checked;
+      if (global.PF.Translate) global.PF.Translate.setEnabled(checked);
+      syncAutoTranslateToggles(checked);
+    }
+
+    syncAutoTranslateToggles(savedAutoTranslate);
+    if (toggle1) toggle1.addEventListener("change", onAutoTranslateChange);
+    if (toggle2) toggle2.addEventListener("change", onAutoTranslateChange);
 
     initComboboxes();
     bindInputs();

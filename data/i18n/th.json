@@ -91,7 +91,12 @@
     "composition": "องค์ประกอบ",
     "renderingQuality": "คุณภาพการเรนเดอร์",
     "promptExpansion": "การขยายพรอมพ์",
-    "aiPreset": "AI Preset"
+    "aiPreset": "AI Preset",
+    "autoTranslate": "แปลอัตโนมัติ TH→EN",
+    "autoTranslateHint": "(เฉพาะช่องข้อความอิสระ)",
+    "translationNotesTitle": "บันทึกการแปล",
+    "original": "ต้นฉบับ",
+    "translated": "แปลแล้ว"
   },
   "placeholders": {
     "projectTypeCustom": "เช่น โปสเตอร์เทศกาล",
@@ -129,7 +134,10 @@
     "randomized": "สุ่มช่องที่ไม่ได้ล็อกแล้ว!",
     "restored": "เรียกคืนแล้ว กด Generate เพื่อสร้างใหม่",
     "restoredDraft": "เรียกคืนเป็นแบบร่างแล้ว แก้ไขช่องแล้วกด Generate",
-    "deleted": "ลบแล้ว"
+    "deleted": "ลบแล้ว",
+    "translating": "กำลังแปล…",
+    "fallbackNote": "โควต้าเต็ม/ออฟไลน์ — ใช้ต้นฉบับ",
+    "offlineNote": "ออฟไลน์ — ใช้ต้นฉบับ"
   },
   "meta": {
     "preset": "Preset",

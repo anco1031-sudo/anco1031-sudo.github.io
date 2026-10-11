@@ -303,6 +303,11 @@
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
                 Add Subject
               </button>
+              <label class="translate-toggle" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); cursor: pointer;">
+                <input type="checkbox" id="autoTranslateToggle1" checked style="width: 16px; height: 16px; accent-color: var(--accent);" />
+                <span data-i18n="labels.autoTranslate">Auto-translate TH→EN</span>
+                <span class="translate-toggle__hint" style="font-size: 10px; color: var(--text-faint);" data-i18n="labels.autoTranslateHint">(Free-text fields only)</span>
+              </label>
             </div>
             <div class="field">
               <label class="field__label" data-i18n="labels.referenceImages">Reference Images</label>
@@ -696,6 +701,11 @@
             <div class="field">
               <label class="field__label" for="additional-desc" data-i18n="labels.additionalDesc">Extra Instructions / Notes <span class="field__hint">(always appended to the generated prompt)</span></label>
               <textarea class="textarea" id="additional-desc" rows="5" placeholder="e.g. Make sure the dragon's eyes glow softly. Avoid any text in the image. The mood should feel melancholic but hopeful." data-i18n-placeholder="placeholders.additionalDesc"></textarea>
+              <label class="translate-toggle" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); cursor: pointer;">
+                <input type="checkbox" id="autoTranslateToggle2" checked style="width: 16px; height: 16px; accent-color: var(--accent);" />
+                <span data-i18n="labels.autoTranslate">Auto-translate TH→EN</span>
+                <span class="translate-toggle__hint" style="font-size: 10px; color: var(--text-faint);" data-i18n="labels.autoTranslateHint">(Free-text fields only)</span>
+              </label>
             </div>
           </div>
         </div>
@@ -777,6 +787,11 @@
             </div>
             <div class="output__text" id="promptOutput" aria-live="polite">
               <span class="output__placeholder">Configure options on the left, then press <strong></strong>.</span>
+            </div>
+            <!-- Translation Notes (PF-L7) -->
+            <div class="translation-notes" id="translationNotes" style="display: none; margin-top: 12px; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);">
+              <div class="translation-notes__title" style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;" data-i18n="labels.translationNotesTitle">Translation Notes</div>
+              <ul id="translationNotesList" style="list-style: none; padding: 0; margin: 0; font-size: 12px; color: var(--text); font-family: var(--font-mono);"></ul>
             </div>
           </div>
 
@@ -923,6 +938,7 @@
   <script src="js/generator.js"></script>
   <script src="js/history.js"></script>
   <script src="js/share.js"></script>
+  <script src="js/translate.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
