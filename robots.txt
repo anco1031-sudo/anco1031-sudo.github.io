@@ -1,5 +1,5 @@
 # PromptForge-Louis robots.txt
-# https://lu5her.github.io/PromptForge-Louis/
+# https://anco1031-sudo.github.io/
 
 User-agent: *
 Allow: /
@@ -35,4 +35,4 @@ User-agent: PerplexityBot
 Allow: /
 
 # Sitemap
-Sitemap: https://lu5her.github.io/PromptForge-Louis/sitemap.xml
+Sitemap: https://anco1031-sudo.github.io/sitemap.xml

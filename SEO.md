@@ -23,7 +23,7 @@ The `<head>` block includes:
 - **Meta author** — `PromptForge-Louis — Louis Team`.
 - **Meta robots** — `index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1` (tells Google to index the page, follow links, and show large image previews in results).
 - **Meta googlebot** — explicit `index, follow`.
-- **Canonical URL** — `https://lu5her.github.io/PromptForge-Louis/` (prevents duplicate-content issues).
+- **Canonical URL** — `https://anco1031-sudo.github.io/` (prevents duplicate-content issues).
 - **Language** — `Thai, English`.
 - **Revisit-after** — `7 days`.
 - **Open Graph tags** — `og:type`, `og:site_name`, `og:title`, `og:description`, `og:url`, `og:image`, `og:image:secure_url`, `og:image:type`, `og:image:width`, `og:image:height`, `og:image:alt`, `og:locale`, `og:locale:alternate`.
@@ -89,19 +89,19 @@ Solution: build inbound links (share on social media, submit to directories, wri
 
 ### Step 1 — Verify the Site Is Live
 
-Open `https://lu5her.github.io/PromptForge-Louis/` in a browser. Confirm:
+Open `https://anco1031-sudo.github.io/` in a browser. Confirm:
 
 - Page loads without errors.
 - Favicon appears.
-- `robots.txt` is reachable at `https://lu5her.github.io/PromptForge-Louis/robots.txt`.
-- `sitemap.xml` is reachable at `https://lu5her.github.io/PromptForge-Louis/sitemap.xml`.
-- `manifest.json` is reachable at `https://lu5her.github.io/PromptForge-Louis/manifest.json`.
+- `robots.txt` is reachable at `https://anco1031-sudo.github.io/robots.txt`.
+- `sitemap.xml` is reachable at `https://anco1031-sudo.github.io/sitemap.xml`.
+- `manifest.json` is reachable at `https://anco1031-sudo.github.io/manifest.json`.
 
 ### Step 2 — Add the Property in Google Search Console
 
 1. Go to [Google Search Console](https://search.google.com/search-console).
 2. Click **Add property** → choose **URL prefix**.
-3. Enter: `https://lu5her.github.io/PromptForge-Louis`.
+3. Enter: `https://anco1031-sudo.github.io`.
 4. Choose verification method:
    - **HTML tag** (easiest for GitHub Pages): copy the `<meta name="google-site-verification" content="...">` tag and paste it into `index.html` `<head>`, then commit and push. Click **Verify** in Search Console.
    - **Google Analytics** (alternative): if you add GA, you can verify through it.
@@ -117,9 +117,9 @@ Open `https://lu5her.github.io/PromptForge-Louis/` in a browser. Confirm:
 ### Step 4 — Request Indexing for the Homepage
 
 1. In Search Console, open **URL Inspection** (top search bar).
-2. Paste: `https://lu5her.github.io/PromptForge-Louis/`.
+2. Paste: `https://anco1031-sudo.github.io/`.
 3. Click **Request Indexing**.
-4. Repeat for `https://lu5her.github.io/PromptForge-Louis/#generator` if desired (note: hash-fragment URLs are usually not indexed separately — the canonical homepage is what gets indexed).
+4. Repeat for `https://anco1031-sudo.github.io/#generator` if desired (note: hash-fragment URLs are usually not indexed separately — the canonical homepage is what gets indexed).
 
 ### Step 5 — Build Inbound Links (Most Important)
 
@@ -198,7 +198,7 @@ Use these free tools to audit your SEO after deployment:
 **Cause**: Sitemap URL is wrong, or `robots.txt` blocks it.
 
 **Fix**:
-1. Verify `https://lu5her.github.io/PromptForge-Louis/sitemap.xml` loads in a browser.
+1. Verify `https://anco1031-sudo.github.io/sitemap.xml` loads in a browser.
 2. Verify `robots.txt` does NOT have `Disallow: /sitemap.xml`.
 3. In Search Console → Sitemaps, check the status. If it says "Couldn't fetch", wait 24 hours and re-submit.
 
@@ -207,7 +207,7 @@ Use these free tools to audit your SEO after deployment:
 **Cause**: The image URL is wrong, or the image is too small.
 
 **Fix**:
-1. Verify `https://lu5her.github.io/PromptForge-Louis/assets/og-image.png` loads.
+1. Verify `https://anco1031-sudo.github.io/assets/og-image.png` loads.
 2. The OG image is 1200×630 — the recommended size for rich social previews.
 3. Use the [Meta Tags Debugger](https://metatags.io) to preview how the link will look when shared.
 
@@ -248,7 +248,7 @@ Use these free tools to audit your SEO after deployment:
 
 After deploying to GitHub Pages:
 
-- [ ] Verify the site loads at `https://lu5her.github.io/PromptForge-Louis/`
+- [ ] Verify the site loads at `https://anco1031-sudo.github.io/`
 - [ ] Add the property to Google Search Console
 - [ ] Add the `google-site-verification` meta tag to `index.html` and verify
 - [ ] Submit `sitemap.xml` in Search Console

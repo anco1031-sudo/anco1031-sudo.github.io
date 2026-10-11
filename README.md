@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://lu5her.github.io/PromptForge-Louis/">
+  <a href="https://anco1031-sudo.github.io/">
     <img src="assets/logo-cropped.png" alt="PromptForge-Louis" width="80" height="80" />
   </a>
   <h1>PromptForge-Louis</h1>
@@ -150,7 +150,7 @@ MIT License — see [LICENSE](LICENSE).
 
 ## Repository
 
-[https://github.com/lu5her/PromptForge-Louis](https://github.com/lu5her/PromptForge-Louis)
+[https://github.com/anco1031-sudo/anco1031-sudo.github.io](https://github.com/anco1031-sudo/anco1031-sudo.github.io)
 
 Built with HTML, CSS &amp; Vanilla JavaScript.
 
