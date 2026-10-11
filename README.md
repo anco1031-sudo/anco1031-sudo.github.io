@@ -37,12 +37,28 @@ Built with **HTML5, CSS3, and Vanilla JavaScript** — no frameworks, no build s
 
 ---
 
+## 🚪 Landing (2 ปุ่ม)
+
+Root `https://anco1031-sudo.github.io/` เป็นประตูส่วนตัวของ Louis (ไฟล์ `index.html` ไฟล์เดียว, vanilla, ไม่ต้อง build):
+
+- `/` — Landing มีแค่ 2 ปุ่มใหญ่: **🎮 อันเดิม** → `./classic/` (หน้า SMC RPG เก่า), **✨ อันใหม่** → `./forge/` (PromptForge + แปล TH→EN อัตโนมัติ)
+- `/forge/` — แอป PromptForge ตัวเต็ม (ย้ายมาจาก root เดิม, asset paths เป็น `../`)
+- `/classic/` — หน้าเก่าจาก `origin/main` เก็บไว้ nguyên (ไฟล์เดียวจบ)
+
+เทส local: `python3 -m http.server 8080` แล้วเปิด `/`, `/forge/`, `/classic/`
+
+---
+
 ## File Structure
 
 ```
 PromptForge/
-├── index.html              # Main app shell (navbar, panels, footer, SEO meta)
-├── manifest.json           # PWA manifest
+├── index.html              # 🚪 Landing 2 ปุ่ม (อันเดิม / อันใหม่)
+├── forge/
+│   └── index.html          # Main app shell (navbar, panels, footer, SEO meta) — PromptForge + TH→EN
+├── classic/
+│   └── index.html          # หน้าเก่า SMC RPG จาก origin/main (เก็บ nguyên)
+├── manifest.json           # PWA manifest (start_url = root landing)
 ├── robots.txt              # Crawler rules
 ├── sitemap.xml             # Sitemap
 ├── SEO.md                  # Google indexing guide

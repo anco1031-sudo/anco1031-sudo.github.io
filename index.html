@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0F172A" />
+  <title>Louis Gateway — เลือกทางเข้า</title>
+  <meta name="description" content="ประตูส่วนตัวของ Louis — เลือกเข้าเว็บอันเดิม หรือ PromptForge อันใหม่ (แปลไทย→อังกฤษ)" />
+  <link rel="canonical" href="https://anco1031-sudo.github.io/" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/logo-192.png" />
+  <link rel="apple-touch-icon" href="assets/logo-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0F172A;
+      --card: #1E293B;
+      --card-hover: #263449;
+      --border: #334155;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --accent: #3B82F6;
+      --accent-2: #8B5CF6;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans Thai', 'Inter', system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1E3A8A33, transparent), var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .wrap { width: 100%; max-width: 560px; text-align: center; }
+    .logo { width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 16px; display: block; }
+    h1 { font-size: 28px; font-weight: 700; letter-spacing: .2px; }
+    h1 .accent { color: var(--accent); }
+    .sub { color: var(--muted); font-size: 15px; margin-top: 8px; }
+    .btns { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .btn {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      min-height: 76px;
+      text-decoration: none; color: var(--text);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover, .btn:focus-visible { background: var(--card-hover); border-color: var(--accent); transform: translateY(-2px); outline: none; }
+    .btn .emoji { font-size: 34px; line-height: 1; }
+    .btn .txt { text-align: left; }
+    .btn .t1 { font-size: 19px; font-weight: 700; }
+    .btn .t2 { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+    .btn--new { border-color: var(--accent); background: linear-gradient(135deg, #1D4ED81F, #8B5CF61F), var(--card); }
+    .note { margin-top: 28px; font-size: 13px; color: var(--muted); }
+    .foot { margin-top: 12px; font-size: 12px; color: #64748B; }
+    .foot a { color: #64748B; }
+    @media (min-width: 560px) {
+      h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <img class="logo" src="assets/logo-192.png" alt="Louis Gateway" width="72" height="72" />
+    <h1>Louis <span class="accent">Gateway</span></h1>
+    <p class="sub">ประตูส่วนตัว — เลือกทางเข้าได้เลย</p>
+
+    <nav class="btns" aria-label="ทางเข้า">
+      <a class="btn" href="./classic/">
+        <span class="emoji" aria-hidden="true">🎮</span>
+        <span class="txt">
+          <span class="t1">อันเดิม — SMC RPG</span>
+          <div class="t2">เว็บเวอร์ชันเก่า (The Liquidity Chronicles)</div>
+        </span>
+      </a>
+      <a class="btn btn--new" href="./forge/">
+        <span class="emoji" aria-hidden="true">✨</span>
+        <span class="txt">
+          <span class="t1">อันใหม่ — PromptForge</span>
+          <div class="t2">สร้าง prompt ภาพ/วิดีโอ · พิมพ์ไทยแปลอังกฤษอัตโนมัติ</div>
+        </span>
+      </a>
+    </nav>
+
+    <p class="note">🔒 ใช้คนเดียว — ไม่ต้องล็อกอิน กดแล้วเข้าเลย</p>
+    <p class="foot">Original PromptForge by <a href="https://github.com/AzkiVIP/PromptForge" target="_blank" rel="noopener">AzkiVIP</a> (MIT) · Louis version</p>
+  </main>
+</body>
+</html>
