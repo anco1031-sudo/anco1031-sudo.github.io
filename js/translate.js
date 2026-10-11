@@ -93,7 +93,7 @@
 
       this._dictLoadPromise = (async () => {
         try {
-          const resp = await fetch("data/shared/th-en-prompt-dict.json", { cache: "no-cache" });
+          const resp = await fetch("../data/shared/th-en-prompt-dict.json", { cache: "no-cache" });
           if (!resp.ok) throw new Error("Failed to load dictionary");
           this._dict = await resp.json();
           this._dictLoaded = true;

@@ -31,7 +31,7 @@
 
     async loadTranslations(lang) {
       try {
-        const resp = await fetch(`data/i18n/${lang}.json`, { cache: "no-cache" });
+        const resp = await fetch(`../data/i18n/${lang}.json`, { cache: "no-cache" });
         if (!resp.ok) throw new Error(`Failed to load ${lang}.json`);
         this.translations = await resp.json();
         this.currentLang = lang;
