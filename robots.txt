@@ -1,0 +1,38 @@
+# PromptForge-Louis robots.txt
+# https://anco1031-sudo.github.io/
+
+User-agent: *
+Allow: /
+Disallow:
+
+# Crawl-delay to be gentle on GitHub Pages
+Crawl-delay: 1
+
+# Block nothing — this is a fully public static site
+# Allow all search engines and AI crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Sitemap
+Sitemap: https://anco1031-sudo.github.io/sitemap.xml

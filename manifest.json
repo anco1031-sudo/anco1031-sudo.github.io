@@ -1,0 +1,86 @@
+{
+  "name": "PromptForge-Louis — Premium Visual Prompt Generator",
+  "short_name": "PromptForge-Louis",
+  "description": "Premium open-source visual prompt generator for posters, thumbnails, ads, covers, wallpapers, concept art, character art, product renders, marketing assets, and AI image/video generation. Rule-based engine. Supports ChatGPT Images, Flux, SDXL, Midjourney, Gemini, Runway Gen-3, Pika, Sora, Kling, Luma Dream Machine.",
+  "start_url": "./index.html?utm_source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "lang": "th",
+  "dir": "ltr",
+  "categories": [
+    "productivity",
+    "design",
+    "utilities",
+    "developer"
+  ],
+  "id": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "PromptForge (อันใหม่)",
+      "short_name": "PromptForge",
+      "description": "Open the PromptForge generator (TH→EN)",
+      "url": "./forge/#generator?utm_source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "assets/logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Classic (อันเดิม)",
+      "short_name": "Classic",
+      "description": "Open the classic page",
+      "url": "./classic/?utm_source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "assets/logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

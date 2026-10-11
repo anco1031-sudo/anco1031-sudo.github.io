@@ -1,0 +1,33 @@
+{
+  "aiPresets": [
+    {
+      "value": "ChatGPT Images",
+      "suffix": "",
+      "negativeSuffix": "",
+      "preferNatural": true
+    },
+    {
+      "value": "Flux",
+      "suffix": "",
+      "negativeSuffix": "",
+      "preferNatural": true
+    },
+    {
+      "value": "SDXL",
+      "suffix": ", masterpiece, best quality, highly detailed",
+      "negativeSuffix": ", lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, deformed, disfigured, mutation, mutated, extra limbs, missing limbs, distorted"
+    },
+    {
+      "value": "Midjourney",
+      "suffix": " --v 6 --style raw",
+      "negativeSuffix": "",
+      "paramStyle": true
+    },
+    {
+      "value": "Gemini",
+      "suffix": "",
+      "negativeSuffix": "",
+      "preferNatural": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "lighting": [
+    { "value": "Daylight", "phrase": "natural daylight" },
+    { "value": "Golden Hour", "phrase": "warm golden hour lighting" },
+    { "value": "Studio Light", "phrase": "professional studio lighting" },
+    { "value": "Volumetric", "phrase": "volumetric god-ray lighting" },
+    { "value": "Rim Light", "phrase": "rim lighting edge highlights" },
+    { "value": "Back Light", "phrase": "backlighting silhouette glow" },
+    { "value": "Neon", "phrase": "neon glow lighting" },
+    { "value": "Moonlight", "phrase": "soft moonlight" },
+    { "value": "Horror Lighting", "phrase": "high-contrast horror lighting" },
+    { "value": "Candlelight", "phrase": "warm candlelight" },
+    { "value": "Cinematic Lighting", "phrase": "cinematic dramatic lighting" },
+    { "value": "Soft Box", "phrase": "soft diffused softbox lighting" },
+    { "value": "Hard Sunlight", "phrase": "hard direct sunlight" },
+    { "value": "Bioluminescent", "phrase": "bioluminescent glow" },
+    { "value": "Underwater Light", "phrase": "underwater caustic lighting" },
+    { "value": "Firelight", "phrase": "flickering firelight" }
+  ]
+}

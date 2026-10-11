@@ -1,0 +1,12 @@
+{
+  "palettes": [
+    { "id": "blue", "label": "Blue", "primary": "#3B82F6", "secondary": "#1E40AF", "accent": "#93C5FD" },
+    { "id": "red", "label": "Red", "primary": "#EF4444", "secondary": "#991B1B", "accent": "#FCA5A5" },
+    { "id": "green", "label": "Green", "primary": "#22C55E", "secondary": "#166534", "accent": "#86EFAC" },
+    { "id": "purple", "label": "Purple", "primary": "#A855F7", "secondary": "#6B21A8", "accent": "#D8B4FE" },
+    { "id": "orange", "label": "Orange", "primary": "#F97316", "secondary": "#9A3412", "accent": "#FDBA74" },
+    { "id": "black-gold", "label": "Black Gold", "primary": "#0F172A", "secondary": "#D4AF37", "accent": "#FDE68A" },
+    { "id": "monochrome", "label": "Monochrome", "primary": "#FFFFFF", "secondary": "#64748B", "accent": "#94A3B8" },
+    { "id": "cyber-neon", "label": "Cyber Neon", "primary": "#00F5FF", "secondary": "#FF00E5", "accent": "#FFE600" }
+  ]
+}

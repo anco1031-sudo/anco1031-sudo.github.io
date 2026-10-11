@@ -1,0 +1,11 @@
+{
+  "motionStrength": [
+    { "value": "Subtle", "phrase": "subtle motion" },
+    { "value": "Normal", "phrase": "normal motion" },
+    { "value": "Dynamic", "phrase": "dynamic motion" }
+  ],
+  "loopOptions": [
+    { "value": "Off", "phrase": "no loop" },
+    { "value": "On", "phrase": "seamless loop" }
+  ]
+}

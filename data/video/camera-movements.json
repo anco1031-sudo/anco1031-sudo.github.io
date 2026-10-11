@@ -1,0 +1,13 @@
+{
+  "cameraMovements": [
+    { "value": "Static", "phrase": "static camera" },
+    { "value": "Pan Left-Right", "phrase": "slow horizontal pan left to right" },
+    { "value": "Tilt", "phrase": "vertical tilt up or down" },
+    { "value": "Dolly In", "phrase": "slow dolly push in" },
+    { "value": "Dolly Out", "phrase": "slow dolly pull out" },
+    { "value": "Orbit", "phrase": "circular orbit around subject" },
+    { "value": "Crane Up", "phrase": "crane lift upward" },
+    { "value": "Handheld Shake", "phrase": "subtle handheld camera shake" },
+    { "value": "FPV Dive", "phrase": "first-person FPV dive through scene" }
+  ]
+}
