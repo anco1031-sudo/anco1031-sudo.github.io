@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMC RPG - Trading Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --gold: #ffd700;
+            --success: #00d9ff;
+            --warning: #ff6b6b;
+            --text: #eaeaea;
+            --text-muted: #a0a0a0;
+        }
+        
+        body {
+            background: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .stat-card .value.level {
+            color: var(--success);
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            background: var(--secondary);
+            border: none;
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-tab:hover {
+            background: var(--accent);
+        }
+        
+        .nav-tab.active {
+            background: var(--accent);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Quest Section */
+        .quest-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--text-muted);
+            transition: all 0.3s;
+        }
+        
+        .quest-item.active {
+            border-left-color: var(--success);
+            background: rgba(0, 217, 255, 0.1);
+        }
+        
+        .quest-item.completed {
+            border-left-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .quest-item .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .quest-item .quest-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .quest-item .quest-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .quest-item .quest-status.pending {
+            background: var(--text-muted);
+        }
+        
+        .quest-item .quest-status.active {
+            background: var(--success);
+            color: var(--primary);
+        }
+        
+        .quest-item .quest-status.completed {
+            background: var(--gold);
+            color: var(--primary);
+        }
+        
+        .quest-item .quest-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .quest-item .quest-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .quest-item .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quest-item .check-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .quest-item .check-item.checked {
+            background: rgba(0, 217, 255, 0.2);
+        }
+        
+        .quest-item .check-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success);
+        }
+        
+        /* Skill Tree */
+        .skill-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .skill-branch {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .skill-branch .branch-name {
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .skill-branch .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .skill-node {
+            padding: 8px 16px;
+            background: var(--primary);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 2px solid var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .skill-node.unlocked {
+            border-color: var(--success);
+            color: var(--success);
+        }
+        
+        .skill-node:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Timeframe Selector */
+        .tf-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tf-btn {
+            padding: 15px;
+            background: var(--primary);
+            border: 2px solid var(--text-muted);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .tf-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        .tf-btn.active {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .tf-btn .tf-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .tf-btn .tf-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Analysis Form */
+        .analysis-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .form-group select,
+        .form-group input {
+            padding: 12px;
+            background: var(--primary);
+            border: 2px solid var(--text-muted);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .btn-analyze {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--accent), #ff8a80);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-analyze:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+        
+        /* Result Panel */
+        .result-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid var(--success);
+        }
+        
+        .result-panel h3 {
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-item .label {
+            color: var(--text-muted);
+        }
+        
+        .result-item .value {
+            font-weight: bold;
+        }
+        
+        .result-item .value.pass {
+            color: var(--success);
+        }
+        
+        .result-item .value.fail {
+            color: var(--warning);
+        }
+        
+        /* Boss Section */
+        .boss-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .boss-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--warning);
+            transition: all 0.3s;
+        }
+        
+        .boss-card.defeated {
+            border-color: var(--success);
+            opacity: 0.7;
+        }
+        
+        .boss-card .boss-name {
+            font-weight: bold;
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+        
+        .boss-card.defeated .boss-name {
+            color: var(--success);
+        }
+        
+        .boss-card .boss-weakness {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* XP Log */
+        .xp-log {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .xp-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .xp-entry .reason {
+            color: var(--text-muted);
+        }
+        
+        .xp-entry .xp-value {
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .xp-entry .xp-value.negative {
+            color: var(--warning);
+        }
+        
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: var(--primary);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: var(--primary);
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Daily Summary */
+        .daily-summary {
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(0, 217, 255, 0.2));
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .daily-summary h3 {
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .summary-stat {
+            text-align: center;
+        }
+        
+        .summary-stat .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .summary-stat .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 SMC RPG: The Liquidity Chronicles</h1>
+            <p class="subtitle">Trading Analysis System | Level {{ playerLevel }} | {{ currentClass }}</p>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="label">Level</div>
+                <div class="value level">{{ playerLevel }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total XP</div>
+                <div class="value">{{ totalXP }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Bias</div>
+                <div class="value" style="font-size: 1.2rem;">{{ currentBias || '—' }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Trades Today</div>
+                <div class="value">{{ todayTrades }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Rule Breaks</div>
+                <div class="value" :style="{color: ruleBreaks > 0 ? 'var(--warning)' : 'var(--success)'}">{{ ruleBreaks }}</div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab" :class="{active: activeTab === 'quest'}" @click="activeTab = 'quest'">📜 Quest</button>
+            <button class="nav-tab" :class="{active: activeTab === 'skill'}" @click="activeTab = 'skill'">🌳 Skill Tree</button>
+            <button class="nav-tab" :class="{active: activeTab === 'analyze'}" @click="activeTab = 'analyze'">🔍 Analyze</button>
+            <button class="nav-tab" :class="{active: activeTab === 'boss'}" @click="activeTab = 'boss'">👾 Boss</button>
+            <button class="nav-tab" :class="{active: activeTab === 'xp'}" @click="activeTab = 'xp'">📊 XP Log</button>
+        </div>
+        
+        <!-- Quest Tab -->
+        <div v-if="activeTab === 'quest'" class="main-content">
+            <div class="panel">
+                <div class="panel-title">📜 Main Quest Loop</div>
+                <div v-for="(quest, index) in quests" :key="index" 
+                     class="quest-item" 
+                     :class="{active: quest.status === 'active', completed: quest.status === 'completed'}">
+                    <div class="quest-header">
+                        <span class="quest-name">{{ quest.icon }} {{ quest.name }}</span>
+                        <span class="quest-status" :class="quest.status">{{ quest.statusText }}</span>
+                    </div>
+                    <div class="quest-desc">{{ quest.description }}</div>
+                    <div class="quest-checklist">
+                        <div v-for="(check, cIndex) in quest.checklist" :key="cIndex" 
+                             class="check-item" 
+                             :class="{checked: check.checked}"
+                             @click="toggleCheck(index, cIndex)">
+                            <input type="checkbox" :checked="check.checked" @click.stop>
+                            <span>{{ check.text }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">🗺️ World Map (Timeframe)</div>
+                <div class="tf-selector">
+                    <div v-for="tf in timeframes" :key="tf.name" 
+                         class="tf-btn" 
+                         :class="{active: selectedTF === tf.name}"
+                         @click="selectedTF = tf.name">
+                        <div class="tf-name">{{ tf.name }}</div>
+                        <div class="tf-role">{{ tf.role }}</div>
+                    </div>
+                </div>
+                
+                <div class="daily-summary">
+                    <h3>📆 Daily Summary</h3>
+                    <div class="summary-stats">
+                        <div class="summary-stat">
+                            <div class="value">{{ dailyXP }}</div>
+                            <div class="label">Daily XP</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="value">{{ questsCompleted }}/6</div>
+                            <div class="label">Quests Done</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="value">{{ checklistProgress }}%</div>
+                            <div class="label">Progress</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Skill Tree Tab -->
+        <div v-if="activeTab === 'skill'" class="panel">
+            <div class="panel-title">🌳 Skill Tree System</div>
+            <div class="skill-tree">
+                <div v-for="branch in skillTrees" :key="branch.name" class="skill-branch">
+                    <div class="branch-name">{{ branch.icon }} {{ branch.name }}</div>
+                    <div class="skills">
+                        <div v-for="skill in branch.skills" :key="skill.name" 
+                             class="skill-node"
+                             :class="{unlocked: skill.unlocked}"
+                             @click="selectSkill(branch.name, skill)">
+                            {{ skill.name }}
+                            <span v-if="skill.tier">({{ skill.tier }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" @click="unlockSelectedSkill">🔓 Unlock Skill</button>
+                <button class="btn btn-success" @click="resetDay">🔄 New Day</button>
+            </div>
+        </div>
+        
+        <!-- Analyze Tab -->
+        <div v-if="activeTab === 'analyze'" class="main-content">
+            <div class="panel">
+                <div class="panel-title">🔍 Analysis Input</div>
+                <div class="analysis-form">
+                    <div class="form-group">
+                        <label>Timeframe</label>
+                        <select v-model="analysis.tf">
+                            <option value="D1">D1 (World Map)</option>
+                            <option value="H4">H4 (Region)</option>
+                            <option value="H1">H1 (Dungeon)</option>
+                            <option value="M15">M15 (Combat)</option>
+                            <option value="M5">M5 (Combat)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Market Structure</label>
+                        <select v-model="analysis.structure">
+                            <option value="HH/HL">HH/HL (Bullish)</option>
+                            <option value="LL/LH">LL/LH (Bearish)</option>
+                            <option value="Ranging">Ranging</option>
+                            <option value="Unknown">ไม่แน่ใจ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>HTF CHOCH Status</label>
+                        <select v-model="analysis.choch">
+                            <option value="not_yet">ยังไม่โดน (Still Valid)</option>
+                            <option value="bullish">Bullish CHOCH</option>
+                            <option value="bearish">Bearish CHOCH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price Position</label>
+                        <select v-model="analysis.position">
+                            <option value="Premium">Premium (แพง)</option>
+                            <option value="Discount">Discount (ถูก)</option>
+                            <option value="Fair">Fair Value</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Liquidity Found</label>
+                        <select v-model="analysis.liquidity">
+                            <option value="yes">มี Liquidity ชัดเจน</option>
+                            <option value="no">ไม่ชัด</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sweep Happened</label>
+                        <select v-model="analysis.sweep">
+                            <option value="yes_return">Sweep และกลับเข้า (Valid)</option>
+                            <option value="yes_break">Sweep และ Break ต่อ (Invalid)</option>
+                            <option value="no">ยังไม่ Sweep</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Entry Zone</label>
+                        <select v-model="analysis.entry">
+                            <option value="OB">Order Block</option>
+                            <option value="FVG">Fair Value Gap</option>
+                            <option value="None">ไม่มี</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>RR Ratio</label>
+                        <input type="number" v-model="analysis.rr" step="0.5" min="0.5">
+                    </div>
+                    <button class="btn-analyze" @click="runAnalysis">🎯 Run Analysis</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">📊 Analysis Result</div>
+                <div v-if="analysisResult" class="result-panel">
+                    <h3>{{ analysisResult.title }}</h3>
+                    <div v-for="(item, index) in analysisResult.items" :key="index" class="result-item">
+                        <span class="label">{{ item.label }}</span>
+                        <span class="value" :class="item.status">{{ item.value }}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">🎮 Overall</span>
+                        <span class="value" :class="analysisResult.overall === 'PASS' ? 'pass' : 'fail'">{{ analysisResult.overall }}</span>
+                    </div>
+                </div>
+                <div v-else style="text-align: center; padding: 50px; color: var(--text-muted);">
+                    <p>กรอกข้อมูลด้านซ้ายแล้วกด "Run Analysis"</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boss Tab -->
+        <div v-if="activeTab === 'boss'" class="panel">
+            <div class="panel-title">👾 Bosses (ตัวร้ายประจำเกม)</div>
+            <div class="boss-grid">
+                <div v-for="boss in bosses" :key="boss.name" class="boss-card" :class="{defeated: boss.defeated}">
+                    <div class="boss-name">{{ boss.icon }} {{ boss.name }}</div>
+                    <div class="boss-weakness">{{ boss.weakness }}</div>
+                    <button class="btn" style="margin-top: 10px;" @click="toggleBoss(boss)">
+                        {{ boss.defeated ? '✅ Defeated' : '⚔️ Fight' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- XP Log Tab -->
+        <div v-if="activeTab === 'xp'" class="main-content">
+            <div class="panel">
+                <div class="panel-title">📊 XP Log</div>
+                <div class="xp-log">
+                    <div v-for="(entry, index) in xpLog" :key="index" class="xp-entry">
+                        <span class="reason">{{ entry.date }} - {{ entry.reason }}</span>
+                        <span class="xp-value" :class="{negative: entry.xp < 0}">{{ entry.xp > 0 ? '+' : '' }}{{ entry.xp }}</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" @click="addXP">+ Add XP</button>
+                    <button class="btn btn-warning" @click="addPenalty">- Add Penalty</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">📈 Level Progress</div>
+                <div style="padding: 20px;">
+                    <div v-for="level in levels" :key="level.lv" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span>Level {{ level.lv }}</span>
+                        <span style="color: var(--gold);">{{ level.xp }} XP</span>
+                        <span v-if="playerLevel >= level.lv" style="color: var(--success);">✓</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    activeTab: 'quest',
+                    playerLevel: 1,
+                    totalXP: 0,
+                    currentBias: '',
+                    todayTrades: 0,
+                    ruleBreaks: 0,
+                    selectedTF: 'D1',
+                    selectedSkill: null,
+                    
+                    timeframes: [
+                        {name: 'D1', role: 'World Map - โครงเรื่องหลัก'},
+                        {name: 'H4', role: 'Region - โซนสำคัญ'},
+                        {name: 'H1', role: 'Dungeon - ศัตรูย่อย'},
+                        {name: 'M15', role: 'Combat - จุดสู้จริง'},
+                    ],
+                    
+                    quests: [
+                        {
+                            name: 'Quest 1: Scan the World',
+                            icon: '🧭',
+                            description: 'วิเคราะห์ HTF เพื่อหา Bias',
+                            status: 'active',
+                            statusText: 'Active',
+                            checklist: [
+                                {text: 'วิเคราะห์ D1/H4', checked: false},
+                                {text: 'ระบุ HH/HL หรือ LL/LH', checked: false},
+                                {text: 'เช็ก HTF ยังไม่โดน CHOCH', checked: false},
+                                {text: 'เขียน Bias 1 ประโยค', checked: false},
+                            ]
+                        },
+                        {
+                            name: 'Quest 2: Mark the Trap',
+                            icon: '🎯',
+                            description: 'หา Liquidity ที่จะวางกับดัก',
+                            status: 'pending',
+                            statusText: 'Pending',
+                            checklist: [
+                                {text: 'Mark Buy-side / Sell-side', checked: false},
+                                {text: 'หา Equal High/Low', checked: false},
+                                {text: 'ระบุ Swing High/Low', checked: false},
+                            ]
+                        },
+                        {
+                            name: 'Quest 3: Trigger the Ambush',
+                            icon: '💥',
+                            description: 'รอราคา Sweep Liquidity',
+                            status: 'pending',
+                            statusText: 'Pending',
+                            checklist: [
+                                {text: 'ราคาแทงทะลุ Liquidity', checked: false},
+                                {text: 'ปิดกลับเข้า Range', checked: false},
+                                {text: 'ไม่ใช่ Break ต่อยาว', checked: false},
+                            ]
+                        },
+                        {
+                            name: 'Quest 4: Shift the Momentum',
+                            icon: '🔄',
+                            description: 'ยืนยัน CHOCH เกิดขึ้นแล้ว',
+                            status: 'pending',
+                            statusText: 'Pending',
+                            checklist: [
+                                {text: 'ดู TF เล็ก (M15/M5)', checked: false},
+                                {text: 'Break LH = Bullish', checked: false},
+                                {text: 'Break HL = Bearish', checked: false},
+                            ]
+                        },
+                        {
+                            name: 'Quest 5: Enter the Arena',
+                            icon: '⚔️',
+                            description: 'เข้า Entry Zone',
+                            status: 'pending',
+                            statusText: 'Pending',
+                            checklist: [
+                                {text: 'อยู่ใน OB หรือ FVG', checked: false},
+                                {text: 'RR ≥ 1:2', checked: false},
+                                {text: 'SL อยู่หลัง Structure', checked: false},
+                            ]
+                        },
+                        {
+                            name: 'Quest 6: Take the Loot',
+                            icon: '💰',
+                            description: 'เก็บ TP และออก',
+                            status: 'pending',
+                            statusText: 'Pending',
+                            checklist: [
+                                {text: 'ถึง Liquidity ฝั่งตรงข้าม', checked: false},
+                                {text: 'ถึง High/Low เดิม', checked: false},
+                                {text: 'ใช้ Partial TP', checked: false},
+                            ]
+                        },
+                    ],
+                    
+                    skillTrees: [
+                        {
+                            name: 'CORE: Market Awareness',
+                            icon: '🧠',
+                            skills: [
+                                {name: 'Market Structure I', tier: 'T1', unlocked: true},
+                                {name: 'HTF Bias Lock', tier: 'T1', unlocked: true},
+                                {name: 'Liquidity Vision', tier: 'T1', unlocked: false},
+                            ]
+                        },
+                        {
+                            name: 'Liquidity Hunter',
+                            icon: '🎯',
+                            skills: [
+                                {name: 'Sell-side Mapping', tier: 'T2', unlocked: false},
+                                {name: 'Buy-side Mapping', tier: 'T2', unlocked: false},
+                                {name: 'Sweep Confirmation', tier: 'T3', unlocked: false},
+                                {name: 'Trap Timing', tier: 'T3', unlocked: false},
+                            ]
+                        },
+                        {
+                            name: 'Structure Engineer',
+                            icon: '🏗️',
+                            skills: [
+                                {name: 'BOS Recognition', tier: 'T2', unlocked: false},
+                                {name: 'CHOCH Detection', tier: 'T2', unlocked: false},
+                                {name: 'Multi-TF Sync', tier: 'T3', unlocked: false},
+                            ]
+                        },
+                        {
+                            name: 'Entry Alchemist',
+                            icon: '⚗️',
+                            skills: [
+                                {name: 'OB Grading', tier: 'T2', unlocked: false},
+                                {name: 'FVG Precision', tier: 'T2', unlocked: false},
+                                {name: 'Refinement Entry', tier: 'T3', unlocked: false},
+                            ]
+                        },
+                        {
+                            name: 'Risk Paladin',
+                            icon: '🛡️',
+                            skills: [
+                                {name: 'Fixed Risk Protocol', tier: 'T2', unlocked: true},
+                                {name: 'SL Discipline', tier: 'T2', unlocked: true},
+                                {name: 'Drawdown Control', tier: 'T3', unlocked: false},
+                            ]
+                        },
+                        {
+                            name: 'Psycho Strategist',
+                            icon: '🧘',
+                            skills: [
+                                {name: 'FOMO Immunity', tier: 'T3', unlocked: false},
+                                {name: 'Revenge Lockdown', tier: 'T3', unlocked: false},
+                                {name: 'Process Trust', tier: 'T4', unlocked: false},
+                            ]
+                        },
+                    ],
+                    
+                    bosses: [
+                        {name: 'FOMO Dragon', icon: '🐉', weakness: 'รอ Quest 3-4', defeated: false},
+                        {name: 'Revenge Demon', icon: '👹', weakness: 'Daily Loss Limit', defeated: false},
+                        {name: 'Overconfidence Titan', icon: '🗿', weakness: 'Journal ทุกไม้', defeated: false},
+                    ],
+                    
+                    analysis: {
+                        tf: 'D1',
+                        structure: 'Unknown',
+                        choch: 'not_yet',
+                        position: 'Fair',
+                        liquidity: 'no',
+                        sweep: 'no',
+                        entry: 'None',
+                        rr: 2,
+                    },
+                    analysisResult: null,
+                    
+                    xpLog: [
+                        {date: '2026-01-26', reason: 'HTF Bias ถูกต้อง', xp: 20},
+                        {date: '2026-01-26', reason: 'Liquidity Mapping', xp: 15},
+                        {date: '2026-01-26', reason: 'รอ Sweep ได้จริง', xp: 25},
+                    ],
+                    
+                    levels: [
+                        {lv: 1, xp: 0},
+                        {lv: 3, xp: 300},
+                        {lv: 5, xp: 700},
+                        {lv: 7, xp: 1200},
+                        {lv: 10, xp: 2000},
+                        {lv: 15, xp: 3500},
+                        {lv: 20, xp: 5000},
+                    ]
+                }
+            },
+            computed: {
+                currentClass() {
+                    return 'Liquidity Hunter';
+                },
+                dailyXP() {
+                    const today = new Date().toISOString().split('T')[0];
+                    return this.xpLog
+                        .filter(e => e.date === today)
+                        .reduce((sum, e) => sum + e.xp, 0);
+                },
+                questsCompleted() {
+                    return this.quests.filter(q => q.status === 'completed').length;
+                },
+                checklistProgress() {
+                    const total = this.quests.reduce((sum, q) => sum + q.checklist.length, 0);
+                    const checked = this.quests.reduce((sum, q) => sum + q.checklist.filter(c => c.checked).length, 0);
+                    return total > 0 ? Math.round((checked / total) * 100) : 0;
+                }
+            },
+            methods: {
+                toggleCheck(questIndex, checkIndex) {
+                    this.quests[questIndex].checklist[checkIndex].checked = !this.quests[questIndex].checklist[checkIndex].checked;
+                    
+                    // Check if all checklist items are checked
+                    const allChecked = this.quests[questIndex].checklist.every(c => c.checked);
+                    if (allChecked && this.quests[questIndex].status !== 'completed') {
+                        this.quests[questIndex].status = 'completed';
+                        this.quests[questIndex].statusText = 'Completed';
+                        
+                        // Activate next quest
+                        if (questIndex < this.quests.length - 1) {
+                            this.quests[questIndex + 1].status = 'active';
+                            this.quests[questIndex + 1].statusText = 'Active';
+                        }
+                    }
+                },
+                selectSkill(branchName, skill) {
+                    this.selectedSkill = {branch: branchName, skill: skill};
+                },
+                unlockSelectedSkill() {
+                    if (this.selectedSkill) {
+                        this.selectedSkill.skill.unlocked = true;
+                        this.totalXP += 50;
+                    }
+                },
+                resetDay() {
+                    this.quests.forEach((q, i) => {
+                        q.checklist.forEach(c => c.checked = false);
+                        q.status = i === 0 ? 'active' : 'pending';
+                        q.statusText = i === 0 ? 'Active' : 'Pending';
+                    });
+                },
+                toggleBoss(boss) {
+                    boss.defeated = !boss.defeated;
+                },
+                addXP() {
+                    this.xpLog.unshift({
+                        date: new Date().toISOString().split('T')[0],
+                        reason: 'Manual Entry',
+                        xp: 20
+                    });
+                    this.updateTotalXP();
+                },
+                addPenalty() {
+                    this.xpLog.unshift({
+                        date: new Date().toISOString().split('T')[0],
+                        reason: 'Rule Break',
+                        xp: -40
+                    });
+                    this.ruleBreaks++;
+                    this.updateTotalXP();
+                },
+                updateTotalXP() {
+                    this.totalXP = this.xpLog.reduce((sum, e) => sum + e.xp, 0);
+                    // Update level
+                    for (let i = this.levels.length - 1; i >= 0; i--) {
+                        if (this.totalXP >= this.levels[i].xp) {
+                            this.playerLevel = this.levels[i].lv;
+                            break;
+                        }
+                    }
+                },
+                runAnalysis() {
+                    const a = this.analysis;
+                    let score = 0;
+                    let maxScore = 0;
+                    let items = [];
+                    
+                    // Check 1: TF Selection
+                    maxScore += 1;
+                    const validTF = ['D1', 'H4'].includes(a.tf);
+                    items.push({
+                        label: 'Timeframe',
+                        value: validTF ? '✓ HTF ถูกต้อง' : '⚠️ ควรใช้ D1/H4',
+                        status: validTF ? 'pass' : 'fail'
+                    });
+                    if (validTF) score++;
+                    
+                    // Check 2: Structure
+                    maxScore += 1;
+                    const hasStructure = a.structure !== 'Unknown';
+                    items.push({
+                        label: 'Market Structure',
+                        value: a.structure,
+                        status: hasStructure ? 'pass' : 'fail'
+                    });
+                    if (hasStructure) score++;
+                    
+                    // Check 3: Bias
+                    maxScore += 1;
+                    const hasBias = a.choch !== 'not_yet' || a.structure !== 'Unknown';
+                    items.push({
+                        label: 'Bias Clarity',
+                        value: hasBias ? '✓ มี Direction' : '⚠️ ยังไม่ชัด',
+                        status: hasBias ? 'pass' : 'fail'
+                    });
+                    if (hasBias) score++;
+                    
+                    // Check 4: Liquidity
+                    maxScore += 1;
+                    const hasLiquidity = a.liquidity === 'yes';
+                    items.push({
+                        label: 'Liquidity',
+                        value: hasLiquidity ? '✓ มี Liquidity' : '⚠️ ไม่มี',
+                        status: hasLiquidity ? 'pass' : 'fail'
+                    });
+                    if (hasLiquidity) score++;
+                    
+                    // Check 5: Sweep
+                    maxScore += 1;
+                    const validSweep = a.sweep === 'yes_return';
+                    items.push({
+                        label: 'Sweep Validation',
+                        value: validSweep ? '✓ Sweep Valid' : a.sweep === 'yes_break' ? '❌ Break ไม่ valid' : '⏳ ยังไม่ Sweep',
+                        status: validSweep ? 'pass' : a.sweep === 'no' ? 'fail' : 'fail'
+                    });
+                    if (validSweep) score++;
+                    
+                    // Check 6: Entry
+                    maxScore += 1;
+                    const hasEntry = a.entry !== 'None';
+                    items.push({
+                        label: 'Entry Zone',
+                        value: a.entry,
+                        status: hasEntry ? 'pass' : 'fail'
+                    });
+                    if (hasEntry) score++;
+                    
+                    // Check 7: RR
+                    maxScore += 1;
+                    const validRR = a.rr >= 2;
+                    items.push({
+                        label: 'Risk:Reward',
+                        value: `1:${a.rr}`,
+                        status: validRR ? 'pass' : 'fail'
+                    });
+                    if (validRR) score++;
+                    
+                    // Overall
+                    const overall = score >= 5 ? 'PASS' : 'FAIL';
+                    const title = overall === 'PASS' ? '✅ Trade Ready' : '❌ Wait for Setup';
+                    
+                    this.analysisResult = {title, items, overall};
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
